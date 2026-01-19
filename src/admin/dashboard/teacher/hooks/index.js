@@ -1,0 +1,2 @@
+// Teacher hooks exports
+export {};

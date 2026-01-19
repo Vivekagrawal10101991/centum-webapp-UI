@@ -1,0 +1,2 @@
+// Teacher components exports
+export {};
