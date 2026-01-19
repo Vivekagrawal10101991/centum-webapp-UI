@@ -1,7 +1,9 @@
 import { Route } from 'react-router-dom';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/common/ProtectedRoute';
+import PermissionProtectedRoute from '../../components/common/PermissionProtectedRoute';
 import { ROLES } from '../../utils/roles';
+import { PERMISSIONS } from '../helpers/rolePermissions';
 
 // Super Admin
 import { SuperAdminDashboard } from '../dashboard/super-admin';
@@ -13,6 +15,7 @@ import CourseManagement from '../Tabs/CourseManagement';
 import SocialProof from '../Tabs/SocialProof';
 import MediaCenter from '../Tabs/MediaCenter';
 import LeadsEnquiries from '../Tabs/LeadsEnquiries';
+import Settings from '../Tabs/Settings';
 
 // Admin
 import {
@@ -83,69 +86,107 @@ export const AdminRoutes = () => {
       <Route
         path="/dashboard/super-admin/dashboard"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_REPORTS, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/dashboard"
+          >
             <DashboardLayout>
               <Dashboard />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/promotions-banners"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/promotions-banners"
+          >
             <DashboardLayout>
               <PromotionsBanners />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/academics-results"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_ACADEMIC, PERMISSIONS.MANAGE_ACADEMIC, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/academics-results"
+          >
             <DashboardLayout>
               <AcademicsResults />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/course-management"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_COURSES, PERMISSIONS.MANAGE_CMS, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/course-management"
+          >
             <DashboardLayout>
               <CourseManagement />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/social-proof"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_SOCIAL, PERMISSIONS.MANAGE_SOCIAL, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/social-proof"
+          >
             <DashboardLayout>
               <SocialProof />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/media-center"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS, PERMISSIONS.MANAGE_CMS, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/media-center"
+          >
             <DashboardLayout>
               <MediaCenter />
             </DashboardLayout>
-          </ProtectedRoute>
+          </PermissionProtectedRoute>
         }
       />
       <Route
         path="/dashboard/super-admin/leads-enquiries"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.ENQUIRE_LIST, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/leads-enquiries"
+          >
             <DashboardLayout>
               <LeadsEnquiries />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <Settings />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -172,14 +213,34 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/dashboard/admin/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
 
       {/* Technical Routes */}
       <Route
         path="/dashboard/technical"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.TECHNICAL_ADMIN]}>
+          <ProtectedRoute allowedRoles={[ROLES.TECHNICAL_HEAD]}>
             <DashboardLayout>
               <TechnicalDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/technical/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TECHNICAL_HEAD]}>
+            <DashboardLayout>
+              <Settings />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -196,6 +257,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/dashboard/teacher/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
 
       {/* Student Routes */}
       <Route
@@ -208,6 +279,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/dashboard/student/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
 
       {/* Parent Routes */}
       <Route
@@ -216,6 +297,16 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.PARENT]}>
             <DashboardLayout>
               <ParentDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/parent/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.PARENT]}>
+            <DashboardLayout>
+              <Settings />
             </DashboardLayout>
           </ProtectedRoute>
         }

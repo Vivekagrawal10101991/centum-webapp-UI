@@ -45,32 +45,85 @@ export const AuthProvider = ({ children }) => {
       console.log('Login response:', response);
       
       const data = response.data || response;
+      
+      if (data.firstLogin === true) {
+        const tempToken = data.temporaryToken;
+        const permissions = data.permissions || [];
+        let role = data.role;
+        
+        // If role is not in response, try to extract from JWT token
+        if (!role && tempToken) {
+          try {
+            const tokenPayload = JSON.parse(atob(tempToken.split('.')[1]));
+            role = tokenPayload.role;
+            console.log('Role extracted from JWT token:', role);
+          } catch (e) {
+            console.error('Failed to decode JWT token:', e);
+          }
+        }
+        
+        console.log('First login data:', {
+          tempToken: tempToken ? 'present' : 'missing',
+          role: role,
+          permissions: permissions
+        });
+        
+        if (!tempToken) {
+          throw new Error('No temporary token received for first login');
+        }
+        
+        if (!role) {
+          throw new Error('No role received from server. Please contact your backend team to include role in the login response.');
+        }
+        
+        const userData = {
+          email: data.email,
+          role: role,
+          permissions: permissions,
+          name: data.name || data.email,
+        };
+        
+        localStorage.setItem('authToken', tempToken);
+        localStorage.setItem('adminToken', tempToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('adminUser', JSON.stringify(userData));
+        
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        const dashboardRoute = getDashboardRoute(role);
+        console.log('Calculated dashboard route for role', role, ':', dashboardRoute);
+        
+        return { 
+          success: true, 
+          data: data,
+          dashboardRoute: dashboardRoute
+        };
+      }
+      
       const token = data.token || data.accessToken || data.authToken;
-      const userData = data.user || data.userData || data;
+      const permissions = data.permissions || [];
       
       if (!token) {
         throw new Error('No authentication token received from server');
       }
       
-      if (!userData) {
-        console.error('Invalid user data:', userData);
-        throw new Error('Invalid user data received from server');
-      }
+      const userData = {
+        email: data.email,
+        role: data.role,
+        permissions: permissions,
+        name: data.name || data.email,
+      };
       
-      // Store token and user data for site context
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(userData));
       
-      // ALSO store for admin context (for dashboard access)
       localStorage.setItem('adminToken', token);
       localStorage.setItem('adminUser', JSON.stringify(userData));
       
       setUser(userData);
       setIsAuthenticated(true);
       
-      // Get dashboard route based on user role
-      console.log('User data for dashboard route:', userData);
-      console.log('User role:', userData.role);
       const dashboardRoute = userData.role ? getDashboardRoute(userData.role) : '/dashboard';
       console.log('Dashboard route:', dashboardRoute);
       

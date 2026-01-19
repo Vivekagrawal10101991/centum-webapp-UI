@@ -28,7 +28,7 @@ export const authService = {
    * @returns {Promise} Response
    */
   changePassword: async (passwordData) => {
-    const response = await api.post('/api/auth/admin/change-password', passwordData);
+    const response = await api.post('/api/auth/change-password', passwordData);
     return response.data;
   },
 

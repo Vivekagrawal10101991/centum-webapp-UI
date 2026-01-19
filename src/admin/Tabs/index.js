@@ -6,3 +6,4 @@ export { default as CourseManagement } from './CourseManagement';
 export { default as SocialProof } from './SocialProof';
 export { default as MediaCenter } from './MediaCenter';
 export { default as LeadsEnquiries } from './LeadsEnquiries';
+export { default as Settings } from './Settings';

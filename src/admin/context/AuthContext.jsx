@@ -62,19 +62,69 @@ export const AuthProvider = ({ children }) => {
       console.log('Admin login response:', response);
       
       const data = response.data || response;
+      
+      if (data.firstLogin === true) {
+        const tempToken = data.temporaryToken;
+        const permissions = data.permissions || [];
+        let role = data.role;
+        
+        // If role is not in response, try to extract from JWT token
+        if (!role && tempToken) {
+          try {
+            const tokenPayload = JSON.parse(atob(tempToken.split('.')[1]));
+            role = tokenPayload.role;
+            console.log('Role extracted from JWT token:', role);
+          } catch (e) {
+            console.error('Failed to decode JWT token:', e);
+          }
+        }
+        
+        if (!tempToken) {
+          throw new Error('No temporary token received for first login');
+        }
+        
+        if (!role) {
+          throw new Error('No role received from server. Please contact your backend team to include role in the login response.');
+        }
+        
+        const userData = {
+          role: role,
+          email: data.email,
+          permissions: permissions,
+          name: data.name || data.email,
+        };
+        
+        localStorage.setItem('adminToken', tempToken);
+        localStorage.setItem('adminUser', JSON.stringify(userData));
+        
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        return { 
+          success: true, 
+          data: data,
+          dashboardRoute: getDashboardRoute(userData.role)
+        };
+      }
+      
       const token = data.token || data.accessToken || data.authToken;
-      const userData = data.user || data.userData || data;
+      
+      const userData = {
+        role: data.role,
+        email: data.email,
+        permissions: data.permissions || [],
+        name: data.name || data.email,
+      };
       
       if (!token) {
         throw new Error('No authentication token received from server');
       }
       
-      if (!userData || !userData.role) {
+      if (!userData.role || !userData.permissions) {
         console.error('Invalid user data:', userData);
         throw new Error('Invalid user data received from server');
       }
       
-      // Store admin token and user data
       localStorage.setItem('adminToken', token);
       localStorage.setItem('adminUser', JSON.stringify(userData));
       
@@ -114,6 +164,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   /**
+   * Check if user has specific permission
+   * @param {string} permission - Permission to check
+   */
+  const hasPermission = (permission) => {
+    if (!user || !user.permissions) return false;
+    return user.permissions.includes(permission);
+  };
+
+  /**
+   * Check if user has any of the specified permissions
+   * @param {Array<string>} permissions - Array of permissions to check
+   */
+  const hasAnyPermission = (permissions) => {
+    if (!user || !user.permissions) return false;
+    return permissions.some(permission => user.permissions.includes(permission));
+  };
+
+  /**
+   * Check if user has all of the specified permissions
+   * @param {Array<string>} permissions - Array of permissions to check
+   */
+  const hasAllPermissions = (permissions) => {
+    if (!user || !user.permissions) return false;
+    return permissions.every(permission => user.permissions.includes(permission));
+  };
+
+  /**
    * Get user's dashboard route
    */
   const getUserDashboard = () => {
@@ -128,6 +205,9 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     hasRole,
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
     getUserDashboard,
   };
 

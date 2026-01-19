@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
+import { filterNavigationByPermissions } from '../../helpers/navigationPermissions';
 import logo from '../../../assets/logo.png';
 
 /**
@@ -98,7 +99,10 @@ const DashboardSidebar = () => {
     ],
   };
 
-  const items = navigationItems[user?.role] || [];
+  const allItems = navigationItems[user?.role] || [];
+  
+  // Filter navigation items based on user permissions
+  const items = filterNavigationByPermissions(allItems, user);
 
   const isActive = (path) => location.pathname === path;
 

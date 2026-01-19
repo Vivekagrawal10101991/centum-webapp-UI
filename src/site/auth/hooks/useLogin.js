@@ -30,22 +30,23 @@ export const useLogin = () => {
 
       if (result.success) {
         // Check if this is first login (password needs to be changed)
-        const isFirstLogin = 
-          result.data.isFirstTimeLogin || 
-          result.data.firstLogin || 
-          result.data.user?.isFirstTimeLogin || 
-          result.data.user?.firstLogin ||
-          result.data.isFirstLogin;
+        const isFirstLogin = result.data.firstLogin === true;
         
         if (isFirstLogin) {
           authService.setFirstLogin(true);
           
-          toast.success('Login successful! Please change your password.', {
+          console.log('First login detected');
+          console.log('Dashboard route:', result.dashboardRoute);
+          console.log('Settings route:', result.dashboardRoute + '/settings');
+          
+          toast.success(result.data.message || 'Login successful! Please change your password.', {
             duration: 3000,
             position: 'top-center',
           });
           
-          navigate('/change-password');
+          setTimeout(() => {
+            window.location.href = result.dashboardRoute + '/settings';
+          }, 500);
         } else {
           const dashboardRoute = result.dashboardRoute || '/dashboard';
           console.log('Navigating to dashboard:', dashboardRoute);
@@ -55,7 +56,6 @@ export const useLogin = () => {
             position: 'top-center',
           });
           
-          // Use window.location to force page reload and reinitialize admin context
           setTimeout(() => {
             window.location.href = dashboardRoute;
           }, 500);

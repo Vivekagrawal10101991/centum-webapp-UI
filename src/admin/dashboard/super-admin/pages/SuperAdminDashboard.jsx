@@ -12,12 +12,16 @@ import {
   MessageCircle 
 } from 'lucide-react';
 import { FeatureCard, SystemStats } from '../components';
+import { useAuth } from '../../../context/AuthContext';
+import { canAccessRoute } from '../../../helpers/navigationPermissions';
 
 /**
  * Super Admin Dashboard Container
  * Main dashboard for super administrator
  */
 export const SuperAdminDashboard = () => {
+  const { user } = useAuth();
+
   const userManagementFeatures = [
     {
       title: 'Add User',
@@ -94,6 +98,15 @@ export const SuperAdminDashboard = () => {
     },
   ];
 
+  // Filter features based on user permissions
+  const filteredUserManagementFeatures = userManagementFeatures.filter(feature => 
+    canAccessRoute(feature.path, user)
+  );
+
+  const filteredContentManagementFeatures = contentManagementFeatures.filter(feature => 
+    canAccessRoute(feature.path, user)
+  );
+
   return (
     <div>
       <div className="mb-8">
@@ -102,32 +115,36 @@ export const SuperAdminDashboard = () => {
       </div>
 
       {/* User Management Section */}
-      <div className="mb-8">
-        <div className="flex items-center space-x-2 mb-4">
-          <Users className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
+      {filteredUserManagementFeatures.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center space-x-2 mb-4">
+            <Users className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {filteredUserManagementFeatures.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} />
+            ))}
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {userManagementFeatures.map((feature, index) => (
-            <FeatureCard key={index} feature={feature} />
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Content Management Section */}
-      <div className="mb-8">
-        <div className="flex items-center space-x-2 mb-4">
-          <BookOpen className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold text-gray-900">Content Management</h2>
+      {filteredContentManagementFeatures.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center space-x-2 mb-4">
+            <BookOpen className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold text-gray-900">Content Management</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredContentManagementFeatures.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} />
+            ))}
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {contentManagementFeatures.map((feature, index) => (
-            <FeatureCard key={index} feature={feature} />
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Quick Stats */}
       <SystemStats />
