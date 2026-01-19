@@ -6,6 +6,13 @@ import { ROLES } from '../../utils/roles';
 // Super Admin
 import { SuperAdminDashboard } from '../dashboard/super-admin';
 import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
+import Dashboard from '../Tabs/Dashboard';
+import PromotionsBanners from '../Tabs/PromotionsBanners';
+import AcademicsResults from '../Tabs/AcademicsResults';
+import CourseManagement from '../Tabs/CourseManagement';
+import SocialProof from '../Tabs/SocialProof';
+import MediaCenter from '../Tabs/MediaCenter';
+import LeadsEnquiries from '../Tabs/LeadsEnquiries';
 
 // Admin
 import {
@@ -69,6 +76,76 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
               <DeleteUser />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/promotions-banners"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <PromotionsBanners />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/academics-results"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <AcademicsResults />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/course-management"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <CourseManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/social-proof"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <SocialProof />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/media-center"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <MediaCenter />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/super-admin/leads-enquiries"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <LeadsEnquiries />
             </DashboardLayout>
           </ProtectedRoute>
         }

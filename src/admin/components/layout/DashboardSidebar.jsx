@@ -13,7 +13,13 @@ import {
   ClipboardList,
   Calendar,
   MessageSquare,
-  TrendingUp
+  TrendingUp,
+  Award,
+  Video,
+  MessageCircle,
+  UserPlus,
+  UserX,
+  Search
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -30,10 +36,17 @@ const DashboardSidebar = () => {
   // Navigation items for each role
   const navigationItems = {
     [ROLES.SUPER_ADMIN]: [
-      { name: 'Dashboard', path: '/dashboard/super-admin', icon: LayoutDashboard },
-      { name: 'Add User', path: '/dashboard/super-admin/add-user', icon: Users },
-      { name: 'Get Users', path: '/dashboard/super-admin/get-users', icon: FileText },
-      { name: 'Delete User', path: '/dashboard/super-admin/delete-user', icon: UserCog },
+      { name: 'Overview', path: '/dashboard/super-admin', icon: LayoutDashboard },
+      { name: 'Dashboard', path: '/dashboard/super-admin/dashboard', icon: BarChart },
+      { name: 'Add User', path: '/dashboard/super-admin/add-user', icon: UserPlus },
+      { name: 'Get Users', path: '/dashboard/super-admin/get-users', icon: Search },
+      { name: 'Delete User', path: '/dashboard/super-admin/delete-user', icon: UserX },
+      { name: 'Promotions & Banners', path: '/dashboard/super-admin/promotions-banners', icon: Megaphone },
+      { name: 'Academics & Results', path: '/dashboard/super-admin/academics-results', icon: Award },
+      { name: 'Course Management', path: '/dashboard/super-admin/course-management', icon: BookOpen },
+      { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
+      { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
+      { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
 
