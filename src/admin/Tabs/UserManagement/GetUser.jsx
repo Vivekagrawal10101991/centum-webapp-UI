@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Search, ArrowLeft, User, Mail, Calendar, Shield } from 'lucide-react';
-import { Card, Button, Select } from '../../../../components/common';
-import { superAdminService } from '../../../services/superAdminService';
-import { ROLES, ROLE_NAMES } from '../../../../utils/roles';
+import { Card, Button, Select } from '../../../components/common';
+import { superAdminService } from '../../services/superAdminService';
+import { ROLES, ROLE_NAMES } from '../../../utils/roles';
 
 /**
  * Get Users Page Container

@@ -1,3 +1,3 @@
 export { FeatureCard } from './FeatureCard';
 export { SystemStats } from './SystemStats';
-export { AddUserForm } from './AddUserForm';
+// AddUserForm has been moved to src/admin/Tabs/UserManagement

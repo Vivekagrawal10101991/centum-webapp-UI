@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { superAdminService } from '../../../services/superAdminService';
-import { validators } from '../../../../utils/validators';
-import { ROLES } from '../../../../utils/roles';
+import { superAdminService } from '../../services/superAdminService';
+import { validators } from '../../../utils/validators';
+import { ROLES } from '../../../utils/roles';
 
 /**
  * Custom hook for Add User functionality

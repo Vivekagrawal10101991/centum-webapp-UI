@@ -1,5 +1,5 @@
 import { UserPlus } from 'lucide-react';
-import { Card, Input, Button } from '../../../../components/common';
+import { Card, Input, Button } from '../../../components/common';
 
 /**
  * Add User Form Component

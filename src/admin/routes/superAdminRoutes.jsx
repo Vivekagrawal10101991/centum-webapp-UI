@@ -2,12 +2,8 @@ import { Route } from 'react-router-dom';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
-import {
-  SuperAdminDashboard,
-  AddUserPage,
-  GetUsersPage,
-  DeleteUserPage,
-} from '../dashboard/super-admin';
+import { SuperAdminDashboard } from '../dashboard/super-admin';
+import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
 
 /**
  * Super Admin Dashboard Routes
@@ -30,7 +26,7 @@ export const superAdminRoutes = (
       element={
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
           <DashboardLayout>
-            <AddUserPage />
+            <AddUser />
           </DashboardLayout>
         </ProtectedRoute>
       }
@@ -40,7 +36,7 @@ export const superAdminRoutes = (
       element={
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
           <DashboardLayout>
-            <GetUsersPage />
+            <GetUser />
           </DashboardLayout>
         </ProtectedRoute>
       }
@@ -50,7 +46,7 @@ export const superAdminRoutes = (
       element={
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
           <DashboardLayout>
-            <DeleteUserPage />
+            <DeleteUser />
           </DashboardLayout>
         </ProtectedRoute>
       }

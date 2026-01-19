@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { UserX, ArrowLeft, AlertTriangle } from 'lucide-react';
-import { Card, Input, Button } from '../../../../components/common';
-import { superAdminService } from '../../../services/superAdminService';
+import { Card, Input, Button } from '../../../components/common';
+import { superAdminService } from '../../services/superAdminService';
 
 /**
  * Delete User Page Container

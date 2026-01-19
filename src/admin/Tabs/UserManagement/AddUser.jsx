@@ -1,7 +1,7 @@
 import { UserPlus, ArrowLeft } from 'lucide-react';
-import { Card, Button } from '../../../../components/common';
-import { useAddUserData } from '../hooks';
-import { AddUserForm } from '../components';
+import { Card, Button } from '../../../components/common';
+import { useAddUserData } from './useAddUserData';
+import { AddUserForm } from './AddUserForm';
 
 /**
  * Add User Page Container

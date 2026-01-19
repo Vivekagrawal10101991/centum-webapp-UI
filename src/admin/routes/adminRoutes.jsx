@@ -4,12 +4,8 @@ import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
 
 // Super Admin
-import {
-  SuperAdminDashboard,
-  AddUserPage,
-  GetUsersPage,
-  DeleteUserPage,
-} from '../dashboard/super-admin';
+import { SuperAdminDashboard } from '../dashboard/super-admin';
+import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
 
 // Admin
 import {
@@ -52,7 +48,7 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
-              <AddUserPage />
+              <AddUser />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -62,7 +58,7 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
-              <GetUsersPage />
+              <GetUser />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -72,7 +68,7 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
-              <DeleteUserPage />
+              <DeleteUser />
             </DashboardLayout>
           </ProtectedRoute>
         }
