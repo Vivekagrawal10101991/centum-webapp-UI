@@ -8,7 +8,7 @@ import { Login, Signup, ChangePassword, Unauthorized } from '../auth';
 import { Home, About, Contact, Courses } from '../public';
 
 // Content pages
-import { Blogs, Videos, Achievers, StudentSuccess, Contributions } from '../content';
+import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
 
 /**
  * Site Routes Component
@@ -25,6 +25,7 @@ export const SiteRoutes = () => {
 
       {/* Content Routes with Layout */}
       <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
+      <Route path="/blogs/:id" element={<Layout><BlogDetail /></Layout>} />
       <Route path="/videos" element={<Layout><Videos /></Layout>} />
       <Route path="/achievers" element={<Layout><Achievers /></Layout>} />
       <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />

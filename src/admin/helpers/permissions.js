@@ -1,4 +1,4 @@
-import { PERMISSIONS } from "./permissions";
+import { PERMISSIONS } from "./rolePermissions";
 
 export const ROLE_PERMISSIONS = {
   SUPER_ADMIN: Object.values(PERMISSIONS),

@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, FileText, Video, Users, Eye } from 'lucide-react';
+import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
+import ConfirmModal from '../../components/common/ConfirmModal';
+import { hasPermission } from '../helpers/authHelper';
+import { PERMISSIONS } from '../helpers/rolePermissions';
 
 export default function MediaCenter() {
   const [activeSubTab, setActiveSubTab] = useState('blogs');
@@ -9,33 +13,11 @@ export default function MediaCenter() {
   const [editingBlog, setEditingBlog] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
   const [editingContributor, setEditingContributor] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ isOpen: false, blogId: null, type: null });
 
-  const [blogs, setBlogs] = useState([
-    {
-      id: 1,
-      title: 'Top 10 Study Tips for JEE Preparation',
-      excerpt: 'Learn the most effective strategies to crack JEE with flying colors',
-      content: 'Detailed blog content here...',
-      author: 'Dr. Sharma',
-      category: 'Study Tips',
-      publishDate: '2026-01-08',
-      thumbnail: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400',
-      views: 1247,
-      published: true,
-    },
-    {
-      id: 2,
-      title: 'NEET Biology: High-Yield Topics',
-      excerpt: 'Focus on these Biology topics for maximum NEET score',
-      content: 'Detailed blog content here...',
-      author: 'Prof. Patel',
-      category: 'NEET',
-      publishDate: '2026-01-05',
-      thumbnail: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400',
-      views: 892,
-      published: true,
-    },
-  ]);
+  const [blogs, setBlogs] = useState([]);
 
   const [videos, setVideos] = useState([
     {
@@ -85,13 +67,10 @@ export default function MediaCenter() {
 
   const [blogForm, setBlogForm] = useState({
     title: '',
-    excerpt: '',
     content: '',
     author: '',
-    category: 'Study Tips',
-    publishDate: '',
-    thumbnail: '',
-    views: 0,
+    imageUrl: '',
+    category: '',
     published: true,
   });
 
@@ -115,15 +94,106 @@ export default function MediaCenter() {
     email: '',
   });
 
-  const handleAddBlog = () => {
-    if (editingBlog) {
-      setBlogs(blogs.map(b => b.id === editingBlog.id ? { ...blogForm, id: editingBlog.id } : b));
-      setEditingBlog(null);
-    } else {
-      setBlogs([...blogs, { ...blogForm, id: Date.now() }]);
+  // Fetch all blogs
+  const fetchBlogs = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllBlogs();
+      setBlogs(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    setBlogForm({ title: '', excerpt: '', content: '', author: '', category: 'Study Tips', publishDate: '', thumbnail: '', views: 0, published: true });
-    setShowBlogForm(false);
+  };
+
+  // Fetch blogs on component mount
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  // Add or Update blog
+  const handleAddBlog = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (editingBlog) {
+        // Update existing blog
+        await updateBlog(editingBlog.id, blogForm);
+        setEditingBlog(null);
+      } else {
+        // Add new blog
+        await addBlog(blogForm);
+      }
+      await fetchBlogs(); // Refresh the list
+      setBlogForm({ title: '', content: '', author: '', imageUrl: '', category: '', published: true });
+      setShowBlogForm(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Open delete confirmation modal
+  const openDeleteModal = (id, type = 'blog') => {
+    setDeleteConfirmModal({ isOpen: true, blogId: id, type });
+  };
+
+  // Close delete confirmation modal
+  const closeDeleteModal = () => {
+    setDeleteConfirmModal({ isOpen: false, blogId: null, type: null });
+  };
+
+  // Handle delete based on type
+  const handleDelete = async () => {
+    const { blogId, type } = deleteConfirmModal;
+    if (!blogId) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      if (type === 'blog') {
+        await deleteBlog(blogId);
+        await fetchBlogs(); // Refresh the list
+      } else if (type === 'video') {
+        setVideos(videos.filter(v => v.id !== blogId));
+      } else if (type === 'contributor') {
+        setContributors(contributors.filter(c => c.id !== blogId));
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get modal content based on type
+  const getDeleteModalContent = () => {
+    const { type } = deleteConfirmModal;
+    switch (type) {
+      case 'blog':
+        return {
+          title: 'Delete Blog Post',
+          message: 'Are you sure you want to delete this blog post? This action cannot be undone.',
+        };
+      case 'video':
+        return {
+          title: 'Delete Video',
+          message: 'Are you sure you want to delete this video? This action cannot be undone.',
+        };
+      case 'contributor':
+        return {
+          title: 'Delete Team Member',
+          message: 'Are you sure you want to remove this team member? This action cannot be undone.',
+        };
+      default:
+        return {
+          title: 'Confirm Delete',
+          message: 'Are you sure you want to delete this item? This action cannot be undone.',
+        };
+    }
   };
 
   const handleAddVideo = () => {
@@ -148,8 +218,22 @@ export default function MediaCenter() {
     setShowContributorForm(false);
   };
 
+  const modalContent = getDeleteModalContent();
+
   return (
     <div>
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete}
+        title={modalContent.title}
+        message={modalContent.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Media Center</h2>
         <p className="text-gray-600 mt-1">Manage content marketing and team information</p>
@@ -192,19 +276,28 @@ export default function MediaCenter() {
       {/* Blogs Tab */}
       {activeSubTab === 'blogs' && (
         <div>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+          
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Educational blog posts and articles</p>
-            <button
-              onClick={() => {
-                setShowBlogForm(true);
-                setEditingBlog(null);
-                setBlogForm({ title: '', excerpt: '', content: '', author: '', category: 'Study Tips', publishDate: '', thumbnail: '', views: 0, published: true });
-              }}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Blog
-            </button>
+            {hasPermission(PERMISSIONS.ADD_BLOG) && (
+              <button
+                onClick={() => {
+                  setShowBlogForm(true);
+                  setEditingBlog(null);
+                  setBlogForm({ title: '', content: '', author: '', imageUrl: '', category: '', published: true });
+                }}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={loading}
+              >
+                <Plus className="w-4 h-4" />
+                Add Blog
+              </button>
+            )}
           </div>
 
           {/* Blog Form */}
@@ -215,75 +308,56 @@ export default function MediaCenter() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Blog Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Blog Title *</label>
                   <input
                     type="text"
                     value={blogForm.title}
                     onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Top 10 Study Tips for JEE Preparation"
+                    required
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt/Summary</label>
-                  <textarea
-                    value={blogForm.excerpt}
-                    onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={2}
-                    placeholder="Brief summary of the blog post..."
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Content</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Content *</label>
                   <textarea
                     value={blogForm.content}
                     onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={6}
+                    rows={8}
                     placeholder="Full blog content goes here..."
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Author</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Author *</label>
                   <input
                     type="text"
                     value={blogForm.author}
                     onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Dr. Sharma"
+                    required
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                  <input
+                    type="text"
+                    value={blogForm.imageUrl}
+                    onChange={(e) => setBlogForm({ ...blogForm, imageUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select
+                  <input
+                    type="text"
                     value={blogForm.category}
                     onChange={(e) => setBlogForm({ ...blogForm, category: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="Study Tips">Study Tips</option>
-                    <option value="JEE">JEE</option>
-                    <option value="NEET">NEET</option>
-                    <option value="Motivation">Motivation</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Publish Date</label>
-                  <input
-                    type="date"
-                    value={blogForm.publishDate}
-                    onChange={(e) => setBlogForm({ ...blogForm, publishDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail URL</label>
-                  <input
-                    type="text"
-                    value={blogForm.thumbnail}
-                    onChange={(e) => setBlogForm({ ...blogForm, thumbnail: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="e.g., Study Tips, JEE, NEET, Motivation"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -301,16 +375,19 @@ export default function MediaCenter() {
               <div className="flex items-center gap-4 mt-4">
                 <button
                   onClick={handleAddBlog}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+                  disabled={loading || !blogForm.title || !blogForm.content || !blogForm.author}
                 >
-                  {editingBlog ? 'Update Blog' : 'Add Blog'}
+                  {loading ? 'Saving...' : (editingBlog ? 'Update Blog' : 'Add Blog')}
                 </button>
                 <button
                   onClick={() => {
                     setShowBlogForm(false);
                     setEditingBlog(null);
+                    setError(null);
                   }}
                   className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                  disabled={loading}
                 >
                   Cancel
                 </button>
@@ -319,67 +396,92 @@ export default function MediaCenter() {
           )}
 
           {/* Blogs List */}
-          <div className="space-y-4">
-            {blogs.map((blog) => (
-              <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex gap-4">
-                  <img
-                    src={blog.thumbnail}
-                    alt={blog.title}
-                    className="w-32 h-24 object-cover rounded-lg"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-gray-800">{blog.title}</h4>
-                          {blog.published ? (
-                            <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
-                              Published
-                            </span>
-                          ) : (
-                            <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
-                              Draft
-                            </span>
+          {loading && blogs.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              Loading blogs...
+            </div>
+          ) : blogs.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              No blogs found. Click "Add Blog" to create your first blog post.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {blogs.map((blog) => (
+                <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex gap-4">
+                    {blog.imageUrl && (
+                      <img
+                        src={blog.imageUrl}
+                        alt={blog.title}
+                        className="w-32 h-24 object-cover rounded-lg"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-semibold text-gray-800">{blog.title}</h4>
+                            {blog.published ? (
+                              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
+                                Published
+                              </span>
+                            ) : (
+                              <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                                Draft
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">{blog.content}</p>
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <span>By {blog.author}</span>
+                            {blog.category && (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                                {blog.category}
+                              </span>
+                            )}
+                            {blog.createdAt && (
+                              <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          {hasPermission(PERMISSIONS.EDIT_BLOG) && (
+                            <button
+                              onClick={() => {
+                                setEditingBlog(blog);
+                                setBlogForm({
+                                  title: blog.title,
+                                  content: blog.content,
+                                  author: blog.author,
+                                  imageUrl: blog.imageUrl || '',
+                                  category: blog.category || '',
+                                  published: blog.published,
+                                });
+                                setShowBlogForm(true);
+                              }}
+                              className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                              disabled={loading}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                          )}
+                          {hasPermission(PERMISSIONS.DELETE_BLOG) && (
+                            <button
+                              onClick={() => openDeleteModal(blog.id, 'blog')}
+                              className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                              disabled={loading}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{blog.excerpt}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>By {blog.author}</span>
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                            {blog.category}
-                          </span>
-                          <span>{blog.publishDate}</span>
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            {blog.views}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingBlog(blog);
-                            setBlogForm(blog);
-                            setShowBlogForm(true);
-                          }}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => setBlogs(blogs.filter(b => b.id !== blog.id))}
-                          className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -388,17 +490,19 @@ export default function MediaCenter() {
         <div>
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Featured YouTube content and educational videos</p>
-            <button
-              onClick={() => {
-                setShowVideoForm(true);
-                setEditingVideo(null);
-                setVideoForm({ title: '', description: '', videoUrl: '', thumbnail: '', category: 'Physics', uploadDate: '', views: 0 });
-              }}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add YouTube Video
-            </button>
+            {hasPermission(PERMISSIONS.ADD_VIDEO) && (
+              <button
+                onClick={() => {
+                  setShowVideoForm(true);
+                  setEditingVideo(null);
+                  setVideoForm({ title: '', description: '', videoUrl: '', thumbnail: '', category: 'Physics', uploadDate: '', views: 0 });
+                }}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Add YouTube Video
+              </button>
+            )}
           </div>
 
           {/* Video Form */}
@@ -513,24 +617,28 @@ export default function MediaCenter() {
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingVideo(video);
-                        setVideoForm(video);
-                        setShowVideoForm(true);
-                      }}
-                      className="flex-1 p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center gap-1"
-                    >
-                      <Edit2 className="w-3 h-3" />
-                      <span className="text-xs">Edit</span>
-                    </button>
-                    <button
-                      onClick={() => setVideos(videos.filter(v => v.id !== video.id))}
-                      className="flex-1 p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span className="text-xs">Delete</span>
-                    </button>
+                    {hasPermission(PERMISSIONS.EDIT_VIDEO) && (
+                      <button
+                        onClick={() => {
+                          setEditingVideo(video);
+                          setVideoForm(video);
+                          setShowVideoForm(true);
+                        }}
+                        className="flex-1 p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        <span className="text-xs">Edit</span>
+                      </button>
+                    )}
+                    {hasPermission(PERMISSIONS.DELETE_VIDEO) && (
+                      <button
+                        onClick={() => openDeleteModal(video.id, 'video')}
+                        className="flex-1 p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span className="text-xs">Delete</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -684,7 +792,7 @@ export default function MediaCenter() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => setContributors(contributors.filter(c => c.id !== contributor.id))}
+                          onClick={() => openDeleteModal(contributor.id, 'contributor')}
                           className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />

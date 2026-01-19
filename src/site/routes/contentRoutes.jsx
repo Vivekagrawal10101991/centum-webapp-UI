@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import { Blogs, Videos, Achievers, StudentSuccess, Contributions } from '../content';
+import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
 
 /**
  * Content Routes
@@ -9,6 +9,7 @@ import { Blogs, Videos, Achievers, StudentSuccess, Contributions } from '../cont
 export const  contentRoutes = (
   <>
     <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
+    <Route path="/blogs/:id" element={<Layout><BlogDetail /></Layout>} />
     <Route path="/videos" element={<Layout><Videos /></Layout>} />
     <Route path="/achievers" element={<Layout><Achievers /></Layout>} />
     <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />

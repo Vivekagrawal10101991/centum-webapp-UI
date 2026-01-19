@@ -1,4 +1,5 @@
 import { PERMISSIONS } from './rolePermissions';
+import { ROLE_PERMISSIONS } from './permissions';
 
 /**
  * Maps navigation items to required permissions
@@ -77,6 +78,11 @@ export const NAVIGATION_PERMISSIONS = {
     requiredPermissions: [PERMISSIONS.VIEW_SETTINGS],
   },
 
+  // Admin Routes - Media Center
+  '/dashboard/admin/media-center': {
+    requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
+  },
+
   // Technical Head Routes
   '/dashboard/technical': {
     requiredRole: 'TECHNICAL_HEAD',
@@ -86,6 +92,12 @@ export const NAVIGATION_PERMISSIONS = {
   },
   '/dashboard/technical/courses': {
     requiredPermissions: [PERMISSIONS.VIEW_COURSES],
+  },
+  '/dashboard/technical/course-management': {
+    requiredPermissions: [PERMISSIONS.VIEW_COURSES],
+  },
+  '/dashboard/technical/media-center': {
+    requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
   },
   '/dashboard/technical/teachers': {
     requiredPermissions: [PERMISSIONS.VIEW_EMPLOYEES],
@@ -99,12 +111,33 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/technical/reports': {
     requiredPermissions: [PERMISSIONS.VIEW_REPORTS],
   },
+  '/dashboard/technical/settings': {
+    requiredPermissions: [],
+  },
+};
+
+/**
+ * Get user's permissions based on their role
+ * @param {Object} user - User object with role property
+ * @returns {Array} Array of permission strings
+ */
+const getUserPermissions = (user) => {
+  if (!user || !user.role) return [];
+  
+  // Super admin has all permissions
+  if (user.role === 'SUPER_ADMIN') {
+    return Object.values(PERMISSIONS);
+  }
+  
+  // Get permissions for the user's role
+  const permissions = ROLE_PERMISSIONS[user.role];
+  return permissions || [];
 };
 
 /**
  * Check if user has access to a navigation item
  * @param {string} path - Navigation path
- * @param {Object} user - User object with role and permissions
+ * @param {Object} user - User object with role property
  * @returns {boolean}
  */
 export const canAccessRoute = (path, user) => {
@@ -124,14 +157,12 @@ export const canAccessRoute = (path, user) => {
 
   // Check permission requirement
   if (navPermission.requiredPermissions) {
-    // Super admin has all permissions
-    if (user.role === 'SUPER_ADMIN') return true;
-    
-    if (!user.permissions || !Array.isArray(user.permissions)) return false;
+    // Get user's permissions based on their role
+    const userPermissions = getUserPermissions(user);
     
     // User needs at least one of the required permissions
     return navPermission.requiredPermissions.some(permission => 
-      user.permissions.includes(permission)
+      userPermissions.includes(permission)
     );
   }
 

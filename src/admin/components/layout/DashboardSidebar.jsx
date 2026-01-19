@@ -56,6 +56,7 @@ const DashboardSidebar = () => {
       { name: 'Users', path: '/dashboard/admin/users', icon: Users },
       { name: 'Courses', path: '/dashboard/admin/courses', icon: BookOpen },
       { name: 'Content', path: '/dashboard/admin/content', icon: FileText },
+      { name: 'Media Center', path: '/dashboard/admin/media-center', icon: Video },
       { name: 'Announcements', path: '/dashboard/admin/announcements', icon: Megaphone },
       { name: 'Testimonials', path: '/dashboard/admin/testimonials', icon: Star },
       { name: 'Analytics', path: '/dashboard/admin/analytics', icon: BarChart },
@@ -66,10 +67,13 @@ const DashboardSidebar = () => {
       { name: 'Dashboard', path: '/dashboard/technical', icon: LayoutDashboard },
       { name: 'Content', path: '/dashboard/technical/content', icon: FileText },
       { name: 'Courses', path: '/dashboard/technical/courses', icon: BookOpen },
+      { name: 'Course Management', path: '/dashboard/technical/course-management', icon: BookOpen },
+      { name: 'Media Center', path: '/dashboard/technical/media-center', icon: Video },
       { name: 'Teachers', path: '/dashboard/technical/teachers', icon: UserCog },
       { name: 'Announcements', path: '/dashboard/technical/announcements', icon: Megaphone },
       { name: 'Analytics', path: '/dashboard/technical/analytics', icon: BarChart },
       { name: 'Reports', path: '/dashboard/technical/reports', icon: TrendingUp },
+      { name: 'Settings', path: '/dashboard/technical/settings', icon: Settings },
     ],
 
     [ROLES.TEACHER]: [

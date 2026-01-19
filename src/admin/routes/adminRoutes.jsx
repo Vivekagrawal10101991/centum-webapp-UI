@@ -214,6 +214,20 @@ export const AdminRoutes = () => {
         }
       />
       <Route
+        path="/dashboard/admin/media-center"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS]}
+            routePath="/dashboard/admin/media-center"
+          >
+            <DashboardLayout>
+              <MediaCenter />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
         path="/dashboard/admin/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
@@ -233,6 +247,34 @@ export const AdminRoutes = () => {
               <TechnicalDashboard />
             </DashboardLayout>
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/technical/media-center"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.TECHNICAL_HEAD]} 
+            requiredPermissions={[PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS]}
+            routePath="/dashboard/technical/media-center"
+          >
+            <DashboardLayout>
+              <MediaCenter />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/technical/course-management"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.TECHNICAL_HEAD]} 
+            requiredPermissions={[PERMISSIONS.VIEW_COURSES]}
+            routePath="/dashboard/technical/course-management"
+          >
+            <DashboardLayout>
+              <CourseManagement />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
         }
       />
       <Route
