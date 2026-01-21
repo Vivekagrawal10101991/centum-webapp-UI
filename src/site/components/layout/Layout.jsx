@@ -1,17 +1,22 @@
-import AnnouncementBar from './AnnouncementBar';
+import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import AnnouncementBar from './AnnouncementBar';
 
-/**
- * Layout Component
- * Wraps page content with header and footer
- */
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen">
-      <AnnouncementBar />
+      {/* 1. Blue Navbar (Top) */}
       <Navbar />
-      <main className="flex-grow">{children}</main>
+
+      {/* 2. White Announcement Bar (Directly Below) */}
+      <AnnouncementBar />
+      
+      {/* 3. Page Content */}
+      <main className="flex-grow">
+        {children}
+      </main>
+      
       <Footer />
     </div>
   );
