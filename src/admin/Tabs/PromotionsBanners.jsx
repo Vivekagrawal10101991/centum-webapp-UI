@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
+import { cmsService } from '../services/cmsService';
 
 export default function PromotionsBanners() {
   const [activeSubTab, setActiveSubTab] = useState('banners');
@@ -15,33 +16,18 @@ export default function PromotionsBanners() {
   const [editingBanner, setEditingBanner] = useState(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
 
-  // Banners State (Local/Dummy for now)
-  const [banners, setBanners] = useState([
-    {
-      id: 1,
-      title: 'JEE 2026 Admissions Open',
-      subtitle: 'Join India\'s Top Coaching Institute',
-      ctaText: 'Enroll Now',
-      ctaLink: '/enroll',
-      imageUrl: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800',
-      position: 1,
-      active: true,
-    },
-  ]);
-
-  // Announcements State
-  const [announcements, setAnnouncements] = useState([]);
-
+  // --- BANNERS STATE ---
+  const [banners, setBanners] = useState([]);
   const [bannerForm, setBannerForm] = useState({
     title: '',
-    subtitle: '',
-    ctaText: '',
-    ctaLink: '',
     imageUrl: '',
-    position: 1,
+    redirectUrl: '',
+    displayOrder: 1,
     active: true,
   });
 
+  // --- ANNOUNCEMENTS STATE ---
+  const [announcements, setAnnouncements] = useState([]);
   const [announcementForm, setAnnouncementForm] = useState({
     message: '',
     type: 'info',
@@ -95,10 +81,25 @@ export default function PromotionsBanners() {
 
   // --- 1. FETCH DATA ---
   useEffect(() => {
-    if (activeSubTab === 'announcements') {
+    if (activeSubTab === 'banners') {
+      fetchBanners();
+    } else if (activeSubTab === 'announcements') {
       fetchAnnouncements();
     }
   }, [activeSubTab]);
+
+  const fetchBanners = async () => {
+    try {
+      setLoading(true);
+      const data = await cmsService.getBanners();
+      setBanners(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch banners:', error);
+      toast.error('Failed to load banners');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchAnnouncements = async () => {
     try {
@@ -114,30 +115,73 @@ export default function PromotionsBanners() {
   };
 
   // --- Banner Handlers ---
-  const handleAddBanner = () => {
-    if (editingBanner) {
-      setBanners(banners.map(b => b.id === editingBanner.id ? { ...bannerForm, id: editingBanner.id } : b));
-      setEditingBanner(null);
-    } else {
-      setBanners([...banners, { ...bannerForm, id: Date.now() }]);
+  const handleAddBanner = async () => {
+    if (!bannerForm.title || !bannerForm.imageUrl) {
+      toast.error('Title and Image URL are required');
+      return;
     }
-    setBannerForm({ title: '', subtitle: '', ctaText: '', ctaLink: '', imageUrl: '', position: 1, active: true });
-    setShowBannerForm(false);
-    toast.success("Banner updated (Local Only)");
+
+    try {
+      setSubmitLoading(true);
+      if (editingBanner) {
+        // Handle logic if ID is different in update vs object
+        const id = editingBanner.id;
+        await cmsService.updateBanner(id, bannerForm);
+        toast.success('Banner updated successfully');
+      } else {
+        await cmsService.createBanner(bannerForm);
+        toast.success('Banner added successfully');
+      }
+      
+      // Reset form
+      setEditingBanner(null);
+      setBannerForm({ title: '', imageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
+      setShowBannerForm(false);
+      fetchBanners();
+    } catch (error) {
+      console.error('Error saving banner:', error);
+      toast.error(error?.response?.data?.message || 'Failed to save banner');
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   const handleEditBanner = (banner) => {
     setEditingBanner(banner);
-    setBannerForm(banner);
+    setBannerForm({
+      title: banner.title || '',
+      imageUrl: banner.imageUrl || '',
+      redirectUrl: banner.redirectUrl || '',
+      displayOrder: banner.displayOrder || 1,
+      active: banner.active
+    });
     setShowBannerForm(true);
   };
 
-  const handleDeleteBanner = (id) => {
-    setBanners(banners.filter(b => b.id !== id));
+  const handleDeleteBanner = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this banner?')) return;
+    
+    try {
+      await cmsService.deleteBanner(id);
+      toast.success('Banner deleted');
+      fetchBanners();
+    } catch (error) {
+      toast.error('Failed to delete banner');
+    }
   };
 
-  const toggleBannerActive = (id) => {
-    setBanners(banners.map(b => b.id === id ? { ...b, active: !b.active } : b));
+  const toggleBannerActive = async (banner) => {
+    try {
+      const updatedBanner = { ...banner, active: !banner.active };
+      // Optimistic update
+      setBanners(banners.map(b => b.id === banner.id ? updatedBanner : b));
+      
+      await cmsService.updateBanner(banner.id, updatedBanner);
+      toast.success(`Banner ${updatedBanner.active ? 'activated' : 'deactivated'}`);
+    } catch (error) {
+      toast.error('Failed to update status');
+      fetchBanners(); // Revert on error
+    }
   };
 
   // --- 2. ANNOUNCEMENT HANDLERS ---
@@ -267,7 +311,7 @@ export default function PromotionsBanners() {
               onClick={() => {
                 setShowBannerForm(true);
                 setEditingBanner(null);
-                setBannerForm({ title: '', subtitle: '', ctaText: '', ctaLink: '', imageUrl: '', position: 1, active: true });
+                setBannerForm({ title: '', imageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -284,66 +328,64 @@ export default function PromotionsBanners() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
                     type="text"
                     value={bannerForm.title}
                     onChange={(e) => setBannerForm({ ...bannerForm, title: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g. NEET 2026 Crash Course"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Redirect URL (Optional)</label>
                   <input
                     type="text"
-                    value={bannerForm.subtitle}
-                    onChange={(e) => setBannerForm({ ...bannerForm, subtitle: e.target.value })}
+                    value={bannerForm.redirectUrl}
+                    onChange={(e) => setBannerForm({ ...bannerForm, redirectUrl: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="/courses/neet"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
-                  <input
-                    type="text"
-                    value={bannerForm.ctaText}
-                    onChange={(e) => setBannerForm({ ...bannerForm, ctaText: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Button Link</label>
-                  <input
-                    type="text"
-                    value={bannerForm.ctaLink}
-                    onChange={(e) => setBannerForm({ ...bannerForm, ctaLink: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Background Image URL</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL *</label>
                   <input
                     type="text"
                     value={bannerForm.imageUrl}
                     onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://cloudinary.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Position (Order)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
                   <input
                     type="number"
-                    value={bannerForm.position}
-                    onChange={(e) => setBannerForm({ ...bannerForm, position: parseInt(e.target.value) })}
+                    value={bannerForm.displayOrder}
+                    onChange={(e) => setBannerForm({ ...bannerForm, displayOrder: parseInt(e.target.value) })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    min="1"
+                    min="0"
                   />
+                </div>
+                <div className="flex items-center mt-6">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={bannerForm.active}
+                        onChange={(e) => setBannerForm({...bannerForm, active: e.target.checked})}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Set as Active</span>
+                    </label>
                 </div>
               </div>
               <div className="flex items-center gap-4 mt-4">
                 <button
                   onClick={handleAddBanner}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  disabled={submitLoading}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                 >
+                  {submitLoading && <Loader2 className="w-4 h-4 animate-spin"/>}
                   {editingBanner ? 'Update Banner' : 'Add Banner'}
                 </button>
                 <button
@@ -360,54 +402,86 @@ export default function PromotionsBanners() {
           )}
 
           {/* Banners List */}
-          <div className="space-y-4">
-            {banners.sort((a, b) => a.position - b.position).map((banner) => (
-              <div key={banner.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-start gap-4">
-                  <img
-                    src={banner.imageUrl}
-                    alt={banner.title}
-                    className="w-32 h-20 object-cover rounded-lg"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-gray-800">{banner.title}</h4>
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                            Position {banner.position}
-                          </span>
+          {loading ? (
+            <div className="flex justify-center items-center py-10">
+               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {banners.length === 0 ? (
+                 <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                   <ImageIcon className="w-10 h-10 mx-auto mb-2 text-gray-300"/>
+                   <p>No banners found. Create your first banner!</p>
+                 </div>
+              ) : (
+                banners.sort((a, b) => a.displayOrder - b.displayOrder).map((banner) => (
+                <div key={banner.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-32 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                        {banner.imageUrl ? (
+                           <img
+                            src={banner.imageUrl}
+                            alt={banner.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                           <div className="w-full h-full flex items-center justify-center text-gray-400">
+                               <ImageIcon size={24}/>
+                           </div>
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-800 truncate">{banner.title}</h4>
+                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                              Order {banner.displayOrder}
+                            </span>
+                            <span className={`px-2 py-0.5 text-xs rounded-full ${banner.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                {banner.active ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                          <p className="text-gray-500 text-sm mt-1 truncate">
+                             {banner.redirectUrl ? (
+                                <span className="flex items-center gap-1">
+                                    Link: {banner.redirectUrl} <ExternalLink size={12}/>
+                                </span>
+                             ) : 'No redirect link'}
+                          </p>
                         </div>
-                        <p className="text-gray-600 text-sm mt-1">{banner.subtitle}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleBannerActive(banner.id)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            banner.active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
-                          }`}
-                        >
-                          {banner.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                        </button>
-                        <button
-                          onClick={() => handleEditBanner(banner)}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteBanner(banner.id)}
-                          className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleBannerActive(banner)}
+                            className={`p-2 rounded-lg transition-colors ${
+                              banner.active ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                            }`}
+                            title={banner.active ? "Deactivate" : "Activate"}
+                          >
+                            {banner.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                          </button>
+                          <button
+                            onClick={() => handleEditBanner(banner)}
+                            className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBanner(banner.id)}
+                            className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              )))}
+            </div>
+          )}
         </div>
       )}
 
