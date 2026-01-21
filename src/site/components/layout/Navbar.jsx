@@ -4,7 +4,6 @@ import {
   Menu,
   X,
   User,
-  LogOut,
   ChevronDown,
   Home,
   Info,
@@ -12,6 +11,7 @@ import {
   Trophy,
   Video,
   Mail,
+  Megaphone, // Added Megaphone icon
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../../components/common/Button";
@@ -24,7 +24,7 @@ import logo from "../../../assets/logo.png";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
 
@@ -59,6 +59,13 @@ const Navbar = () => {
         },
       ],
     },
+    // New Announcements Section added here
+    {
+      name: "Announcements",
+      path: "/announcements",
+      icon: Megaphone,
+      dropdown: null,
+    },
     {
       name: "Success Stories",
       path: "/success-stories",
@@ -84,12 +91,6 @@ const Navbar = () => {
       dropdown: null,
     },
   ];
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-    setIsMobileMenuOpen(false);
-  };
 
   const handleMouseEnter = (index) => {
     // Clear any existing timeout
@@ -215,28 +216,15 @@ const Navbar = () => {
             {/* Auth Buttons - Desktop */}
             <div className="hidden lg:flex items-center space-x-3">
               {isAuthenticated ? (
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => navigate('/dashboard')}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 rounded-xl backdrop-blur-sm hover:from-primary-100 hover:to-blue-100 transition-all cursor-pointer"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-600 text-white flex items-center justify-center shadow-md">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <span className="font-medium text-gray-700">
-                      {user?.name || "User"}
-                    </span>
-                  </button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleLogout}
-                    className="flex items-center rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="relative group p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  title="Go to Dashboard"
+                >
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-600 text-white flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+                    <User className="w-6 h-6" />
+                  </div>
+                </button>
               ) : (
                 <>
                   <Link to="/login">
@@ -341,31 +329,21 @@ const Navbar = () => {
                 {/* Mobile Auth Buttons */}
                 <div className="pt-4 border-t border-gray-100 space-y-2">
                   {isAuthenticated ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          navigate('/dashboard');
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="w-full flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 rounded-xl hover:from-primary-100 hover:to-blue-100 transition-all"
-                      >
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-600 text-white flex items-center justify-center">
-                          <User className="w-5 h-5" />
-                        </div>
-                        <span className="font-medium text-gray-700">
-                          {user?.name || "User"}
-                        </span>
-                      </button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleLogout}
-                        className="w-full rounded-xl"
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Logout
-                      </Button>
-                    </>
+                    <button
+                      onClick={() => {
+                        navigate('/dashboard');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 rounded-xl hover:from-primary-100 hover:to-blue-100 transition-all"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-600 text-white flex items-center justify-center">
+                        <User className="w-5 h-5" />
+                      </div>
+                      <span className="font-medium text-gray-700">
+                        {user?.name || "User"}
+                      </span>
+                      <span className="ml-auto text-xs text-primary-600 font-medium">Dashboard</span>
+                    </button>
                   ) : (
                     <>
                       <Link
