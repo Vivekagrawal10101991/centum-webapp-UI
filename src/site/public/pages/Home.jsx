@@ -1,16 +1,24 @@
-import HeroSection from '../../components/specific/HeroSection';
-import StatsSection from '../../components/specific/StatsSection';
-import TestimonialsSection from '../../components/specific/TestimonialsSection';
+import React from 'react';
+import { 
+  HeroSection, 
+  StatsSection, 
+  TestimonialsSection,
+  ToppersSection 
+} from '../../components/specific';
 
-/**
- * Home Page
- * Main landing page with hero, stats, and testimonials
- */
 const Home = () => {
   return (
-    <div>
+    <div className="flex flex-col w-full">
+      {/* Main Hero Banner */}
       <HeroSection />
+
+      {/* Stats Section (4 Cards: Students, Success Rate, Faculty...) */}
       <StatsSection />
+
+      {/* Toppers Section - Placed BELOW Stats Section as requested */}
+      <ToppersSection />
+
+      {/* Testimonials Section */}
       <TestimonialsSection />
     </div>
   );
