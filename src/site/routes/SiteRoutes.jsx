@@ -10,6 +10,7 @@ import {
   About, 
   Contact, 
   Courses, 
+  Announcements, // Imported
   JeeMains,
   JeeAdvance,
   NeetCourses,
@@ -20,10 +21,6 @@ import {
 // Content pages
 import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
 
-/**
- * Site Routes Component
- * All public-facing routes for the website
- */
 export const SiteRoutes = () => {
   return (
     <>
@@ -32,10 +29,13 @@ export const SiteRoutes = () => {
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
       
+      {/* NEW ANNOUNCEMENT ROUTE */}
+      <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
+      
       {/* Main Course Landing Page */}
       <Route path="/courses" element={<Layout><Courses /></Layout>} />
       
-      {/* Specific Course Pages (Card Links) */}
+      {/* Specific Course Pages */}
       <Route path="/courses/jee-mains" element={<Layout><JeeMains /></Layout>} />
       <Route path="/courses/jee-advance" element={<Layout><JeeAdvance /></Layout>} />
       <Route path="/courses/neet" element={<Layout><NeetCourses /></Layout>} />
@@ -50,7 +50,7 @@ export const SiteRoutes = () => {
       <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />
       <Route path="/contributions" element={<Layout><Contributions /></Layout>} />
 
-      {/* Auth Routes (no layout for login/signup) */}
+      {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/change-password" element={<ChangePassword />} />
