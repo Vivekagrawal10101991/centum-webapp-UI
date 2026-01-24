@@ -11,7 +11,7 @@ import {
   Trophy,
   Video,
   Mail,
-  Megaphone, // Added Megaphone icon
+  Megaphone, 
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../../components/common/Button";
@@ -19,7 +19,8 @@ import logo from "../../../assets/logo.png";
 
 /**
  * Navbar Component
- * Sticky header with logo, navigation links with dropdowns, and auth buttons
+ * Sticky header with logo, navigation links, and auth buttons
+ * UPDATED: Courses dropdown removed
  */
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,7 +29,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
 
-  // Navigation structure with dropdowns and icons
+  // Navigation structure - UPDATED COURSES TO HAVE NO DROPDOWN
   const navLinks = [
     {
       name: "Home",
@@ -47,19 +48,10 @@ const Navbar = () => {
     },
     {
       name: "Courses",
-      path: "/courses",
+      path: "/courses", // Direct link to Courses landing page
       icon: BookOpen,
-      dropdown: [
-        { name: "JEE Course", path: "/courses/jee", icon: BookOpen },
-        { name: "NEET Course", path: "/courses/neet", icon: BookOpen },
-        {
-          name: "Foundation Course",
-          path: "/courses/foundation",
-          icon: BookOpen,
-        },
-      ],
+      dropdown: null, // Removed dropdown
     },
-    // New Announcements Section added here
     {
       name: "Announcements",
       path: "/announcements",
@@ -93,7 +85,6 @@ const Navbar = () => {
   ];
 
   const handleMouseEnter = (index) => {
-    // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -101,14 +92,12 @@ const Navbar = () => {
   };
 
   const handleMouseLeave = () => {
-    // Add a small delay before closing
     timeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
     }, 150);
   };
 
   const handleDropdownEnter = () => {
-    // Cancel the close timeout when entering dropdown
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -119,9 +108,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md px-6 py-3">
           <div className="flex items-center justify-between">
-            {/* Logo with Centered Slogan */}
+            {/* Logo */}
             <Link to="/" className="flex items-center space-x-4 group">
-              {/* Logo Image */}
               <div className="relative flex-shrink-0">
                 <img
                   src={logo}
@@ -130,7 +118,6 @@ const Navbar = () => {
                 />
               </div>
 
-              {/* Brand Text with Centered Slogan */}
               <div className="flex flex-col items-center">
                 <span className="text-xl md:text-2xl lg:text-3xl font-bold text-primary leading-tight group-hover:text-primary-600 transition-colors duration-300">
                   Centum Academy
@@ -141,7 +128,7 @@ const Navbar = () => {
               </div>
             </Link>
 
-            {/* Desktop Navigation with Dropdowns */}
+            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-1">
               {navLinks.map((link, index) => {
                 const Icon = link.icon;
@@ -166,20 +153,16 @@ const Navbar = () => {
                           />
                         </button>
 
-                        {/* Dropdown Menu with Translucent Effect */}
+                        {/* Dropdown Menu */}
                         {activeDropdown === index && (
                           <div
                             className="absolute top-full left-0 mt-1 w-64 z-50"
                             onMouseEnter={handleDropdownEnter}
                             onMouseLeave={handleMouseLeave}
                           >
-                            {/* Invisible bridge to prevent dropdown from closing */}
                             <div className="h-2 w-full" />
-
                             <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-primary-100 py-2 animate-fade-in overflow-hidden">
-                              {/* Gradient overlay for extra depth */}
                               <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-transparent pointer-events-none" />
-
                               {link.dropdown.map((item) => {
                                 const ItemIcon = item.icon;
                                 return (
@@ -213,7 +196,7 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Auth Buttons - Desktop */}
+            {/* Auth Buttons */}
             <div className="hidden lg:flex items-center space-x-3">
               {isAuthenticated ? (
                 <button
