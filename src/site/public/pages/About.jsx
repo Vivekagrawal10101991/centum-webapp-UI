@@ -144,16 +144,18 @@ const About = () => {
   return (
     <>
       {/* ==================== PAGE HEADER ==================== */}
-      <div className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-10 overflow-hidden border-b border-indigo-100/50">
+      {/* Updated to py-12 to match Courses page */}
+      <div className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12 overflow-hidden border-b border-indigo-100/50">
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1e3a8a 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
            <div className="inline-block px-3 py-1 mb-3 text-[10px] font-semibold text-indigo-700 bg-white/60 rounded-full uppercase tracking-widest shadow-sm border border-indigo-100/50">
               Home / About Us
            </div>
-           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2">
+           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight mb-4">
               About Us
            </h1>
-           <div className="w-12 h-1 bg-indigo-500 rounded-full mt-1 opacity-90"></div>
+           {/* Adjusted margin to match Courses page style */}
+           <div className="w-12 h-1 bg-indigo-500 rounded-full opacity-90"></div>
         </div>
       </div>
 
