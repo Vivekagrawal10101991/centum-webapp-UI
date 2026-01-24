@@ -5,7 +5,17 @@ import Layout from '../components/layout/Layout';
 import { Login, Signup, ChangePassword, Unauthorized } from '../auth';
 
 // Public pages
-import { Home, About, Contact, Courses } from '../public';
+import { 
+  Home, 
+  About, 
+  Contact, 
+  Courses, 
+  JeeMains,
+  JeeAdvance,
+  NeetCourses,
+  KcetCourses,
+  FoundationCourses
+} from '../public';
 
 // Content pages
 import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
@@ -21,7 +31,16 @@ export const SiteRoutes = () => {
       <Route path="/" element={<Layout><Home /></Layout>} />
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
+      
+      {/* Main Course Landing Page */}
       <Route path="/courses" element={<Layout><Courses /></Layout>} />
+      
+      {/* Specific Course Pages (Card Links) */}
+      <Route path="/courses/jee-mains" element={<Layout><JeeMains /></Layout>} />
+      <Route path="/courses/jee-advance" element={<Layout><JeeAdvance /></Layout>} />
+      <Route path="/courses/neet" element={<Layout><NeetCourses /></Layout>} />
+      <Route path="/courses/kcet" element={<Layout><KcetCourses /></Layout>} />
+      <Route path="/courses/foundation" element={<Layout><FoundationCourses /></Layout>} />
 
       {/* Content Routes with Layout */}
       <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
