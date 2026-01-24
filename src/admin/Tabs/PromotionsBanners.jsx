@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon, Calendar, Star, FileText } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { cmsService } from '../services/cmsService';
@@ -30,19 +30,19 @@ export default function PromotionsBanners() {
   const [announcements, setAnnouncements] = useState([]);
   const [announcementForm, setAnnouncementForm] = useState({
     message: '',
-    type: 'info',
+    type: 'Exam Update', // Default changed from 'info'
     startDate: '',
     endDate: '',
     linkUrl: '', 
     active: true,
   });
 
-  // --- Helpers for Styling ---
+  // --- Helpers for Styling (UPDATED FOR NEW TYPES) ---
   const getTypeStyles = (type) => {
-    const normalizedType = (type || 'info').toLowerCase();
+    const normalizedType = (type || 'Exam Update').toLowerCase();
 
     switch (normalizedType) {
-      case 'warning':
+      case 'schedule':
         return {
           cardBg: 'bg-orange-50',
           cardBorder: 'border-orange-200',
@@ -51,18 +51,40 @@ export default function PromotionsBanners() {
           badgeText: 'text-orange-800',
           iconBg: 'bg-orange-200',
           iconColor: 'text-orange-700',
-          icon: <AlertTriangle className="w-5 h-5 text-orange-600" />
+          icon: <Calendar className="w-5 h-5 text-orange-600" />
         };
-      case 'success':
+      case 'admission':
         return {
-          cardBg: 'bg-green-50',
-          cardBorder: 'border-green-200',
-          leftBorder: 'border-l-4 border-green-400',
-          badgeBg: 'bg-green-100',
-          badgeText: 'text-green-800',
-          iconBg: 'bg-green-200',
-          iconColor: 'text-green-700',
-          icon: <CheckCircle className="w-5 h-5 text-green-600" />
+          cardBg: 'bg-emerald-50',
+          cardBorder: 'border-emerald-200',
+          leftBorder: 'border-l-4 border-emerald-400',
+          badgeBg: 'bg-emerald-100',
+          badgeText: 'text-emerald-800',
+          iconBg: 'bg-emerald-200',
+          iconColor: 'text-emerald-700',
+          icon: <CheckCircle className="w-5 h-5 text-emerald-600" />
+        };
+      case 'event':
+        return {
+          cardBg: 'bg-purple-50',
+          cardBorder: 'border-purple-200',
+          leftBorder: 'border-l-4 border-purple-400',
+          badgeBg: 'bg-purple-100',
+          badgeText: 'text-purple-800',
+          iconBg: 'bg-purple-200',
+          iconColor: 'text-purple-700',
+          icon: <Star className="w-5 h-5 text-purple-600" />
+        };
+      case 'exam update':
+        return {
+          cardBg: 'bg-red-50',
+          cardBorder: 'border-red-200',
+          leftBorder: 'border-l-4 border-red-400',
+          badgeBg: 'bg-red-100',
+          badgeText: 'text-red-800',
+          iconBg: 'bg-red-200',
+          iconColor: 'text-red-700',
+          icon: <AlertTriangle className="w-5 h-5 text-red-600" />
         };
       case 'info':
       default:
@@ -194,9 +216,12 @@ export default function PromotionsBanners() {
     try {
       setSubmitLoading(true);
       
+      // Don't lowercase the type here so it saves nicely in DB, 
+      // or ensure frontend handles capitalization consistently.
+      // We will save it exactly as selected.
       const payload = {
         ...announcementForm,
-        type: announcementForm.type.toLowerCase() // Ensure lowercase
+        type: announcementForm.type 
       };
 
       if (editingAnnouncement) {
@@ -210,7 +235,7 @@ export default function PromotionsBanners() {
       }
 
       setEditingAnnouncement(null);
-      setAnnouncementForm({ message: '', type: 'info', startDate: '', endDate: '', linkUrl: '', active: true });
+      setAnnouncementForm({ message: '', type: 'Exam Update', startDate: '', endDate: '', linkUrl: '', active: true });
       setShowAnnouncementForm(false);
       fetchAnnouncements();
 
@@ -226,7 +251,7 @@ export default function PromotionsBanners() {
     setEditingAnnouncement(announcement);
     setAnnouncementForm({
         ...announcement,
-        type: (announcement.type || 'info').toLowerCase()
+        type: announcement.type || 'Exam Update'
     });
     setShowAnnouncementForm(true);
     // Scroll to form if needed
@@ -495,7 +520,7 @@ export default function PromotionsBanners() {
               onClick={() => {
                 setShowAnnouncementForm(true);
                 setEditingAnnouncement(null);
-                setAnnouncementForm({ message: '', type: 'info', startDate: '', endDate: '', linkUrl: '', active: true });
+                setAnnouncementForm({ message: '', type: 'Exam Update', startDate: '', endDate: '', linkUrl: '', active: true });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -534,16 +559,17 @@ export default function PromotionsBanners() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category Type</label>
                     <div className="relative">
                       <select
                         value={announcementForm.type}
                         onChange={(e) => setAnnouncementForm({ ...announcementForm, type: e.target.value })}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-gray-50/50 appearance-none"
                       >
-                        <option value="info">Info (Blue)</option>
-                        <option value="warning">Warning (Orange)</option>
-                        <option value="success">Success (Green)</option>
+                        <option value="Exam Update">Exam Update</option>
+                        <option value="Schedule">Schedule</option>
+                        <option value="Event">Events</option>
+                        <option value="Admission">Admission</option>
                       </select>
                       <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -620,7 +646,7 @@ export default function PromotionsBanners() {
                                             {styles.icon}
                                         </div>
                                         <span className={`px-2.5 py-0.5 rounded-lg text-xs font-bold tracking-wide uppercase ${styles.badgeBg} ${styles.badgeText}`}>
-                                            {(announcement.type || 'INFO')}
+                                            {(announcement.type || 'Exam Update')}
                                         </span>
 
                                         {announcement.startDate && (
