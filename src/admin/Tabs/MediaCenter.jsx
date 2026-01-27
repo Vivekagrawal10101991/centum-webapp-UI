@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, FileText, Video, Users, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2, FileText, Video, Users, Eye, Image as ImageIcon } from 'lucide-react';
 import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { hasPermission } from '../helpers/authHelper';
 import { PERMISSIONS } from '../helpers/rolePermissions';
+// ✅ IMPORT IMAGE PICKER
+import ImagePicker from '../components/ImagePicker';
 
 export default function MediaCenter() {
   const [activeSubTab, setActiveSubTab] = useState('blogs');
   const [showBlogForm, setShowBlogForm] = useState(false);
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [showContributorForm, setShowContributorForm] = useState(false);
+  
+  // ✅ NEW: Image Picker State
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [imagePickerMode, setImagePickerMode] = useState('gallery'); // 'gallery' | 'select'
+
   const [editingBlog, setEditingBlog] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
   const [editingContributor, setEditingContributor] = useState(null);
@@ -19,6 +26,7 @@ export default function MediaCenter() {
 
   const [blogs, setBlogs] = useState([]);
 
+  // --- YOUR EXISTING DUMMY DATA ---
   const [videos, setVideos] = useState([
     {
       id: 1,
@@ -234,16 +242,33 @@ export default function MediaCenter() {
         type="danger"
       />
 
+      {/* ✅ ADDED: Image Picker Component */}
+      <ImagePicker 
+        isOpen={showImagePicker}
+        onClose={() => setShowImagePicker(false)}
+        title={imagePickerMode === 'gallery' ? "Media Gallery" : "Select Image"}
+        onSelect={imagePickerMode === 'select' ? (url) => {
+          // 🧠 SMART SELECT: Detects which form is open and applies the image
+          if (showBlogForm) {
+             setBlogForm({ ...blogForm, imageUrl: url });
+          } else if (showVideoForm) {
+             setVideoForm({ ...videoForm, thumbnail: url });
+          } else if (showContributorForm) {
+             setContributorForm({ ...contributorForm, photo: url });
+          }
+        } : undefined}
+      />
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Media Center</h2>
         <p className="text-gray-600 mt-1">Manage content marketing and team information</p>
       </div>
 
-      {/* Sub Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-gray-200">
+      {/* Sub Tabs - ✅ ADDED "GALLERY" */}
+      <div className="flex gap-4 mb-6 border-b border-gray-200 overflow-x-auto">
         <button
           onClick={() => setActiveSubTab('blogs')}
-          className={`pb-3 px-4 font-medium transition-colors ${
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
             activeSubTab === 'blogs'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
@@ -251,9 +276,24 @@ export default function MediaCenter() {
         >
           Blogs
         </button>
+        {/* NEW TAB */}
+        <button
+          onClick={() => {
+            setActiveSubTab('gallery');
+            setImagePickerMode('gallery');
+            setShowImagePicker(true);
+          }}
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+            activeSubTab === 'gallery'
+              ? 'text-blue-600 border-b-2 border-blue-600'
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
+        >
+          Gallery (Uploads)
+        </button>
         <button
           onClick={() => setActiveSubTab('youtube')}
-          className={`pb-3 px-4 font-medium transition-colors ${
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
             activeSubTab === 'youtube'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
@@ -263,7 +303,7 @@ export default function MediaCenter() {
         </button>
         <button
           onClick={() => setActiveSubTab('team')}
-          className={`pb-3 px-4 font-medium transition-colors ${
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
             activeSubTab === 'team'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
@@ -272,6 +312,25 @@ export default function MediaCenter() {
           Contributors/Team
         </button>
       </div>
+
+      {/* ✅ NEW GALLERY TAB CONTENT */}
+      {activeSubTab === 'gallery' && (
+        <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+           <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+             <ImageIcon className="w-10 h-10 text-blue-600" />
+           </div>
+           <h3 className="text-xl font-bold text-gray-800 mb-2">Media Gallery</h3>
+           <p className="text-gray-500 mb-6 text-center max-w-md">
+             View, upload and manage all your images here. Use the "Select Image" button in other forms to access these files.
+           </p>
+           <button 
+             onClick={() => { setImagePickerMode('gallery'); setShowImagePicker(true); }}
+             className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 font-medium flex items-center gap-2"
+           >
+             <ImageIcon className="w-5 h-5" /> Open Full Gallery
+           </button>
+        </div>
+      )}
 
       {/* Blogs Tab */}
       {activeSubTab === 'blogs' && (
@@ -340,16 +399,32 @@ export default function MediaCenter() {
                     required
                   />
                 </div>
+
+                {/* ✅ REPLACED: Image Input with Picker */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                  <input
-                    type="text"
-                    value={blogForm.imageUrl}
-                    onChange={(e) => setBlogForm({ ...blogForm, imageUrl: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={blogForm.imageUrl}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none"
+                      placeholder="Select an image from gallery..."
+                    />
+                    <button
+                      onClick={() => { setImagePickerMode('select'); setShowImagePicker(true); }}
+                      className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 flex items-center gap-2 transition-colors"
+                    >
+                      <ImageIcon className="w-4 h-4" /> Select
+                    </button>
+                  </div>
+                  {blogForm.imageUrl && (
+                    <div className="mt-2 h-24 w-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                        <img src={blogForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
+
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <input
@@ -542,16 +617,27 @@ export default function MediaCenter() {
                     placeholder="https://youtube.com/watch?v=..."
                   />
                 </div>
+
+                {/* ✅ REPLACED: Thumbnail Input with Picker */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail URL</label>
-                  <input
-                    type="text"
-                    value={videoForm.thumbnail}
-                    onChange={(e) => setVideoForm({ ...videoForm, thumbnail: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/thumbnail.jpg"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail Image</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={videoForm.thumbnail}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none"
+                      placeholder="Select thumbnail..."
+                    />
+                    <button
+                      onClick={() => { setImagePickerMode('select'); setShowImagePicker(true); }}
+                      className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 flex items-center gap-2 transition-colors"
+                    >
+                      <ImageIcon className="w-4 h-4" /> Select
+                    </button>
+                  </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <select
@@ -712,16 +798,27 @@ export default function MediaCenter() {
                     placeholder="rajesh@institute.com"
                   />
                 </div>
+
+                {/* ✅ REPLACED: Photo Input with Picker */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Photo URL</label>
-                  <input
-                    type="text"
-                    value={contributorForm.photo}
-                    onChange={(e) => setContributorForm({ ...contributorForm, photo: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/photo.jpg"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Photo</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={contributorForm.photo}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none"
+                      placeholder="Select profile photo..."
+                    />
+                    <button
+                      onClick={() => { setImagePickerMode('select'); setShowImagePicker(true); }}
+                      className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 flex items-center gap-2 transition-colors"
+                    >
+                      <ImageIcon className="w-4 h-4" /> Select
+                    </button>
+                  </div>
                 </div>
+
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                   <textarea
