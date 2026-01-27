@@ -3,6 +3,8 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, Ch
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { cmsService } from '../services/cmsService';
+// ✅ IMPORT THE NEW IMAGE PICKER COMPONENT
+import ImagePicker from '../components/ImagePicker';
 
 export default function PromotionsBanners() {
   const [activeSubTab, setActiveSubTab] = useState('banners');
@@ -13,6 +15,10 @@ export default function PromotionsBanners() {
 
   const [showBannerForm, setShowBannerForm] = useState(false);
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
+  
+  // ✅ STATE FOR IMAGE PICKER MODAL
+  const [showImagePicker, setShowImagePicker] = useState(false);
+
   const [editingBanner, setEditingBanner] = useState(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
 
@@ -30,14 +36,14 @@ export default function PromotionsBanners() {
   const [announcements, setAnnouncements] = useState([]);
   const [announcementForm, setAnnouncementForm] = useState({
     message: '',
-    type: 'Exam Update', // Default changed from 'info'
+    type: 'Exam Update', 
     startDate: '',
     endDate: '',
     linkUrl: '', 
     active: true,
   });
 
-  // --- Helpers for Styling (UPDATED FOR NEW TYPES) ---
+  // --- Helpers for Styling ---
   const getTypeStyles = (type) => {
     const normalizedType = (type || 'Exam Update').toLowerCase();
 
@@ -146,7 +152,6 @@ export default function PromotionsBanners() {
     try {
       setSubmitLoading(true);
       if (editingBanner) {
-        // Handle logic if ID is different in update vs object
         const id = editingBanner.id;
         await cmsService.updateBanner(id, bannerForm);
         toast.success('Banner updated successfully');
@@ -155,7 +160,6 @@ export default function PromotionsBanners() {
         toast.success('Banner added successfully');
       }
       
-      // Reset form
       setEditingBanner(null);
       setBannerForm({ title: '', imageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
       setShowBannerForm(false);
@@ -202,7 +206,7 @@ export default function PromotionsBanners() {
       toast.success(`Banner ${updatedBanner.active ? 'activated' : 'deactivated'}`);
     } catch (error) {
       toast.error('Failed to update status');
-      fetchBanners(); // Revert on error
+      fetchBanners(); 
     }
   };
 
@@ -215,21 +219,15 @@ export default function PromotionsBanners() {
 
     try {
       setSubmitLoading(true);
-      
-      // Don't lowercase the type here so it saves nicely in DB, 
-      // or ensure frontend handles capitalization consistently.
-      // We will save it exactly as selected.
       const payload = {
         ...announcementForm,
         type: announcementForm.type 
       };
 
       if (editingAnnouncement) {
-        // Update API
         await api.put(`/api/tech/announcements/${editingAnnouncement.id}`, payload);
         toast.success("Announcement updated successfully!");
       } else {
-        // Create API
         await api.post('/api/tech/announcements/add', payload);
         toast.success("Announcement created successfully!");
       }
@@ -254,7 +252,6 @@ export default function PromotionsBanners() {
         type: announcement.type || 'Exam Update'
     });
     setShowAnnouncementForm(true);
-    // Scroll to form if needed
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -266,10 +263,9 @@ export default function PromotionsBanners() {
     const toastId = toast.loading("Deleting announcement...");
 
     try {
-      // Delete API
       await api.delete(`/api/tech/announcements/${id}`);
       toast.success("Announcement deleted", { id: toastId });
-      fetchAnnouncements(); // Refresh list
+      fetchAnnouncements(); 
     } catch (error) {
       console.error("Delete failed", error);
       toast.error("Could not delete announcement", { id: toastId });
@@ -277,14 +273,12 @@ export default function PromotionsBanners() {
   };
 
   const toggleAnnouncementActive = async (announcement) => {
-    // Optimistic Update
     const updatedList = announcements.map(a => 
       a.id === announcement.id ? { ...a, active: !a.active } : a
     );
     setAnnouncements(updatedList);
 
     try {
-      // Toggle Status API
       await api.put(`/api/tech/announcements/${announcement.id}`, {
         ...announcement,
         active: !announcement.active
@@ -292,12 +286,20 @@ export default function PromotionsBanners() {
     } catch (error) {
       console.error("Toggle failed", error);
       toast.error("Failed to update status");
-      fetchAnnouncements(); // Revert
+      fetchAnnouncements(); 
     }
   };
 
   return (
     <div>
+      {/* ✅ ADDED: IMAGE PICKER MODAL */}
+      <ImagePicker 
+        isOpen={showImagePicker}
+        onClose={() => setShowImagePicker(false)}
+        title="Select Banner Image"
+        onSelect={(url) => setBannerForm({ ...bannerForm, imageUrl: url })}
+      />
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Promotions & Banners</h2>
         <p className="text-gray-600 mt-1">Manage hero banners and website announcements</p>
@@ -372,16 +374,33 @@ export default function PromotionsBanners() {
                     placeholder="/courses/neet"
                   />
                 </div>
+                
+                {/* ✅ REPLACED: Image Input with Select Button */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL *</label>
-                  <input
-                    type="text"
-                    value={bannerForm.imageUrl}
-                    onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://cloudinary.com/..."
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Banner Image *</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={bannerForm.imageUrl}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none"
+                      placeholder="Select an image from gallery..."
+                    />
+                    <button
+                      onClick={() => setShowImagePicker(true)}
+                      className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors flex items-center gap-2"
+                    >
+                      <ImageIcon className="w-4 h-4" /> Select
+                    </button>
+                  </div>
+                  {/* Image Preview */}
+                  {bannerForm.imageUrl && (
+                    <div className="mt-2 h-32 w-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                       <img src={bannerForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
                   <input
@@ -513,7 +532,7 @@ export default function PromotionsBanners() {
       {/* Announcements Tab Content */}
       {activeSubTab === 'announcements' && (
          <>
-         {/* HEADER - RESTORED */}
+         {/* HEADER */}
          <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Manage marquee announcements and popup notifications</p>
             <button
