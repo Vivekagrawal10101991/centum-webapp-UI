@@ -4,10 +4,55 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    @apply font-sans antialiased bg-white text-gray-900;
   }
 }
 
 @layer components {
-  /* Custom component styles can be added here */
+  /* Samsung UI Floating Animation */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Soft Background Glows */
+  .bg-glow-blue {
+    @apply absolute bg-blue-400/20 blur-[100px] rounded-full -z-10;
+  }
+
+  .bg-glow-orange {
+    @apply absolute bg-orange-300/15 blur-[80px] rounded-full -z-10;
+  }
+
+  /* Custom Container for Centum Academy Sections */
+  .max-container {
+    @apply max-w-7xl mx-auto w-full;
+  }
+}
+
+@layer utilities {
+  /* Smooth Transitions for Brand Blue */
+  .transition-brand {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Logo Dark Blue helper if needed outside inline styles */
+  .text-centum-blue {
+    color: #002B6B;
+  }
+  
+  .bg-centum-blue {
+    background-color: #002B6B;
+  }
 }
