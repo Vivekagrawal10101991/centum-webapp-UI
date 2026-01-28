@@ -1,11 +1,136 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Loader2, ImageIcon, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2, ImageIcon, ChevronLeft, ChevronRight, Sparkles, Youtube, ExternalLink } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
+import { Button, Modal } from '../../../components/common';
+import EnquiryForm from '../../components/specific/EnquiryForm';
+
+/**
+ * VideosSection Component
+ * Fetches and displays YouTube videos in a 3-column grid
+ */
+const VideosSection = () => {
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Replace with your actual YouTube API Key
+  const API_KEY = 'YOUR_YOUTUBE_API_KEY'; 
+  const CHANNEL_ID = 'UC_x5XG1OV2P6uSZw9H2of7Q'; // Derived from @CentumAcademy
+
+  useEffect(() => {
+    const fetchYouTubeVideos = async () => {
+      try {
+        // Fetching latest 3 videos from the channel
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=3&type=video`
+        );
+        const data = await response.json();
+        setVideos(data.items || []);
+      } catch (error) {
+        console.error('Error fetching YouTube videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchYouTubeVideos();
+  }, []);
+
+  return (
+    <section className="py-20 bg-secondary-50">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
+              Watch Our Success Stories
+            </h2>
+            <p className="text-secondary-600 text-lg">
+              Explore our latest educational content and student testimonials on YouTube.
+            </p>
+          </div>
+          <a 
+            href="https://www.youtube.com/@CentumAcademy" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 font-bold rounded-xl shadow-sm border border-primary-100 hover:bg-primary-50 transition-colors group"
+          >
+            Explore More
+            <ExternalLink size={18} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {videos.map((video) => (
+              <motion.div 
+                key={video.id.videoId}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-secondary-100 flex flex-col h-full"
+              >
+                {/* Video Thumbnail */}
+                <div className="relative aspect-video group cursor-pointer">
+                  <img 
+                    src={video.snippet.thumbnails.high.url} 
+                    alt={video.snippet.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <Youtube size={24} fill="currentColor" />
+                    </div>
+                  </div>
+                  <a 
+                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0"
+                  />
+                </div>
+
+                {/* Video Info */}
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold text-secondary-900 mb-3 line-clamp-2 leading-snug">
+                    {video.snippet.title}
+                  </h3>
+                  <p className="text-secondary-500 text-sm line-clamp-2 mb-6 flex-1">
+                    {video.snippet.description}
+                  </p>
+                  <div className="flex items-center justify-between pt-4 border-t border-secondary-50">
+                    <span className="text-xs font-medium text-secondary-400 uppercase tracking-wider">
+                      {new Date(video.snippet.publishedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                    <a 
+                      href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 text-sm font-bold hover:text-primary-700"
+                    >
+                      Watch Video
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
 const Achievers = () => {
   const [gallery, setGallery] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -23,12 +148,21 @@ const Achievers = () => {
     fetchGallery();
   }, []);
 
-  // Tripling the array ensures there are no gaps during the infinite scroll animation
-  const infiniteGallery = [...gallery, ...gallery, ...gallery];
+  useEffect(() => {
+    if (gallery.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % gallery.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [gallery.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % gallery.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + gallery.length) % gallery.length);
 
   return (
-    <div className="bg-secondary-50 min-h-screen pb-24">
-      {/* Restored Original Hero Section Colors */}
+    <div className="bg-white">
+      {/* 1. BLUE HERO SECTION */}
       <div className="relative bg-gradient-to-br from-primary-50 via-white to-primary-100 py-16 overflow-hidden border-b border-primary-100">
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="inline-block px-3 py-1 mb-3 text-[10px] font-bold text-primary-700 bg-white/80 rounded-full uppercase tracking-widest shadow-sm border border-primary-100">
@@ -44,69 +178,89 @@ const Achievers = () => {
         </div>
       </div>
 
-      <section className="py-20 overflow-hidden">
+      {/* 2. ACHIEVER BANNER SECTION */}
+      <div className="relative h-[500px] overflow-hidden bg-white">
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-64">
+          <div className="h-full flex items-center justify-center">
             <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
           </div>
-        ) : gallery.length === 0 ? (
-          <div className="container mx-auto px-4">
-            <div className="h-64 flex flex-col items-center justify-center bg-white rounded-xl border-2 border-dashed border-secondary-200">
-              <ImageIcon className="w-12 h-12 text-secondary-200 mb-2" />
-              <p className="text-secondary-400">No gallery items found.</p>
-            </div>
-          </div>
         ) : (
-          <div className="relative flex items-center">
-            {/* Seamless Side-wise Infinite Scroll Track */}
-            <motion.div 
-              className="flex gap-6"
-              animate={{
-                x: [0, -100 * gallery.length + "%"], 
-              }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: gallery.length * 6, // Adjust speed: higher is slower
-                  ease: "linear",
-                },
-              }}
-              style={{ width: "fit-content" }}
-            >
-              {infiniteGallery.map((item, index) => (
-                <div 
-                  key={`${item.id}-${index}`}
-                  className="flex-shrink-0 w-[280px] md:w-[350px]" // Sized to fit approximately 3 cards on screen
-                >
-                  <div className="bg-white rounded-2xl overflow-hidden border border-secondary-100 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col group">
-                    {/* Square Image Section */}
-                    <div className="aspect-square w-full bg-secondary-50 overflow-hidden">
-                      <img 
-                        src={item.imageUrl} 
-                        alt={item.description}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    {/* Reduced Text Area with Center Alignment */}
-                    <div className="p-5 flex flex-col items-center text-center bg-white">
-                      <div className="w-6 h-0.5 bg-primary-400 rounded-full mb-3 opacity-30" />
-                      <p className="text-secondary-900 text-sm md:text-base font-bold leading-snug line-clamp-2">
-                        {item.description}
-                      </p>
-                      <div className="mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-50 text-[9px] font-bold text-secondary-500 uppercase tracking-wider">
-                        <Sparkles size={10} className="text-primary-500" />
-                        Achiever
-                      </div>
-                    </div>
+          <>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7 }}
+                className="absolute inset-0"
+              >
+                <img 
+                  src={gallery[currentSlide].imageUrl} 
+                  alt={gallery[currentSlide].description}
+                  className="absolute inset-0 w-full h-full object-fill"
+                />
+                <div className="absolute inset-0 bg-black/40" />
+                <div className="relative container mx-auto px-4 h-full flex items-center">
+                  <div className="max-w-3xl text-white">
+                    <motion.div 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[11px] font-bold text-primary-400 bg-primary-950/50 backdrop-blur-sm rounded-full uppercase tracking-widest border border-primary-500/30"
+                    >
+                      <Sparkles size={12} />
+                      Success Story
+                    </motion.div>
+                    <motion.h1 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-3xl md:text-5xl font-bold mb-8 leading-tight drop-shadow-2xl"
+                    >
+                      {gallery[currentSlide].description}
+                    </motion.h1>
+                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
+                      <Button variant="primary" size="lg" onClick={() => setIsEnquiryModalOpen(true)} className="shadow-xl bg-primary-600 hover:bg-primary-700 border-none px-8">
+                        Start Your Journey
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
-              ))}
-            </motion.div>
-          </div>
+              </motion.div>
+            </AnimatePresence>
+            {gallery.length > 1 && (
+              <>
+                <button onClick={prevSlide} className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full z-20"><ChevronLeft /></button>
+                <button onClick={nextSlide} className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full z-20"><ChevronRight /></button>
+              </>
+            )}
+          </>
         )}
+      </div>
+
+      {/* 3. NEW YOUTUBE VIDEOS SECTION */}
+      <VideosSection />
+
+      {/* 4. FOOTER STATS SECTION */}
+      <section className="py-16 bg-white border-b border-secondary-100">
+        <div className="container mx-auto px-4 text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <h2 className="text-2xl font-bold text-secondary-900">Celebrating Excellence</h2>
+              <p className="text-secondary-600 mt-2">Every student at Centum Academy has a unique story of growth and achievement.</p>
+            </div>
+            <div className="flex gap-4">
+              <div className="px-6 py-4 bg-secondary-50 rounded-2xl text-center"><span className="block text-2xl font-bold text-primary-600">100%</span><span className="text-xs font-semibold text-secondary-500 uppercase tracking-wider">Dedication</span></div>
+              <div className="px-6 py-4 bg-secondary-50 rounded-2xl text-center"><span className="block text-2xl font-bold text-primary-600">Top</span><span className="text-xs font-semibold text-secondary-500 uppercase tracking-wider">Results</span></div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      <Modal isOpen={isEnquiryModalOpen} onClose={() => setIsEnquiryModalOpen(false)} title="Start Your Success Story" size="md">
+        <EnquiryForm onSuccess={() => setIsEnquiryModalOpen(false)} />
+      </Modal>
     </div>
   );
 };
