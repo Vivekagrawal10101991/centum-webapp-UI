@@ -7,36 +7,65 @@ const AuthContext = createContext(null);
 /**
  * Site AuthProvider Component
  * Manages site authentication state
+ * UPDATED: Added Event Listeners to auto-detect logout from Dashboard
  */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Initialize auth state from localStorage
+  // Helper to check current auth status from storage
+  const checkAuthStatus = () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const userData = authService.getCurrentUser();
+      
+      if (token && userData) {
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        // If data is missing in storage, ensure state matches (Logged Out)
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initialize auth state and set up listeners
   useEffect(() => {
-    const initAuth = () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const userData = authService.getCurrentUser();
-        
-        if (token && userData) {
-          setUser(userData);
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setLoading(false);
+    checkAuthStatus();
+
+    // Listener 1: Listens for the custom 'auth:logout' event (from same tab)
+    const handleLogoutEvent = () => {
+      console.log('Logout event detected. Updating UI...');
+      checkAuthStatus();
+    };
+
+    // Listener 2: Listens for 'storage' changes (from other tabs or manual triggers)
+    const handleStorageChange = (e) => {
+      if (e.key === 'authToken' || e.key === 'user' || e.type === 'storage') {
+        console.log('Storage change detected. Syncing auth state...');
+        checkAuthStatus();
       }
     };
 
-    initAuth();
+    window.addEventListener('auth:logout', handleLogoutEvent);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('auth:logout', handleLogoutEvent);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   /**
    * Login function
-   * @param {Object} credentials - { email, password }
    */
   const login = async (credentials) => {
     try {
@@ -56,24 +85,13 @@ export const AuthProvider = ({ children }) => {
           try {
             const tokenPayload = JSON.parse(atob(tempToken.split('.')[1]));
             role = tokenPayload.role;
-            console.log('Role extracted from JWT token:', role);
           } catch (e) {
             console.error('Failed to decode JWT token:', e);
           }
         }
         
-        console.log('First login data:', {
-          tempToken: tempToken ? 'present' : 'missing',
-          role: role,
-          permissions: permissions
-        });
-        
         if (!tempToken) {
           throw new Error('No temporary token received for first login');
-        }
-        
-        if (!role) {
-          throw new Error('No role received from server. Please contact your backend team to include role in the login response.');
         }
         
         const userData = {
@@ -92,7 +110,6 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         
         const dashboardRoute = getDashboardRoute(role);
-        console.log('Calculated dashboard route for role', role, ':', dashboardRoute);
         
         return { 
           success: true, 
@@ -125,7 +142,6 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       
       const dashboardRoute = userData.role ? getDashboardRoute(userData.role) : '/dashboard';
-      console.log('Dashboard route:', dashboardRoute);
       
       return { 
         success: true, 
@@ -143,7 +159,6 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Signup function
-   * @param {Object} userData - User registration data
    */
   const signup = async (userData) => {
     try {
@@ -158,10 +173,8 @@ export const AuthProvider = ({ children }) => {
    * Logout function
    */
   const logout = () => {
-    authService.logout();
-    // Also clear admin tokens
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
+    authService.logout(); // This now dispatches the event
+    // Manually update state just in case
     setUser(null);
     setIsAuthenticated(false);
   };

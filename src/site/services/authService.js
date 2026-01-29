@@ -3,6 +3,7 @@ import api from '../../services/api';
 /**
  * Site Authentication Service
  * Handles all site authentication-related API calls
+ * UPDATED: Logout now dispatches a custom event to sync state across the app.
  */
 
 export const authService = {
@@ -38,18 +39,26 @@ export const authService = {
    * @returns {Promise} Response with created user
    */
   signup: async (userData) => {
-    const response = await api.post('/api/auth/signup', userData);
+    const response = await api.post('/api/public/signup', userData);
     return response.data;
   },
 
   /**
    * Logout user (client-side)
-   * Clears authentication token from storage
+   * Clears authentication token from storage and Dispatches Event
    */
   logout: () => {
+    // 1. Clear all auth data
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     localStorage.removeItem('isFirstLogin');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+
+    // 2. Dispatch a custom event so the App knows logout happened
+    // This fixes the issue where the Navbar still shows the User Icon
+    window.dispatchEvent(new Event('auth:logout'));
+    window.dispatchEvent(new Event('storage')); // Trigger storage listener manually for same-tab sync
   },
 
   /**
