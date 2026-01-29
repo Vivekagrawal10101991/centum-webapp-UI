@@ -7,7 +7,7 @@ import { validators } from '../../../utils/validators';
 
 /**
  * Custom hook for Signup functionality
- * Handles signup form state and submission logic
+ * UPDATED: Maps form data to the specific backend JSON requirements
  */
 export const useSignup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,11 +26,17 @@ export const useSignup = () => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
 
-    // Remove confirmPassword before sending to API
-    const { confirmPassword, ...signupData } = data;
+    // Prepare payload matching the backend requirement exactly
+    const signupPayload = {
+      name: data.name,
+      email: data.email,
+      phoneNumber: data.phone, // Map 'phone' field to 'phoneNumber' key
+      password: data.password,
+      confirmPassword: data.confirmPassword // Include confirmPassword as requested
+    };
 
     try {
-      const result = await signup(signupData);
+      const result = await signup(signupPayload);
 
       if (result.success) {
         toast.success('Account created successfully! Please login to continue.', {
