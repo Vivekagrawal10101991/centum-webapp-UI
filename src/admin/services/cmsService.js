@@ -1,6 +1,29 @@
 import api from '../../services/api';
 
 export const cmsService = {
+  // --- Course Endpoints ---
+  getCourses: async () => {
+    const response = await api.get('/api/tech/courses/all');
+    return response.data;
+  },
+
+  addCourse: async (courseData) => {
+    const response = await api.post('/api/tech/courses/add', courseData);
+    return response.data;
+  },
+
+  updateCourse: async (id, courseData) => {
+    // FIXED: Changed endpoint from '/api/tech/courses/all' to '/api/tech/courses/${id}'
+    // This matches the pattern used by DELETE
+    const response = await api.put(`/api/tech/courses/${id}`, courseData);
+    return response.data;
+  },
+
+  deleteCourse: async (id) => {
+    const response = await api.delete(`/api/tech/courses/${id}`);
+    return response.data;
+  },
+
   // --- Banner Endpoints ---
   getBanners: async () => {
     const response = await api.get('/api/tech/cms/banners');
@@ -22,7 +45,7 @@ export const cmsService = {
     return response.data;
   },
 
-  // --- Toppers Endpoints (Academic) ---
+  // --- Toppers Endpoints ---
   getToppers: async () => {
     const response = await api.get('/api/tech/academic/toppers');
     return response.data;
