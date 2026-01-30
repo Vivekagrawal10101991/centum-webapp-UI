@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ImageIcon, ChevronLeft, ChevronRight, Sparkles, Youtube, ExternalLink } from 'lucide-react';
+import { Loader2, ChevronLeft, ChevronRight, Sparkles, Youtube, ExternalLink } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 import { Button, Modal } from '../../../components/common';
 import EnquiryForm from '../../components/specific/EnquiryForm';
@@ -35,6 +35,8 @@ const VideosSection = () => {
 
     fetchYouTubeVideos();
   }, []);
+
+  if (videos.length === 0 && !loading) return null;
 
   return (
     <section className="py-20 bg-secondary-50">
@@ -160,6 +162,15 @@ const Achievers = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % gallery.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + gallery.length) % gallery.length);
 
+  // Loading State
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white">
       {/* 1. BLUE HERO SECTION */}
@@ -178,66 +189,87 @@ const Achievers = () => {
         </div>
       </div>
 
-      {/* 2. ACHIEVER BANNER SECTION */}
-      <div className="relative h-[500px] overflow-hidden bg-white">
-        {loading ? (
-          <div className="h-full flex items-center justify-center">
-            <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
-          </div>
-        ) : (
-          <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.7 }}
-                className="absolute inset-0"
-              >
-                <img 
-                  src={gallery[currentSlide].imageUrl} 
-                  alt={gallery[currentSlide].description}
-                  className="absolute inset-0 w-full h-full object-fill"
-                />
-                <div className="absolute inset-0 bg-black/40" />
-                <div className="relative container mx-auto px-4 h-full flex items-center">
-                  <div className="max-w-3xl text-white">
-                    <motion.div 
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[11px] font-bold text-primary-400 bg-primary-950/50 backdrop-blur-sm rounded-full uppercase tracking-widest border border-primary-500/30"
-                    >
-                      <Sparkles size={12} />
-                      Success Story
-                    </motion.div>
-                    <motion.h1 
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="text-3xl md:text-5xl font-bold mb-8 leading-tight drop-shadow-2xl"
-                    >
-                      {gallery[currentSlide].description}
-                    </motion.h1>
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-                      <Button variant="primary" size="lg" onClick={() => setIsEnquiryModalOpen(true)} className="shadow-xl bg-primary-600 hover:bg-primary-700 border-none px-8">
-                        Start Your Journey
-                      </Button>
-                    </motion.div>
-                  </div>
+      {/* 2. ACHIEVER BANNER SECTION (UPDATED RESPONSIVE) */}
+      {gallery.length > 0 ? (
+        <div className="relative w-full h-[400px] md:h-auto md:min-h-[300px] overflow-hidden group bg-black flex items-center justify-center">
+            
+            {/* Mobile View: Absolute fill (Fixed height) */}
+            <div className="md:hidden absolute inset-0 w-full h-full">
+               <img
+                 src={gallery[currentSlide].imageUrl} 
+                 alt={gallery[currentSlide].description}
+                 className="w-full h-full object-cover object-center"
+               />
+            </div>
+
+            {/* Desktop View: Natural Scaling + Centered */}
+            <div className="hidden md:block w-full">
+               <img
+                 src={gallery[currentSlide].imageUrl} 
+                 alt={gallery[currentSlide].description}
+                 className="w-full h-auto block" 
+               />
+            </div>
+
+            {/* Dark Overlay */}
+            <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+
+            {/* Content Layer */}
+            <div className="absolute inset-0 flex items-center">
+              <div className="container mx-auto px-4 h-full flex items-center">
+                <div className="max-w-3xl text-white drop-shadow-xl relative z-10">
+                  <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[11px] font-bold text-white bg-primary-950/40 backdrop-blur-sm rounded-full uppercase tracking-widest border border-white/20 hidden sm:inline-flex"
+                  >
+                    <Sparkles size={12} />
+                    Success Story
+                  </motion.div>
+                  
+                  {/* Title hidden on mobile to avoid covering small images */}
+                  <motion.h1 
+                    key={currentSlide}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-3xl md:text-5xl font-bold mb-8 leading-tight drop-shadow-2xl hidden sm:block"
+                  >
+                    {gallery[currentSlide].description}
+                  </motion.h1>
+
+                  <motion.div 
+                    initial={{ y: 20, opacity: 0 }} 
+                    animate={{ y: 0, opacity: 1 }} 
+                    transition={{ delay: 0.4 }}
+                    className="mt-4 sm:mt-0"
+                  >
+                    <Button variant="primary" size="lg" onClick={() => setIsEnquiryModalOpen(true)} className="shadow-xl bg-primary-600 hover:bg-primary-700 border-none px-8 hover:scale-105 transition-transform">
+                      Start Your Journey
+                    </Button>
+                  </motion.div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Navigation Arrows */}
             {gallery.length > 1 && (
               <>
-                <button onClick={prevSlide} className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full z-20"><ChevronLeft /></button>
-                <button onClick={nextSlide} className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full z-20"><ChevronRight /></button>
+                <button onClick={prevSlide} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-md text-white p-2 md:p-3 rounded-full z-20 transition-all opacity-0 group-hover:opacity-100">
+                    <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button onClick={nextSlide} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-md text-white p-2 md:p-3 rounded-full z-20 transition-all opacity-0 group-hover:opacity-100">
+                    <ChevronRight className="w-6 h-6" />
+                </button>
               </>
             )}
-          </>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="py-20 text-center text-gray-500">
+            No achiever stories found.
+        </div>
+      )}
 
       {/* 3. NEW YOUTUBE VIDEOS SECTION */}
       <VideosSection />
