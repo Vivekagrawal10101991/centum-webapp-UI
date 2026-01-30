@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Linkedin } from 'lucide-react';
 import logo from '../../../assets/logo.png';
 
 /**
@@ -23,10 +23,11 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
+    { icon: Facebook, href: 'https://www.facebook.com/centumacademy', label: 'Facebook' },
+    { icon: Twitter, href: 'https://x.com/centumacademy', label: 'Twitter' },
+    { icon: Instagram, href: 'https://www.instagram.com/centumacademy/', label: 'Instagram' },
+    { icon: Youtube, href: 'https://www.youtube.com/centumacademy', label: 'YouTube' },
+    { icon: Linkedin, href: 'https://www.linkedin.com/company/centum-academy/', label: 'LinkedIn' },
   ];
 
   return (
@@ -55,6 +56,8 @@ const Footer = () => {
                 <a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
                   className="text-gray-400 hover:text-primary transition-colors"
                 >
@@ -110,7 +113,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-sm">+91 98765 43210</span>
+                <span className="text-sm">+91 6366-411473</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />

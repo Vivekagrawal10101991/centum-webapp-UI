@@ -8,11 +8,12 @@ import api from '../../services/api';
 export const enquiryService = {
   /**
    * Submit enquiry form
-   * @param {Object} enquiryData - { name, phone, email, location, course, message }
+   * @param {Object} enquiryData - Payload matching /api/public/enquire structure
    * @returns {Promise} Response from server
    */
   submitEnquiry: async (enquiryData) => {
-    const response = await api.post('/api/public/enquiry', enquiryData);
+    // Updated endpoint to /api/public/enquire
+    const response = await api.post('/api/public/enquire', enquiryData);
     return response.data;
   },
 };
