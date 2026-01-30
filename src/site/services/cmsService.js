@@ -1,6 +1,12 @@
 import api from '../../services/api';
 
 export const cmsService = {
+  // Added getCourses to fetch from the same endpoint used in Admin
+  getCourses: async () => {
+    const response = await api.get('/api/tech/courses/all');
+    return response.data;
+  },
+  
   getBanners: async () => {
     const response = await api.get('/api/tech/cms/banners');
     return response.data;
