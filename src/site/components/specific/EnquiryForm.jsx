@@ -29,8 +29,18 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     
+    // Transform form data to match the required API JSON structure
+    const apiPayload = {
+      studentName: data.name,
+      phoneNumber: data.phone,
+      email: data.email,
+      location: data.location,
+      courseInterest: data.course,
+      message: data.message || "" // Ensure message is a string even if empty
+    };
+
     try {
-      await enquiryService.submitEnquiry(data);
+      await enquiryService.submitEnquiry(apiPayload);
       
       toast.success('Enquiry submitted successfully! We will contact you soon.', {
         duration: 4000,
@@ -43,7 +53,8 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         onSuccess();
       }
     } catch (error) {
-      toast.error(error || 'Failed to submit enquiry. Please try again.', {
+      console.error("Enquiry submission error:", error);
+      toast.error(error?.message || 'Failed to submit enquiry. Please try again.', {
         duration: 4000,
         position: 'top-center',
       });
@@ -63,7 +74,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         </div>
       )}
 
-      {/* Name */}
+      {/* Name (Mapped to studentName) */}
       <Input
         label="Full Name"
         placeholder="Enter your full name"
@@ -78,7 +89,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         })}
       />
 
-      {/* Phone */}
+      {/* Phone (Mapped to phoneNumber) */}
       <Input
         label="Phone Number"
         type="tel"
@@ -92,7 +103,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         })}
       />
 
-      {/* Email */}
+      {/* Email (Mapped to email) */}
       <Input
         label="Email Address"
         type="email"
@@ -106,7 +117,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         })}
       />
 
-      {/* Location */}
+      {/* Location (Mapped to location) */}
       <Input
         label="Location"
         placeholder="Enter your city/location"
@@ -117,7 +128,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         })}
       />
 
-      {/* Course */}
+      {/* Course (Mapped to courseInterest) */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Course Interested In
@@ -143,7 +154,7 @@ const EnquiryForm = ({ onSuccess, embedded = false }) => {
         )}
       </div>
 
-      {/* Message */}
+      {/* Message (Mapped to message) */}
       <Textarea
         label="Message (Optional)"
         placeholder="Any specific questions or requirements?"
