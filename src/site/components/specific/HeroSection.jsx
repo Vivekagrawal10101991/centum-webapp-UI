@@ -6,7 +6,9 @@ import EnquiryForm from './EnquiryForm';
 
 /**
  * HeroSection Component
- * Dynamic banner carousel with enquiry modal
+ * UPDATED: Added Flexbox centering (items-center) to the main container.
+ * This ensures that if the screen resize causes the image to be shorter than the container,
+ * the image remains vertically centered with equal spacing top and bottom.
  */
 const HeroSection = () => {
   const [banners, setBanners] = useState([]);
@@ -30,13 +32,12 @@ const HeroSection = () => {
     fetchBanners();
   }, []);
 
-  // Auto-slide every 5 seconds
+  // Auto-slide
   useEffect(() => {
     if (banners.length > 1) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % banners.length);
       }, 5000);
-
       return () => clearInterval(interval);
     }
   }, [banners.length]);
@@ -49,33 +50,26 @@ const HeroSection = () => {
     setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
   };
 
-  const handleEnquirySuccess = () => {
-    setIsEnquiryModalOpen(false);
-  };
-
+  // Loading State
   if (loading) {
     return (
-      <div className="relative h-[500px] bg-gradient-to-r from-primary-600 to-primary-400 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="w-full h-[400px] bg-gray-100 flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
       </div>
     );
   }
 
+  // Fallback if no banners
   if (banners.length === 0) {
-    // Fallback hero if no banners
     return (
-      <div className="relative h-[500px] bg-gradient-to-r from-primary-600 to-primary-400">
-        <div className="container mx-auto px-4 h-full flex items-center">
+      <div className="relative w-full py-32 bg-gradient-to-r from-primary-600 to-primary-800 flex items-center">
+        <div className="container mx-auto px-4">
           <div className="max-w-2xl text-white">
-            <h1 className="text-5xl font-bold mb-4">Welcome to Centum Academy</h1>
-            <p className="text-xl mb-8">
-              Empowering students to achieve their dreams through quality education
-            </p>
-            <Button
-              variant="outline"
-              size="lg"
+            <h1 className="text-3xl lg:text-5xl font-bold mb-4">Welcome to Centum Academy</h1>
+            <Button 
+              variant="outline" 
+              className="bg-white text-primary border-white hover:bg-gray-100"
               onClick={() => setIsEnquiryModalOpen(true)}
-              className="bg-white text-primary hover:bg-gray-100"
             >
               Enquire Now
             </Button>
@@ -89,37 +83,59 @@ const HeroSection = () => {
 
   return (
     <>
-      <div className="relative h-[500px] overflow-hidden">
-        {/* Banner Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-500"
-          style={{
-            backgroundImage: `url(${currentBanner.imageUrl})`,
-          }}
-        >
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black bg-opacity-40" />
+      {/* Main Container
+         - added 'flex items-center justify-center': This centers the image vertically if the container is taller than the image.
+         - bg-black: Ensures the "bars" are black as requested.
+      */}
+      <div className="relative w-full h-[400px] md:h-auto md:min-h-[300px] overflow-hidden group bg-black flex items-center justify-center">
+        
+        {/* Mobile View: Absolute fill (Standard mobile behavior) */}
+        <div className="md:hidden absolute inset-0 w-full h-full">
+           <img
+             src={currentBanner.imageUrl}
+             alt={currentBanner.title}
+             className="w-full h-full object-cover object-center"
+           />
         </div>
 
-        {/* Content */}
-        <div className="relative container mx-auto px-4 h-full flex items-center">
-          <div className="max-w-2xl text-white">
-            <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
-              {currentBanner.title}
-            </h1>
-            {currentBanner.description && (
-              <p className="text-xl mb-8 drop-shadow-lg">
-                {currentBanner.description}
-              </p>
-            )}
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => setIsEnquiryModalOpen(true)}
-              className="shadow-lg"
-            >
-              Enquire Now
-            </Button>
+        {/* Desktop View: Natural Scaling + Centered by Parent Flex */}
+        <div className="hidden md:block w-full">
+           <img
+             src={currentBanner.imageUrl}
+             alt={currentBanner.title}
+             className="w-full h-auto block" 
+           />
+        </div>
+
+        {/* Dark Overlay - Absolute to cover everything */}
+        <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+
+        {/* Content Layer - Absolute centered */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="container mx-auto px-4">
+            <div className="max-w-xl lg:max-w-2xl text-white drop-shadow-xl">
+              {/* Text hidden on mobile if image is small, visible on desktop */}
+              <h1 className="text-3xl lg:text-5xl font-bold mb-4 hidden sm:block">
+                {currentBanner.title}
+              </h1>
+              
+              {currentBanner.description && (
+                <p className="text-lg lg:text-xl mb-6 opacity-90 hidden sm:block">
+                  {currentBanner.description}
+                </p>
+              )}
+              
+              <div className="mt-4 sm:mt-0">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setIsEnquiryModalOpen(true)}
+                  className="shadow-xl hover:scale-105 transition-transform"
+                >
+                  Enquire Now
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -128,48 +144,43 @@ const HeroSection = () => {
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-white p-2 rounded-full transition-all"
-              aria-label="Previous slide"
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100 z-10"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-white p-2 rounded-full transition-all"
-              aria-label="Next slide"
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100 z-10"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
             </button>
-          </>
-        )}
 
-        {/* Dots Indicator */}
-        {banners.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentSlide
-                    ? 'bg-white w-8'
-                    : 'bg-white bg-opacity-50'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+            {/* Dots */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+              {banners.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? 'bg-white w-6'
+                      : 'bg-white/50 w-1.5 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
-      {/* Enquiry Modal */}
+      {/* Modal */}
       <Modal
         isOpen={isEnquiryModalOpen}
         onClose={() => setIsEnquiryModalOpen(false)}
         title="Enquire Now"
         size="md"
       >
-        <EnquiryForm onSuccess={handleEnquirySuccess} />
+        <EnquiryForm onSuccess={() => setIsEnquiryModalOpen(false)} />
       </Modal>
     </>
   );
