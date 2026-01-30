@@ -1,84 +1,166 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { ArrowRight, Clock, Users } from 'lucide-react';
+import Button from '../../../components/common/Button';
 
-const CourseCard = ({ id, title, shortDescription, imageUrl, colorTheme, tag }) => {
+const CourseCard = ({ 
+  id, 
+  title, 
+  shortDescription, 
+  imageUrl, 
+  tag,
+  duration,
+  colorTheme = 'blue' 
+}) => {
   
-  // Badge Styles
-  const badgeStyles = {
-    primary: "bg-blue-100/60 text-blue-700 border-blue-200/50",
-    emerald: "bg-emerald-100/60 text-emerald-700 border-emerald-200/50",
-    rose: "bg-rose-100/60 text-rose-700 border-rose-200/50",
-    purple: "bg-purple-100/60 text-purple-700 border-purple-200/50",
-    orange: "bg-orange-100/60 text-orange-700 border-orange-200/50",
-    teal: "bg-teal-100/60 text-teal-700 border-teal-200/50",
-    pink: "bg-pink-100/60 text-pink-700 border-pink-200/50",
-    cyan: "bg-cyan-100/60 text-cyan-700 border-cyan-200/50",
+  // Color mapping for different themes
+  // Added 'btnClass' to explicitly force filled backgrounds for all buttons
+  const themeColors = {
+    blue: {
+      badge: 'bg-blue-600 text-white shadow-sm',
+      accent: 'text-blue-600',
+      hoverBorder: 'hover:border-blue-500',
+      iconBg: 'bg-blue-50',
+      btnClass: 'bg-blue-600 hover:bg-blue-700 text-white border-transparent'
+    },
+    emerald: {
+      badge: 'bg-emerald-600 text-white shadow-sm',
+      accent: 'text-emerald-600',
+      hoverBorder: 'hover:border-emerald-500',
+      iconBg: 'bg-emerald-50',
+      btnClass: 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent'
+    },
+    rose: {
+      badge: 'bg-rose-600 text-white shadow-sm',
+      accent: 'text-rose-600',
+      hoverBorder: 'hover:border-rose-500',
+      iconBg: 'bg-rose-50',
+      btnClass: 'bg-rose-600 hover:bg-rose-700 text-white border-transparent'
+    },
+    purple: {
+      badge: 'bg-purple-600 text-white shadow-sm',
+      accent: 'text-purple-600',
+      hoverBorder: 'hover:border-purple-500',
+      iconBg: 'bg-purple-50',
+      btnClass: 'bg-purple-600 hover:bg-purple-700 text-white border-transparent'
+    },
+    orange: {
+      badge: 'bg-orange-600 text-white shadow-sm',
+      accent: 'text-orange-600',
+      hoverBorder: 'hover:border-orange-500',
+      iconBg: 'bg-orange-50',
+      btnClass: 'bg-orange-600 hover:bg-orange-700 text-white border-transparent'
+    },
+    teal: {
+      badge: 'bg-teal-600 text-white shadow-sm',
+      accent: 'text-teal-600',
+      hoverBorder: 'hover:border-teal-500',
+      iconBg: 'bg-teal-50',
+      btnClass: 'bg-teal-600 hover:bg-teal-700 text-white border-transparent'
+    },
+    cyan: {
+      badge: 'bg-cyan-600 text-white shadow-sm',
+      accent: 'text-cyan-600',
+      hoverBorder: 'hover:border-cyan-500',
+      iconBg: 'bg-cyan-50',
+      btnClass: 'bg-cyan-600 hover:bg-cyan-700 text-white border-transparent'
+    },
+    pink: {
+      badge: 'bg-pink-600 text-white shadow-sm',
+      accent: 'text-pink-600',
+      hoverBorder: 'hover:border-pink-500',
+      iconBg: 'bg-pink-50',
+      btnClass: 'bg-pink-600 hover:bg-pink-700 text-white border-transparent'
+    },
+    indigo: {
+      badge: 'bg-indigo-600 text-white shadow-sm',
+      accent: 'text-indigo-600',
+      hoverBorder: 'hover:border-indigo-500',
+      iconBg: 'bg-indigo-50',
+      btnClass: 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'
+    },
+    red: {
+      badge: 'bg-red-600 text-white shadow-sm',
+      accent: 'text-red-600',
+      hoverBorder: 'hover:border-red-500',
+      iconBg: 'bg-red-50',
+      btnClass: 'bg-red-600 hover:bg-red-700 text-white border-transparent'
+    }
   };
 
-  const currentBadgeStyle = badgeStyles[colorTheme] || badgeStyles.primary;
-
-  const btnGradients = {
-    primary: "bg-gradient-to-r from-blue-600 to-indigo-500",
-    emerald: "bg-gradient-to-r from-emerald-600 to-teal-500",
-    rose: "bg-gradient-to-r from-rose-600 to-pink-500",
-    purple: "bg-gradient-to-r from-purple-600 to-indigo-500",
-    orange: "bg-gradient-to-r from-orange-600 to-amber-500",
-    teal: "bg-gradient-to-r from-teal-600 to-cyan-500",
-    pink: "bg-gradient-to-r from-pink-600 to-rose-500",
-    cyan: "bg-gradient-to-r from-cyan-600 to-blue-500",
-  };
-
-  const currentBtnGradient = btnGradients[colorTheme] || btnGradients.primary;
+  const theme = themeColors[colorTheme] || themeColors.blue;
 
   return (
-    <div className="group relative bg-white rounded-3xl p-5 w-full max-w-[360px] border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-1 overflow-hidden">
+    <div className={`
+      group bg-white rounded-xl overflow-hidden 
+      border border-secondary-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] 
+      transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] 
+      ${theme.hoverBorder} 
+      flex flex-col 
+      w-full max-w-[360px] h-[400px]
+    `}>
       
-      {tag && (
-        <div className={`absolute top-5 right-5 z-20 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-wide uppercase border backdrop-blur-md ${currentBadgeStyle}`}>
-          {tag}
-        </div>
-      )}
-
-      {/* Course Image - Using 'imageUrl' directly */}
-      <div className="relative h-48 w-full mb-6 rounded-2xl overflow-hidden bg-gray-50">
-        {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt={title} 
-            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-            onError={(e) => {
-                e.target.style.display = 'none';
-                if(e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-        ) : null}
+      {/* Image Container */}
+      <div className="relative h-48 w-full bg-secondary-200 shrink-0">
+        <img 
+          src={imageUrl || "https://via.placeholder.com/400x250?text=Course+Image"} 
+          alt={title} 
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
-        {/* Fallback */}
-        <div 
-            className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-300 absolute inset-0"
-            style={{ display: imageUrl ? 'none' : 'flex' }}
-        >
-          <BookOpen className="w-12 h-12" />
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        {/* Badge/Tag */}
+        {tag && (
+          <div className={`absolute top-3 right-3 ${theme.badge} text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full z-20`}>
+            {tag}
+          </div>
+        )}
       </div>
 
-      <div className="px-2 pb-2">
-        <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
-          {title}
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-grow relative">
+        {/* Meta Info (Duration Only) */}
+        {duration && (
+          <div className="flex items-center gap-4 mb-3 text-xs text-secondary-500 font-medium">
+            <div className="flex items-center gap-1.5">
+              <Clock className={`w-3.5 h-3.5 ${theme.accent}`} />
+              <span>{duration}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Title */}
+        <h3 className="text-lg font-bold text-secondary-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+          <Link to={`/courses/${id}`}>
+            {title}
+          </Link>
         </h3>
         
-        <p className="text-gray-500 text-sm mb-8 leading-relaxed line-clamp-2 font-medium">
+        {/* Description */}
+        <p className="text-secondary-600 text-sm line-clamp-3 mb-4 flex-grow">
           {shortDescription}
         </p>
-
-        <Link to={`/courses/${id}`}>
-          <button className={`w-full py-4 px-6 rounded-xl text-white font-bold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all active:scale-95 ${currentBtnGradient}`}>
-            Explore Program <ArrowRight className="w-4 h-4" />
-          </button>
-        </Link>
+        
+        {/* Footer / Action */}
+        <div className="mt-auto pt-4 border-t border-secondary-100 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-secondary-500 font-medium">
+            <div className={`p-1.5 rounded-full ${theme.iconBg}`}>
+              <Users className={`w-4 h-4 ${theme.accent}`} />
+            </div>
+            <span>Enrolling</span>
+          </div>
+          
+          <Link to={`/courses/${id}`}>
+            {/* Added theme.btnClass to force the correct background color */}
+            <Button 
+              size="sm" 
+              className={`rounded-lg px-4 gap-1.5 group-hover:gap-2 transition-all ${theme.btnClass}`}
+            >
+              View Details
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
