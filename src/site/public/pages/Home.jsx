@@ -5,7 +5,7 @@ import {
   StatsSection, 
   ToppersSection, 
   TestimonialsSection,
-  MentorsSection // Imported here
+  MentorsSection
 } from '../../components/specific';
 import { Button } from '../../../components/common';
 import { 
@@ -28,7 +28,6 @@ import {
   Bus,
   Users,
   Compass,
-  // New Icons for Course Features
   Brain,
   Clock,
   Smartphone,
@@ -45,9 +44,7 @@ import FoundationPrograme from '../../../assets/Home/Foundation-Programe.png';
 /**
  * Home Page Component
  * Updates:
- * 1. Added "Course Features" section with 8-point grid.
- * 2. Maintained consistent "Splendid Performance" heading style.
- * 3. Added "Meet Our Mentors" section at the bottom.
+ * 1. Buttons in "Course Offerings" now navigate to the main '/courses' page.
  */
 const Home = () => {
   const navigate = useNavigate();
@@ -220,8 +217,9 @@ const Home = () => {
                   <p className="text-[#002B6B] font-bold text-lg italic mb-6">
                     Take your first step toward becoming a top-ranked engineer with Centum Academy!
                   </p>
+                  {/* UPDATED: Navigates to /courses */}
                   <Button 
-                    onClick={() => navigate('/courses/jee-mains')}
+                    onClick={() => navigate('/courses')}
                     className="bg-[#002B6B] hover:bg-[#001c45] text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
                   >
                     View Details <ArrowRight className="w-4 h-4" />
@@ -319,8 +317,9 @@ const Home = () => {
                   <p className="text-emerald-800 font-bold text-lg italic mb-6">
                     Turn your medical career dreams into reality with Centum Academy’s NEET program!
                   </p>
+                  {/* UPDATED: Navigates to /courses */}
                   <Button 
-                    onClick={() => navigate('/courses/neet')}
+                    onClick={() => navigate('/courses')}
                     className="bg-emerald-700 hover:bg-emerald-800 text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
                   >
                     View Details <ArrowRight className="w-4 h-4" />
@@ -380,7 +379,7 @@ const Home = () => {
                     <p className="text-sm text-gray-500">Ensure personalized mentoring and focus on individual aptitude.</p>
                   </div>
 
-                   {/* Point 5 - Spanning full width if odd, or just in grid */}
+                   {/* Point 5 */}
                    <div className="bg-[#ecfccb] p-5 rounded-[1.5rem] border border-lime-100 hover:shadow-md transition-all duration-300 md:col-span-2">
                     <div className="flex items-center gap-3 mb-2">
                       <Compass className="text-lime-700 w-5 h-5" />
@@ -395,8 +394,9 @@ const Home = () => {
                   <p className="text-orange-800 font-bold text-lg italic mb-6">
                     Start early to lead tomorrow with Centum Academy's Foundation Program!
                   </p>
+                  {/* UPDATED: Navigates to /courses */}
                   <Button 
-                    onClick={() => navigate('/courses/foundation')}
+                    onClick={() => navigate('/courses')}
                     className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
                   >
                     Read More <ArrowRight className="w-4 h-4" />
@@ -427,7 +427,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 4. Course Features Section (NEW) */}
+      {/* 4. Course Features Section */}
       <section className="py-20 bg-gray-50 overflow-hidden">
         <div className="max-container px-4">
           
@@ -525,7 +525,7 @@ const Home = () => {
 
       <TestimonialsSection />
       
-      {/* 5. Mentors Section (Added at the bottom) */}
+      {/* 5. Mentors Section */}
       <MentorsSection />
     </div>
   );

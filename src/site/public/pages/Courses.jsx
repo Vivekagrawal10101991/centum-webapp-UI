@@ -9,7 +9,6 @@ import {
 import Button from '../../../components/common/Button';
 import { Link } from 'react-router-dom';
 import { cmsService } from '../../services/cmsService';
-// Importing the specific CourseCard as requested
 import CourseCard from '../../components/specific/CourseCard';
 
 const Courses = () => {
@@ -18,6 +17,9 @@ const Courses = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // FIX: Scroll to top immediately when the page loads
+    window.scrollTo(0, 0);
+
     const fetchCourses = async () => {
       try {
         setLoading(true);
