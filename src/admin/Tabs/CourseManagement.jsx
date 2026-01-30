@@ -26,8 +26,7 @@ export default function CourseManagement() {
     slug: '',
     imageUrl: '',
     details: {
-      about: '',
-      // Default template, but now editable
+      about: '', // This is the field we are editing in the new section
       curriculum: [
         { subject: 'Physics', topics: '' },
         { subject: 'Chemistry', topics: '' },
@@ -116,6 +115,8 @@ export default function CourseManagement() {
       ...course,
       details: {
         ...course.details,
+        // Ensure 'about' exists if it was missing in old data
+        about: course.details?.about || '',
         curriculum: course.details.curriculum.map(c => ({
           ...c,
           topics: Array.isArray(c.topics) ? c.topics.join(', ') : c.topics
@@ -275,7 +276,7 @@ export default function CourseManagement() {
                     value={courseForm.shortDescription}
                     onChange={(e) => setCourseForm({ ...courseForm, shortDescription: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-y min-h-[80px]"
-                    placeholder="Brief overview of the course..."
+                    placeholder="Brief overview of the course (for cards)..."
                   />
                 </div>
               </div>
@@ -367,7 +368,29 @@ export default function CourseManagement() {
 
             <hr className="border-gray-100" />
 
-            {/* Section 3: Curriculum */}
+            {/* Section 3: About Course (NEW) */}
+            <section>
+              <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <FileText className="w-4 h-4" /> About Course
+              </h4>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Detailed Overview</label>
+                <textarea
+                  value={courseForm.details.about}
+                  onChange={(e) => setCourseForm({ 
+                    ...courseForm, 
+                    details: { ...courseForm.details, about: e.target.value } 
+                  })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-y min-h-[150px]"
+                  placeholder="Enter the full course description, methodology, prerequisites, benefits, etc..."
+                />
+                <p className="text-xs text-gray-500">This content will be displayed in the 'Overview' tab of the course detail page.</p>
+              </div>
+            </section>
+
+            <hr className="border-gray-100" />
+
+            {/* Section 4: Curriculum */}
             <section>
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
