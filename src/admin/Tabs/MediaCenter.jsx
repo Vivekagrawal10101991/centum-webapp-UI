@@ -263,7 +263,8 @@ export default function MediaCenter() {
   };
 
   return (
-    <div>
+    // ✅ FIXED: w-full max-w-full overflow-hidden ensures content stays inside container
+    <div className="w-full max-w-full overflow-hidden">
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={deleteConfirmModal.isOpen}
@@ -297,52 +298,54 @@ export default function MediaCenter() {
         <p className="text-gray-600 mt-1">Manage content marketing and team information</p>
       </div>
 
-      {/* Sub Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-gray-200 overflow-x-auto">
-        <button
-          onClick={() => setActiveSubTab('blogs')}
-          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
-            activeSubTab === 'blogs'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Blogs
-        </button>
-        <button
-          onClick={() => {
-            setActiveSubTab('gallery');
-            setImagePickerMode('gallery');
-            setShowImagePicker(true);
-          }}
-          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
-            activeSubTab === 'gallery'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Gallery (Uploads)
-        </button>
-        <button
-          onClick={() => setActiveSubTab('youtube')}
-          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
-            activeSubTab === 'youtube'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          YouTube Videos
-        </button>
-        <button
-          onClick={() => setActiveSubTab('team')}
-          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
-            activeSubTab === 'team'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Contributors/Team
-        </button>
+      {/* Sub Tabs - Safe Overflow */}
+      <div className="w-full overflow-x-auto pb-1 mb-6 border-b border-gray-200">
+        <div className="flex gap-4 min-w-max">
+          <button
+            onClick={() => setActiveSubTab('blogs')}
+            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+              activeSubTab === 'blogs'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Blogs
+          </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('gallery');
+              setImagePickerMode('gallery');
+              setShowImagePicker(true);
+            }}
+            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+              activeSubTab === 'gallery'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Gallery (Uploads)
+          </button>
+          <button
+            onClick={() => setActiveSubTab('youtube')}
+            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+              activeSubTab === 'youtube'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            YouTube Videos
+          </button>
+          <button
+            onClick={() => setActiveSubTab('team')}
+            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+              activeSubTab === 'team'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Contributors/Team
+          </button>
+        </div>
       </div>
 
       {/* GALLERY TAB CONTENT */}
@@ -366,7 +369,7 @@ export default function MediaCenter() {
 
       {/* Blogs Tab */}
       {activeSubTab === 'blogs' && (
-        <div>
+        <div className="w-full">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
@@ -393,7 +396,7 @@ export default function MediaCenter() {
 
           {/* Blog Form */}
           {showBlogForm && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full">
               <h3 className="font-semibold text-gray-800 mb-4">
                 {editingBlog ? 'Edit Blog Post' : 'Add New Blog Post'}
               </h3>
@@ -411,16 +414,16 @@ export default function MediaCenter() {
                 </div>
 
                 {/* ✅ FIXED EDITOR */}
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 w-full max-w-full overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Content *</label>
-                  <div className="bg-white">
+                  <div className="bg-white w-full">
                     <ReactQuill
                       theme="snow"
                       value={blogForm.content}
                       onChange={(content) => setBlogForm({ ...blogForm, content })}
                       modules={quillModules}
                       formats={quillFormats}
-                      className="h-64 mb-12"
+                      className="h-64 mb-12 w-full"
                       placeholder="Write your blog content here..."
                     />
                   </div>
@@ -517,49 +520,53 @@ export default function MediaCenter() {
               No blogs found. Click "Add Blog" to create your first blog post.
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 w-full">
               {blogs.map((blog) => (
-                <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex gap-4">
+                <div key={blog.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full overflow-hidden">
+                  <div className="flex gap-4 w-full">
                     {blog.imageUrl && (
                       <img
                         src={blog.imageUrl}
                         alt={blog.title}
-                        className="w-32 h-24 object-cover rounded-lg"
+                        className="w-32 h-24 object-cover rounded-lg flex-shrink-0"
                       />
                     )}
-                    <div className="flex-1">
+                    
+                    {/* ✅ FIXED: w-0 is a CSS trick that forces flex item to respect parent width */}
+                    <div className="flex-1 w-0">
                       <div className="flex items-start justify-between mb-2">
-                        <div>
+                        {/* ✅ FIXED: Changed 'w-full' to 'flex-1 min-w-0' to allow sharing space with buttons */}
+                        <div className="flex-1 min-w-0 pr-4">
                           <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-gray-800">{blog.title}</h4>
+                            <h4 className="font-semibold text-gray-800 truncate">{blog.title}</h4>
                             {blog.published ? (
-                              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
+                              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded flex-shrink-0">
                                 Published
                               </span>
                             ) : (
-                              <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                              <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded flex-shrink-0">
                                 Draft
                               </span>
                             )}
                           </div>
-                          {/* Strip HTML tags for preview using helper function */}
-                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                          {/* ✅ FIXED: truncate is strictly enforced by w-0 parent */}
+                          <p className="text-sm text-gray-600 mb-2 truncate">
                             {stripHtml(blog.content)}
                           </p>
                           <div className="flex items-center gap-4 text-xs text-gray-500">
-                            <span>By {blog.author}</span>
+                            <span className="truncate">By {blog.author}</span>
                             {blog.category && (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded flex-shrink-0">
                                 {blog.category}
                               </span>
                             )}
                             {blog.createdAt && (
-                              <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                              <span className="flex-shrink-0">{new Date(blog.createdAt).toLocaleDateString()}</span>
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        
+                        <div className="flex gap-2 flex-shrink-0">
                           {hasPermission(PERMISSIONS.EDIT_BLOG) && (
                             <button
                               onClick={() => {
@@ -602,7 +609,7 @@ export default function MediaCenter() {
 
       {/* YouTube Videos Tab */}
       {activeSubTab === 'youtube' && (
-        <div>
+        <div className="w-full">
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Featured YouTube content and educational videos</p>
             {hasPermission(PERMISSIONS.ADD_VIDEO) && (
@@ -622,7 +629,7 @@ export default function MediaCenter() {
 
           {/* Video Form */}
           {showVideoForm && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full">
               <h3 className="font-semibold text-gray-800 mb-4">
                 {editingVideo ? 'Edit YouTube Video' : 'Add New YouTube Video'}
               </h3>
@@ -731,8 +738,8 @@ export default function MediaCenter() {
                   className="w-full h-40 object-cover"
                 />
                 <div className="p-4">
-                  <h4 className="font-semibold text-gray-800 mb-2 line-clamp-2">{video.title}</h4>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{video.description}</p>
+                  <h4 className="font-semibold text-gray-800 mb-2 truncate">{video.title}</h4>
+                  <p className="text-sm text-gray-600 mb-3 truncate">{video.description}</p>
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                     <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
                       {video.category}
@@ -775,7 +782,7 @@ export default function MediaCenter() {
 
       {/* Contributors/Team Tab */}
       {activeSubTab === 'team' && (
-        <div>
+        <div className="w-full">
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Faculty and team member profiles</p>
             <button
@@ -793,7 +800,7 @@ export default function MediaCenter() {
 
           {/* Contributor Form */}
           {showContributorForm && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full">
               <h3 className="font-semibold text-gray-800 mb-4">
                 {editingContributor ? 'Edit Team Member' : 'Add New Team Member'}
               </h3>
@@ -908,16 +915,16 @@ export default function MediaCenter() {
                   <img
                     src={contributor.photo}
                     alt={contributor.name}
-                    className="w-24 h-24 rounded-full object-cover"
+                    className="w-24 h-24 rounded-full object-cover flex-shrink-0"
                   />
-                  <div className="flex-1">
+                  <div className="flex-1 w-0">
                     <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-gray-800 text-lg">{contributor.name}</h4>
-                        <p className="text-blue-600 text-sm">{contributor.role}</p>
+                      <div className="flex-1 min-w-0 pr-2">
+                        <h4 className="font-semibold text-gray-800 text-lg truncate">{contributor.name}</h4>
+                        <p className="text-blue-600 text-sm truncate">{contributor.role}</p>
                         <p className="text-xs text-gray-500 mt-1">{contributor.experience} experience</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-shrink-0">
                         <button
                           onClick={() => {
                             setEditingContributor(contributor);
@@ -946,7 +953,7 @@ export default function MediaCenter() {
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500">{contributor.email}</p>
+                <p className="text-xs text-gray-500 truncate">{contributor.email}</p>
               </div>
             ))}
           </div>
