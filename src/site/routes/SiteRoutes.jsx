@@ -10,13 +10,16 @@ import {
   About, 
   Contact, 
   Courses, 
-  Announcements, // Imported
+  Announcements,
   JeeMains,
   JeeAdvance,
   NeetCourses,
   KcetCourses,
   FoundationCourses
 } from '../public';
+
+// Import the new Dynamic Template
+import CourseDetail from '../public/pages/CourseDetail';
 
 // Content pages
 import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
@@ -29,20 +32,23 @@ export const SiteRoutes = () => {
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
       
-      {/* NEW ANNOUNCEMENT ROUTE */}
+      {/* Announcements */}
       <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
       
-      {/* Main Course Landing Page */}
+      {/* Main Course Listing */}
       <Route path="/courses" element={<Layout><Courses /></Layout>} />
       
-      {/* Specific Course Pages */}
-      <Route path="/courses/jee-mains" element={<Layout><JeeMains /></Layout>} />
-      <Route path="/courses/jee-advance" element={<Layout><JeeAdvance /></Layout>} />
-      <Route path="/courses/neet" element={<Layout><NeetCourses /></Layout>} />
-      <Route path="/courses/kcet" element={<Layout><KcetCourses /></Layout>} />
-      <Route path="/courses/foundation" element={<Layout><FoundationCourses /></Layout>} />
+      {/* --- DYNAMIC COURSE TEMPLATE (Matches Slug or ID) --- */}
+      <Route path="/courses/:slug" element={<Layout><CourseDetail /></Layout>} />
+      
+      {/* Legacy Specific Pages */}
+      <Route path="/courses/jee-mains-legacy" element={<Layout><JeeMains /></Layout>} />
+      <Route path="/courses/jee-advance-legacy" element={<Layout><JeeAdvance /></Layout>} />
+      <Route path="/courses/neet-legacy" element={<Layout><NeetCourses /></Layout>} />
+      <Route path="/courses/kcet-legacy" element={<Layout><KcetCourses /></Layout>} />
+      <Route path="/courses/foundation-legacy" element={<Layout><FoundationCourses /></Layout>} />
 
-      {/* Content Routes with Layout */}
+      {/* Content Routes */}
       <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
       <Route path="/blogs/:id" element={<Layout><BlogDetail /></Layout>} />
       <Route path="/videos" element={<Layout><Videos /></Layout>} />
