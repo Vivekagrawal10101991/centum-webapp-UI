@@ -64,7 +64,6 @@ const CourseDetail = () => {
   }
 
   // --- DATA MAPPING (DB Schema -> Component) ---
-  // We handle both snake_case (DB default) and camelCase (API transformed)
   const title = course.title;
   const tag = course.tag;
   const image = course.image_url || course.imageUrl || "https://via.placeholder.com/1920x600?text=Course+Banner";
@@ -161,9 +160,18 @@ const CourseDetail = () => {
                     <FileText className="w-6 h-6 text-blue-600" />
                     About This Course
                   </h3>
-                  <div className="prose prose-blue max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                    {about || "No detailed description available for this course yet."}
-                  </div>
+                  
+                  {/* ✅ FIXED: 
+                      Added custom classes to force list visibility:
+                      - [&_ul]:list-disc  -> Makes unordered lists have bullets
+                      - [&_ul]:pl-5       -> Adds indentation for bullets
+                      - [&_ol]:list-decimal -> Makes ordered lists have numbers
+                      - [&_ol]:pl-5       -> Adds indentation for numbers
+                  */}
+                  <div 
+                    className="prose prose-blue max-w-none text-gray-600 leading-relaxed break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                    dangerouslySetInnerHTML={{ __html: about || "No detailed description available for this course yet." }}
+                  />
                 </div>
               )}
 
