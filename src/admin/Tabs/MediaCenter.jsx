@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, FileText, Video, Users, Eye, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Video, Users, Eye, Image as ImageIcon } from 'lucide-react';
 import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { hasPermission } from '../helpers/authHelper';
 import { PERMISSIONS } from '../helpers/rolePermissions';
-// ✅ IMPORT IMAGE PICKER
 import ImagePicker from '../components/ImagePicker';
+
+// ✅ FIXED: USING 'react-quill-new' FOR REACT 19 SUPPORT
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css'
 
 export default function MediaCenter() {
   const [activeSubTab, setActiveSubTab] = useState('blogs');
@@ -13,7 +16,7 @@ export default function MediaCenter() {
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [showContributorForm, setShowContributorForm] = useState(false);
   
-  // ✅ NEW: Image Picker State
+  // Image Picker State
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [imagePickerMode, setImagePickerMode] = useState('gallery'); // 'gallery' | 'select'
 
@@ -26,7 +29,29 @@ export default function MediaCenter() {
 
   const [blogs, setBlogs] = useState([]);
 
-  // --- YOUR EXISTING DUMMY DATA ---
+  // --- EDITOR CONFIGURATION ---
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['blockquote', 'code-block'],
+      [{ 'color': [] }, { 'background': [] }],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  const quillFormats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'blockquote', 'code-block',
+    'color', 'background',
+    'link'
+  ];
+
+  // --- EXISTING DUMMY DATA FOR VIDEOS & TEAM ---
   const [videos, setVideos] = useState([
     {
       id: 1,
@@ -175,6 +200,7 @@ export default function MediaCenter() {
     } finally {
       setLoading(false);
     }
+    closeDeleteModal(); // Close modal after delete
   };
 
   // Get modal content based on type
@@ -228,6 +254,14 @@ export default function MediaCenter() {
 
   const modalContent = getDeleteModalContent();
 
+  // Helper to strip HTML tags for preview
+  const stripHtml = (html) => {
+    if (!html) return '';
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
   return (
     <div>
       {/* Delete Confirmation Modal */}
@@ -242,13 +276,12 @@ export default function MediaCenter() {
         type="danger"
       />
 
-      {/* ✅ ADDED: Image Picker Component */}
+      {/* Image Picker Component */}
       <ImagePicker 
         isOpen={showImagePicker}
         onClose={() => setShowImagePicker(false)}
         title={imagePickerMode === 'gallery' ? "Media Gallery" : "Select Image"}
         onSelect={imagePickerMode === 'select' ? (url) => {
-          // 🧠 SMART SELECT: Detects which form is open and applies the image
           if (showBlogForm) {
              setBlogForm({ ...blogForm, imageUrl: url });
           } else if (showVideoForm) {
@@ -264,7 +297,7 @@ export default function MediaCenter() {
         <p className="text-gray-600 mt-1">Manage content marketing and team information</p>
       </div>
 
-      {/* Sub Tabs - ✅ ADDED "GALLERY" */}
+      {/* Sub Tabs */}
       <div className="flex gap-4 mb-6 border-b border-gray-200 overflow-x-auto">
         <button
           onClick={() => setActiveSubTab('blogs')}
@@ -276,7 +309,6 @@ export default function MediaCenter() {
         >
           Blogs
         </button>
-        {/* NEW TAB */}
         <button
           onClick={() => {
             setActiveSubTab('gallery');
@@ -313,7 +345,7 @@ export default function MediaCenter() {
         </button>
       </div>
 
-      {/* ✅ NEW GALLERY TAB CONTENT */}
+      {/* GALLERY TAB CONTENT */}
       {activeSubTab === 'gallery' && (
         <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
            <div className="bg-white p-4 rounded-full shadow-sm mb-4">
@@ -377,17 +409,23 @@ export default function MediaCenter() {
                     required
                   />
                 </div>
+
+                {/* ✅ FIXED EDITOR */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Content *</label>
-                  <textarea
-                    value={blogForm.content}
-                    onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={8}
-                    placeholder="Full blog content goes here..."
-                    required
-                  />
+                  <div className="bg-white">
+                    <ReactQuill
+                      theme="snow"
+                      value={blogForm.content}
+                      onChange={(content) => setBlogForm({ ...blogForm, content })}
+                      modules={quillModules}
+                      formats={quillFormats}
+                      className="h-64 mb-12"
+                      placeholder="Write your blog content here..."
+                    />
+                  </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Author *</label>
                   <input
@@ -400,7 +438,6 @@ export default function MediaCenter() {
                   />
                 </div>
 
-                {/* ✅ REPLACED: Image Input with Picker */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
                   <div className="flex gap-2">
@@ -506,7 +543,10 @@ export default function MediaCenter() {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">{blog.content}</p>
+                          {/* Strip HTML tags for preview using helper function */}
+                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                            {stripHtml(blog.content)}
+                          </p>
                           <div className="flex items-center gap-4 text-xs text-gray-500">
                             <span>By {blog.author}</span>
                             {blog.category && (
@@ -618,7 +658,7 @@ export default function MediaCenter() {
                   />
                 </div>
 
-                {/* ✅ REPLACED: Thumbnail Input with Picker */}
+                {/* Video Thumbnail Picker */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail Image</label>
                   <div className="flex gap-2">
@@ -799,7 +839,7 @@ export default function MediaCenter() {
                   />
                 </div>
 
-                {/* ✅ REPLACED: Photo Input with Picker */}
+                {/* Team Photo Picker */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Photo</label>
                   <div className="flex gap-2">
