@@ -7,6 +7,10 @@ import { toast } from 'react-hot-toast';
 import { cmsService } from '../services/cmsService';
 import ImagePicker from '../components/ImagePicker';
 
+// ✅ IMPORT REACT QUILL (Rich Text Editor)
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+
 export default function CourseManagement() {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
@@ -17,6 +21,28 @@ export default function CourseManagement() {
   const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
 
+  // --- EDITOR CONFIGURATION ---
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['blockquote', 'code-block'],
+      [{ 'color': [] }, { 'background': [] }],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  const quillFormats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'blockquote', 'code-block',
+    'color', 'background',
+    'link'
+  ];
+
   // Form State
   const initialFormState = {
     title: '',
@@ -26,7 +52,7 @@ export default function CourseManagement() {
     slug: '',
     imageUrl: '',
     details: {
-      about: '', // This is the field we are editing in the new section
+      about: '', // This will now store HTML from the editor
       curriculum: [
         { subject: 'Physics', topics: '' },
         { subject: 'Chemistry', topics: '' },
@@ -368,23 +394,27 @@ export default function CourseManagement() {
 
             <hr className="border-gray-100" />
 
-            {/* Section 3: About Course (NEW) */}
+            {/* Section 3: About Course (UPDATED WITH RICH TEXT EDITOR) */}
             <section>
               <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <FileText className="w-4 h-4" /> About Course
+                <FileText className="w-4 h-4" /> About Course (Detailed Overview)
               </h4>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Detailed Overview</label>
-                <textarea
-                  value={courseForm.details.about}
-                  onChange={(e) => setCourseForm({ 
-                    ...courseForm, 
-                    details: { ...courseForm.details, about: e.target.value } 
-                  })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-y min-h-[150px]"
-                  placeholder="Enter the full course description, methodology, prerequisites, benefits, etc..."
-                />
-                <p className="text-xs text-gray-500">This content will be displayed in the 'Overview' tab of the course detail page.</p>
+                <div className="bg-white">
+                  <ReactQuill
+                    theme="snow"
+                    value={courseForm.details.about}
+                    onChange={(content) => setCourseForm({ 
+                      ...courseForm, 
+                      details: { ...courseForm.details, about: content } 
+                    })}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    className="h-64 mb-12" // Extra margin for toolbar space
+                    placeholder="Enter the full course description, methodology, prerequisites, etc..."
+                  />
+                </div>
+                <p className="text-xs text-gray-500 pt-2">This content will be displayed in the 'Overview' tab of the course detail page.</p>
               </div>
             </section>
 
