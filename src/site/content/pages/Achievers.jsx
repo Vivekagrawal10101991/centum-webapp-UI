@@ -191,23 +191,18 @@ const Achievers = () => {
 
       {/* 2. ACHIEVER BANNER SECTION (UPDATED RESPONSIVE) */}
       {gallery.length > 0 ? (
-        <div className="relative w-full h-[400px] md:h-auto md:min-h-[300px] overflow-hidden group bg-black flex items-center justify-center">
+        <div className="relative w-full group bg-black overflow-hidden">
             
-            {/* Mobile View: Absolute fill (Fixed height) */}
-            <div className="md:hidden absolute inset-0 w-full h-full">
+            {/* RESPONSIVENESS UPDATE:
+              - Matched HeroSection structure.
+              - Uses vh units and object-contain/cover logic.
+              - Replaced split mobile/desktop implementation with unified responsive image.
+            */}
+            <div className="relative w-full md:min-h-[40vh] flex items-center justify-center">
                <img
                  src={gallery[currentSlide].imageUrl} 
                  alt={gallery[currentSlide].description}
-                 className="w-full h-full object-cover object-center"
-               />
-            </div>
-
-            {/* Desktop View: Natural Scaling + Centered */}
-            <div className="hidden md:block w-full">
-               <img
-                 src={gallery[currentSlide].imageUrl} 
-                 alt={gallery[currentSlide].description}
-                 className="w-full h-auto block" 
+                 className="w-full h-auto object-contain md:object-cover max-h-[85vh] block"
                />
             </div>
 
