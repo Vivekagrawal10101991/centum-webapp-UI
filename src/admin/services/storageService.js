@@ -6,19 +6,20 @@ export const storageService = {
   uploadImage: async (file) => {
     const formData = new FormData();
     formData.append('file', file);
+    // Backend now reads the original name from 'file' directly
 
     const response = await api.post('/api/tech/storage/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return response.data; // Returns { url: "..." }
+    return response.data; 
   },
 
   // Get list of all images
   getImages: async () => {
     const response = await api.get('/api/tech/storage/list');
-    return response.data; // Returns ["url1", "url2", ...]
+    return response.data;
   },
 
   // Delete an image

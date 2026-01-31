@@ -6,8 +6,8 @@ import { getAllBlogs } from '../../../admin/services/blogService';
 /**
  * Blog Detail Page
  * UPDATED: 
- * - Reduced negative margin to make Hero Image visible
- * - Adjusted Sidebar spacing
+ * - Fixed Heading sizes (h1, h2, h3) appearing same as normal text.
+ * - Added explicit styling for lists and spacing within blog content.
  */
 const BlogDetail = () => {
   const { id } = useParams();
@@ -184,7 +184,6 @@ const BlogDetail = () => {
       </div>
 
       {/* --- Main Content Container (Grid Layout) --- */}
-      {/* UPDATED: Changed negative margin to -mt-20 md:-mt-32 to reveal more image */}
       <div className="relative z-10 container mx-auto px-4 -mt-20 md:-mt-32 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -239,13 +238,30 @@ const BlogDetail = () => {
               {/* Divider */}
               <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-12"></div>
 
-              {/* Blog Body Content */}
-              <article className="prose prose-lg md:prose-xl prose-slate mx-auto prose-headings:font-bold prose-a:text-indigo-600 hover:prose-a:text-indigo-500 prose-img:rounded-3xl prose-img:shadow-xl w-full max-w-full">
-                 <div 
-                    className="text-gray-600 leading-relaxed font-serif text-[1.15rem] md:text-[1.25rem] break-words overflow-hidden"
-                    dangerouslySetInnerHTML={{ __html: blog.content }}
-                 />
-              </article>
+              {/* Blog Body Content - FIXED */}
+              <div 
+                 className="
+                  w-full max-w-none prose prose-lg md:prose-xl prose-slate mx-auto
+                  
+                  text-gray-600 leading-relaxed font-serif text-[1.15rem] md:text-[1.25rem] break-words
+                  
+                  prose-headings:font-bold prose-headings:text-gray-900 
+                  prose-p:text-gray-600 prose-p:leading-relaxed 
+                  prose-a:text-indigo-600 hover:prose-a:text-indigo-500 
+                  prose-img:rounded-3xl prose-img:shadow-xl
+                  
+                  /* EXPLICIT HEADING & LIST OVERRIDES to fix size issues */
+                  [&>h1]:text-3xl [&>h1]:md:text-4xl [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-black
+                  [&>h2]:text-2xl [&>h2]:md:text-3xl [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-bold
+                  [&>h3]:text-xl [&>h3]:md:text-2xl [&>h3]:mb-3 [&>h3]:mt-5 [&>h3]:font-bold
+                  [&>p]:mb-6
+                  [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-6
+                  [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-6
+                  [&>li]:mb-2
+                  [&>blockquote]:border-l-4 [&>blockquote]:border-indigo-500 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-6 [&>blockquote]:bg-gray-50 [&>blockquote]:p-4 [&>blockquote]:rounded-r-xl
+                 "
+                 dangerouslySetInnerHTML={{ __html: blog.content }}
+              />
 
               {/* Footer Share */}
               <div className="mt-16 pt-8 border-t border-gray-100 flex items-center justify-between">
