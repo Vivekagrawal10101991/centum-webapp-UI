@@ -13,8 +13,6 @@ const CourseCard = ({
   colorTheme = 'blue' 
 }) => {
   
-  // Color mapping for different themes
-  // Added 'btnClass' to explicitly force filled backgrounds for all buttons
   const themeColors = {
     blue: {
       badge: 'bg-blue-600 text-white shadow-sm',
@@ -100,18 +98,22 @@ const CourseCard = ({
       w-full max-w-[360px] h-[400px]
     `}>
       
-      {/* Image Container */}
-      <div className="relative h-48 w-full bg-secondary-200 shrink-0">
+      {/* Image Container Changes:
+         1. Increased height to 'h-56' (was h-48) to show more image.
+         2. Removed 'p-2' and 'bg-white' to remove the box effect.
+         3. Changed back to 'object-cover' so it fills the width fully.
+         4. Removed 'group-hover:scale-105' and 'transition-transform' to stop zooming.
+      */}
+      <div className="relative h-56 w-full bg-secondary-100 shrink-0 overflow-hidden border-b border-secondary-50">
         <img 
           src={imageUrl || "https://via.placeholder.com/400x250?text=Course+Image"} 
           alt={title} 
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
         {/* Badge/Tag */}
         {tag && (
-          <div className={`absolute top-3 right-3 ${theme.badge} text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full z-20`}>
+          <div className={`absolute top-3 right-3 ${theme.badge} text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full z-20 shadow-sm`}>
             {tag}
           </div>
         )}
@@ -151,7 +153,6 @@ const CourseCard = ({
           </div>
           
           <Link to={`/courses/${id}`}>
-            {/* Added theme.btnClass to force the correct background color */}
             <Button 
               size="sm" 
               className={`rounded-lg px-4 gap-1.5 group-hover:gap-2 transition-all ${theme.btnClass}`}
