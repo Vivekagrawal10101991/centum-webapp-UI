@@ -7,10 +7,9 @@ import EnquiryForm from "./EnquiryForm";
 /**
  * HeroSection Component
  * UPDATED:
- * - Replaced fixed 'px' height with 'vh' (viewport height) for better responsiveness.
- * - Mobile: min-h-[30vh] (approx 30% of screen height).
- * - Desktop: min-h-[40vh] (approx 40% of screen height).
- * - This ensures the text overlay always has room, regardless of device size.
+ * - Banner image and description remain in the top section.
+ * - Added a dedicated white section BELOW the banner for the "Enquiry Now" button.
+ * - Restored Modal and Form logic to handle the enquiry request.
  */
 const HeroSection = () => {
   const [banners, setBanners] = useState([]);
@@ -55,7 +54,6 @@ const HeroSection = () => {
   // Loading State
   if (loading) {
     return (
-      // Also updated loading state to use vh
       <div className="w-full h-[30vh] md:h-[40vh] bg-gray-100 flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
@@ -68,24 +66,42 @@ const HeroSection = () => {
   // Fallback if no banners
   if (banners.length === 0) {
     return (
-      <div className="relative w-full py-20 md:py-32 bg-gradient-to-r from-[#002B6B] to-indigo-900 flex items-center">
-        <div className="container mx-auto px-4 text-center md:text-left">
-          <div className="max-w-2xl text-white mx-auto md:mx-0">
-            <h1 className="text-2xl md:text-5xl font-bold mb-4">
-              Welcome to Centum Academy
-            </h1>
-            <p className="text-blue-100 mb-6 text-sm md:text-lg">
-              Empowering students to achieve their dreams.
-            </p>
-            <Button
-              variant="outline"
-              className="bg-white text-[#002B6B] border-white hover:bg-gray-100 font-semibold px-6 py-2"
-              onClick={() => setIsEnquiryModalOpen(true)}
-            >
-              Enquire Now
-            </Button>
+      <div className="flex flex-col">
+        <div className="relative w-full py-20 md:py-32 bg-gradient-to-r from-[#002B6B] to-indigo-900 flex items-center">
+          <div className="container mx-auto px-4 text-center md:text-left">
+            <div className="max-w-2xl text-white mx-auto md:mx-0">
+              <h1 className="text-2xl md:text-5xl font-bold mb-4">
+                Welcome to Centum Academy
+              </h1>
+              <p className="text-blue-100 text-sm md:text-lg">
+                Empowering students to achieve their dreams.
+              </p>
+            </div>
           </div>
         </div>
+        
+        {/* Call to Action Section (Fallback) */}
+        <div className="bg-white py-8 border-b border-gray-100">
+          <div className="container mx-auto px-4 text-center">
+             <h3 className="text-xl font-bold text-gray-800 mb-4">Start Your Journey With Us</h3>
+             <Button
+                onClick={() => setIsEnquiryModalOpen(true)}
+                className="bg-[#002B6B] hover:bg-[#001c45] text-white px-10 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+              >
+                Enquire Now
+              </Button>
+          </div>
+        </div>
+
+        {/* Modal */}
+        <Modal
+          isOpen={isEnquiryModalOpen}
+          onClose={() => setIsEnquiryModalOpen(false)}
+          title="Enquire Now"
+          size="md"
+        >
+          <EnquiryForm onSuccess={() => setIsEnquiryModalOpen(false)} />
+        </Modal>
       </div>
     );
   }
@@ -93,54 +109,32 @@ const HeroSection = () => {
   const currentBanner = banners[currentSlide];
 
   return (
-    <>
+    <div className="flex flex-col">
+      {/* 1. Banner Section */}
       <div className="relative w-full group bg-black overflow-hidden">
-        {/* Responsive Image Container
-           min-h-[30vh]: Mobile - Ensures at least 30% of screen height is used.
-           md:min-h-[40vh]: Desktop - Ensures at least 40% of screen height is used.
-           This is much better than fixed pixels because it adapts to the device.
-        */}
+        {/* Responsive Image Container */}
         <div className="relative w-full md:min-h-[40vh] flex items-center justify-center">
           <img
             src={currentBanner.imageUrl}
             alt={currentBanner.title}
-            // max-h-[85vh] prevents the image from taking up the WHOLE screen on very tall images
             className="w-full h-auto object-contain md:object-cover max-h-[85vh] block"
           />
         </div>
 
-        {/* Content Layer */}
+        {/* Content Layer (Description Only) */}
         <div className="absolute inset-0 flex items-center justify-center md:justify-start">
           <div className="container mx-auto px-4 md:px-8">
             <div className="max-w-full md:max-w-2xl text-white text-center md:text-left">
-              {/* Title */}
-              {currentBanner.title && (
-                <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 md:mb-4 drop-shadow-lg tracking-tight">
-                  {currentBanner.title}
-                </h1>
-              )}
-
-              {/* Description */}
               {currentBanner.description && (
-                <p className="text-sm sm:text-base md:text-xl mb-4 md:mb-6 opacity-95 drop-shadow-md hidden sm:block">
+                <p className="text-sm sm:text-base md:text-xl mb-0 opacity-95 drop-shadow-md hidden sm:block bg-black/30 p-4 rounded-lg backdrop-blur-sm inline-block">
                   {currentBanner.description}
                 </p>
               )}
-
-              {/* Button */}
-              <div className="mt-2 md:mt-4">
-                <Button
-                  onClick={() => setIsEnquiryModalOpen(true)}
-                  className="bg-[#002B6B] hover:bg-[#001c45] text-white px-6 py-2 md:px-8 md:py-3 text-sm md:text-base rounded-lg shadow-xl hover:scale-105 transition-transform duration-200 border border-white/20"
-                >
-                  Enquire Now
-                </Button>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Arrows - Hidden on Mobile */}
+        {/* Navigation Arrows */}
         {banners.length > 1 && (
           <>
             <button
@@ -175,6 +169,24 @@ const HeroSection = () => {
         )}
       </div>
 
+      {/* 2. Call To Action Section (Below Banner) */}
+      <div className="bg-white py-8 border-b border-gray-100 shadow-sm relative z-10">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+          <div>
+            <h3 className="text-lg md:text-xl font-bold text-gray-800">
+              Ready to excel in your studies?
+            </h3>
+            <p className="text-gray-500 text-sm">Join Centum Academy today and achieve your academic goals.</p>
+          </div>
+          <Button
+            onClick={() => setIsEnquiryModalOpen(true)}
+            className="bg-[#002B6B] hover:bg-[#001c45] text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold whitespace-nowrap"
+          >
+            Enquire Now
+          </Button>
+        </div>
+      </div>
+
       {/* Modal */}
       <Modal
         isOpen={isEnquiryModalOpen}
@@ -184,7 +196,7 @@ const HeroSection = () => {
       >
         <EnquiryForm onSuccess={() => setIsEnquiryModalOpen(false)} />
       </Modal>
-    </>
+    </div>
   );
 };
 
