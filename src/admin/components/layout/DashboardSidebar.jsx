@@ -19,16 +19,17 @@ import {
   MessageCircle,
   UserPlus,
   UserX,
-  Search
+  Search,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
 import { filterNavigationByPermissions } from '../../helpers/navigationPermissions';
-import logo from '../../../assets/logo.png';
 
 /**
  * DashboardSidebar Component
- * Role-based navigation sidebar for dashboards
+ * UPDATED: Logo removed (moved to Navbar).
+ * UPDATED: Active state uses Samsung-style gradients.
  */
 const DashboardSidebar = () => {
   const location = useLocation();
@@ -83,6 +84,7 @@ const DashboardSidebar = () => {
       { name: 'Assignments', path: '/dashboard/teacher/assignments', icon: ClipboardList },
       { name: 'Schedule', path: '/dashboard/teacher/schedule', icon: Calendar },
       { name: 'Analytics', path: '/dashboard/teacher/analytics', icon: BarChart },
+      { name: 'Settings', path: '/dashboard/teacher/settings', icon: Settings },
     ],
 
     [ROLES.STUDENT]: [
@@ -92,6 +94,7 @@ const DashboardSidebar = () => {
       { name: 'Grades', path: '/dashboard/student/grades', icon: GraduationCap },
       { name: 'Schedule', path: '/dashboard/student/schedule', icon: Calendar },
       { name: 'Messages', path: '/dashboard/student/messages', icon: MessageSquare },
+      { name: 'Settings', path: '/dashboard/student/settings', icon: Settings },
     ],
 
     [ROLES.PARENT]: [
@@ -100,72 +103,90 @@ const DashboardSidebar = () => {
       { name: 'Courses', path: '/dashboard/parent/courses', icon: BookOpen },
       { name: 'Grades', path: '/dashboard/parent/grades', icon: GraduationCap },
       { name: 'Messages', path: '/dashboard/parent/messages', icon: MessageSquare },
+      { name: 'Settings', path: '/dashboard/parent/settings', icon: Settings },
     ],
   };
 
   const allItems = navigationItems[user?.role] || [];
-  
-  // Filter navigation items based on user permissions
   const items = filterNavigationByPermissions(allItems, user);
-
   const isActive = (path) => location.pathname === path;
 
+  // Helper to get Role Label
+  const getRoleLabel = () => {
+    switch(user?.role) {
+      case ROLES.SUPER_ADMIN: return 'Super Admin';
+      case ROLES.ADMIN: return 'Admin Portal';
+      case ROLES.TECHNICAL_HEAD: return 'Technical Head';
+      case ROLES.TEACHER: return 'Teacher Portal';
+      case ROLES.STUDENT: return 'Student Portal';
+      case ROLES.PARENT: return 'Parent Portal';
+      default: return 'Dashboard';
+    }
+  };
+
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
-      <div className="p-6 border-b border-gray-200">
-        {/* Logo and Brand */}
-        <Link to="/" className="flex items-center space-x-3 mb-4 group">
-          <img 
-            src={logo} 
-            alt="Centum Academy" 
-            className="h-12 w-12 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow"
-          />
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-primary leading-tight">
-              Centum Academy
-            </h3>
-            <p className="text-xs text-primary-600 italic">Education with Emotion</p>
+    <aside className="w-72 bg-white/50 backdrop-blur-xl border-r border-white/50 flex flex-col h-full shadow-[4px_0_24px_rgba(0,0,0,0.02)] relative z-20">
+      
+      {/* 1. Context Header (Logo removed) */}
+      <div className="p-6 pb-2">
+        {/* Portal Badge */}
+        <div className="px-5 py-4 bg-gradient-to-br from-white to-blue-50/50 rounded-2xl border border-white shadow-sm flex items-center justify-between group hover:shadow-md transition-all duration-300">
+          <div>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Current View</p>
+            <p className="text-sm font-bold text-[#002B6B]">{getRoleLabel()}</p>
           </div>
-        </Link>
-        
-        {/* Dashboard Title */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">
-            {user?.role === ROLES.SUPER_ADMIN && 'Super Admin Panel'}
-            {user?.role === ROLES.ADMIN && 'Admin Panel'}
-            {user?.role === ROLES.TECHNICAL_HEAD && 'Technical Dashboard'}
-            {user?.role === ROLES.TEACHER && 'Teacher Portal'}
-            {user?.role === ROLES.STUDENT && 'Student Portal'}
-            {user?.role === ROLES.PARENT && 'Parent Portal'}
-          </h2>
-          <p className="text-xs text-gray-500 mt-1">{user?.name}</p>
+          <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-[#002B6B] shadow-sm border border-slate-50 group-hover:scale-110 transition-transform">
+             {user?.role === ROLES.STUDENT ? <GraduationCap className="w-5 h-5" /> : <UserCog className="w-5 h-5" />}
+          </div>
         </div>
       </div>
 
-      <nav className="px-3 pb-6">
-        <ul className="space-y-1">
+      {/* 2. Navigation Section */}
+      <div className="flex-1 overflow-y-auto py-4 px-4 custom-scrollbar">
+        <nav className="space-y-1.5">
           {items.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
 
             return (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                    active
-                      ? 'bg-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              </li>
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`
+                  group flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden
+                  ${active 
+                    ? 'text-white shadow-lg shadow-blue-900/20 translate-x-1' 
+                    : 'text-slate-500 hover:bg-white hover:text-[#002B6B] hover:shadow-sm hover:translate-x-1'
+                  }
+                `}
+              >
+                {/* Active Gradient Background */}
+                {active && (
+                   <div className="absolute inset-0 bg-gradient-to-r from-[#002B6B] to-[#0042a3] z-0"></div>
+                )}
+
+                <div className="flex items-center gap-3.5 relative z-10">
+                  <Icon 
+                    className={`w-5 h-5 transition-colors duration-300 ${active ? 'text-white' : 'text-slate-400 group-hover:text-[#002B6B]'}`} 
+                  />
+                  <span className={`font-medium tracking-wide ${active ? 'font-semibold' : ''}`}>
+                    {item.name}
+                  </span>
+                </div>
+                
+                {active && <ChevronRight className="w-4 h-4 text-white/70 relative z-10" />}
+              </Link>
             );
           })}
-        </ul>
-      </nav>
+        </nav>
+      </div>
+
+      {/* 3. Footer Decor */}
+      <div className="p-6 border-t border-slate-100/50">
+         <div className="text-center">
+            <p className="text-[10px] text-slate-300 font-medium">v1.0.0 • Centum Dashboard</p>
+         </div>
+      </div>
     </aside>
   );
 };
