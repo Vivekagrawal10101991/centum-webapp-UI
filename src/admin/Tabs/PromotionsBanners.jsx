@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon, Calendar, Star, FileText } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon, Calendar, Star, Smartphone, Monitor } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { cmsService } from '../services/cmsService';
-// ✅ IMPORT THE NEW IMAGE PICKER COMPONENT
 import ImagePicker from '../components/ImagePicker';
 
 export default function PromotionsBanners() {
@@ -16,8 +15,9 @@ export default function PromotionsBanners() {
   const [showBannerForm, setShowBannerForm] = useState(false);
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   
-  // ✅ STATE FOR IMAGE PICKER MODAL
+  // --- IMAGE PICKER STATE ---
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [imagePickerTarget, setImagePickerTarget] = useState(null); // 'desktop' or 'mobile'
 
   const [editingBanner, setEditingBanner] = useState(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
@@ -26,7 +26,8 @@ export default function PromotionsBanners() {
   const [banners, setBanners] = useState([]);
   const [bannerForm, setBannerForm] = useState({
     title: '',
-    imageUrl: '',
+    imageUrl: '',       // Desktop Image
+    mobileImageUrl: '', // ✅ Mobile Image
     redirectUrl: '',
     displayOrder: 1,
     active: true,
@@ -145,7 +146,7 @@ export default function PromotionsBanners() {
   // --- Banner Handlers ---
   const handleAddBanner = async () => {
     if (!bannerForm.title || !bannerForm.imageUrl) {
-      toast.error('Title and Image URL are required');
+      toast.error('Title and Desktop Image are required');
       return;
     }
 
@@ -161,7 +162,7 @@ export default function PromotionsBanners() {
       }
       
       setEditingBanner(null);
-      setBannerForm({ title: '', imageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
+      setBannerForm({ title: '', imageUrl: '', mobileImageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
       setShowBannerForm(false);
       fetchBanners();
     } catch (error) {
@@ -177,6 +178,7 @@ export default function PromotionsBanners() {
     setBannerForm({
       title: banner.title || '',
       imageUrl: banner.imageUrl || '',
+      mobileImageUrl: banner.mobileImageUrl || '', // ✅ Load Mobile Image
       redirectUrl: banner.redirectUrl || '',
       displayOrder: banner.displayOrder || 1,
       active: banner.active
@@ -208,6 +210,17 @@ export default function PromotionsBanners() {
       toast.error('Failed to update status');
       fetchBanners(); 
     }
+  };
+
+  // ✅ Unified Image Selection Handler
+  const handleImageSelect = (url) => {
+    if (imagePickerTarget === 'desktop') {
+      setBannerForm({ ...bannerForm, imageUrl: url });
+    } else if (imagePickerTarget === 'mobile') {
+      setBannerForm({ ...bannerForm, mobileImageUrl: url });
+    }
+    setShowImagePicker(false);
+    setImagePickerTarget(null);
   };
 
   // --- 2. ANNOUNCEMENT HANDLERS ---
@@ -292,12 +305,12 @@ export default function PromotionsBanners() {
 
   return (
     <div>
-      {/* ✅ ADDED: IMAGE PICKER MODAL */}
+      {/* ✅ UPDATED: IMAGE PICKER MODAL */}
       <ImagePicker 
         isOpen={showImagePicker}
         onClose={() => setShowImagePicker(false)}
-        title="Select Banner Image"
-        onSelect={(url) => setBannerForm({ ...bannerForm, imageUrl: url })}
+        title={imagePickerTarget === 'mobile' ? "Select Mobile Banner (Portrait)" : "Select Desktop Banner (Landscape)"}
+        onSelect={handleImageSelect}
       />
 
       <div className="mb-6">
@@ -338,7 +351,7 @@ export default function PromotionsBanners() {
               onClick={() => {
                 setShowBannerForm(true);
                 setEditingBanner(null);
-                setBannerForm({ title: '', imageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
+                setBannerForm({ title: '', imageUrl: '', mobileImageUrl: '', redirectUrl: '', displayOrder: 1, active: true });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -353,7 +366,9 @@ export default function PromotionsBanners() {
               <h3 className="font-semibold text-gray-800 mb-4">
                 {editingBanner ? 'Edit Banner' : 'Add New Banner'}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* 1. Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
@@ -364,6 +379,8 @@ export default function PromotionsBanners() {
                     placeholder="e.g. NEET 2026 Crash Course"
                   />
                 </div>
+
+                {/* 2. Redirect URL */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Redirect URL (Optional)</label>
                   <input
@@ -375,55 +392,89 @@ export default function PromotionsBanners() {
                   />
                 </div>
                 
-                {/* ✅ REPLACED: Image Input with Select Button */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Banner Image *</label>
+                {/* 3. DESKTOP IMAGE */}
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <Monitor className="w-4 h-4 text-blue-600" /> Desktop Banner *
+                  </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       readOnly
                       value={bannerForm.imageUrl}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none"
-                      placeholder="Select an image from gallery..."
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm focus:outline-none"
+                      placeholder="Select desktop image..."
                     />
                     <button
-                      onClick={() => setShowImagePicker(true)}
-                      className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors flex items-center gap-2"
+                      onClick={() => { setImagePickerTarget('desktop'); setShowImagePicker(true); }}
+                      className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors flex items-center gap-1 text-sm font-medium"
                     >
                       <ImageIcon className="w-4 h-4" /> Select
                     </button>
                   </div>
-                  {/* Image Preview */}
+                  {/* Desktop Preview */}
                   {bannerForm.imageUrl && (
                     <div className="mt-2 h-32 w-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                       <img src={bannerForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                       <img src={bannerForm.imageUrl} alt="Desktop Preview" className="w-full h-full object-cover" />
                     </div>
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                  <input
-                    type="number"
-                    value={bannerForm.displayOrder}
-                    onChange={(e) => setBannerForm({ ...bannerForm, displayOrder: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    min="0"
-                  />
+                {/* 4. ✅ MOBILE IMAGE */}
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <Smartphone className="w-4 h-4 text-purple-600" /> Mobile Banner (Optional)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={bannerForm.mobileImageUrl}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm focus:outline-none"
+                      placeholder="Select mobile image..."
+                    />
+                    <button
+                      onClick={() => { setImagePickerTarget('mobile'); setShowImagePicker(true); }}
+                      className="bg-purple-50 text-purple-600 px-3 py-2 rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors flex items-center gap-1 text-sm font-medium"
+                    >
+                      <ImageIcon className="w-4 h-4" /> Select
+                    </button>
+                  </div>
+                  {/* Mobile Preview */}
+                  {bannerForm.mobileImageUrl && (
+                    <div className="mt-2 h-32 w-24 mx-auto bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                       <img src={bannerForm.mobileImageUrl} alt="Mobile Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center mt-6">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={bannerForm.active}
-                        onChange={(e) => setBannerForm({...bannerForm, active: e.target.checked})}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Set as Active</span>
-                    </label>
+
+                {/* 5. Display Order & Active */}
+                <div className="md:col-span-2 flex items-center gap-6 mt-2">
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
+                        <input
+                            type="number"
+                            value={bannerForm.displayOrder}
+                            onChange={(e) => setBannerForm({ ...bannerForm, displayOrder: parseInt(e.target.value) })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            min="0"
+                        />
+                    </div>
+                    <div className="flex items-center pt-7">
+                        <label className="flex items-center space-x-2 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            checked={bannerForm.active}
+                            onChange={(e) => setBannerForm({...bannerForm, active: e.target.checked})}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-5 h-5"
+                        />
+                        <span className="text-sm font-medium text-gray-700">Set as Active</span>
+                        </label>
+                    </div>
                 </div>
+
               </div>
-              <div className="flex items-center gap-4 mt-4">
+              <div className="flex items-center gap-4 mt-6 border-t pt-4 border-gray-100">
                 <button
                   onClick={handleAddBanner}
                   disabled={submitLoading}
@@ -461,16 +512,39 @@ export default function PromotionsBanners() {
                 banners.sort((a, b) => a.displayOrder - b.displayOrder).map((banner) => (
                 <div key={banner.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-32 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    
+                    {/* Desktop Image Thumb */}
+                    <div className="relative w-32 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 group">
                         {banner.imageUrl ? (
+                           <>
                            <img
                             src={banner.imageUrl}
                             alt={banner.title}
                             className="w-full h-full object-cover"
                           />
+                          <div className="absolute bottom-0 right-0 bg-black/50 text-white text-[10px] px-1">Desktop</div>
+                          </>
                         ) : (
                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                               <ImageIcon size={24}/>
+                               <Monitor size={20}/>
+                           </div>
+                        )}
+                    </div>
+
+                    {/* Mobile Image Thumb */}
+                    <div className="relative w-16 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
+                        {banner.mobileImageUrl ? (
+                           <>
+                           <img
+                            src={banner.mobileImageUrl}
+                            alt="Mobile"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-0 right-0 bg-purple-600/70 text-white text-[10px] px-1">Mobile</div>
+                          </>
+                        ) : (
+                           <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                               <Smartphone size={20}/>
                            </div>
                         )}
                     </div>
