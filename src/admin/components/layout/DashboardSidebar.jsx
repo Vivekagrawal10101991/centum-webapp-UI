@@ -43,6 +43,10 @@ const DashboardSidebar = () => {
       { name: 'Add User', path: '/dashboard/super-admin/add-user', icon: UserPlus },
       { name: 'Get Users', path: '/dashboard/super-admin/get-users', icon: Search },
       { name: 'Delete User', path: '/dashboard/super-admin/delete-user', icon: UserX },
+      
+      // ✅ NEW: LMS CENTER
+      { name: 'LMS Center', path: '/dashboard/super-admin/lms-center', icon: GraduationCap },
+
       { name: 'Promotions & Banners', path: '/dashboard/super-admin/promotions-banners', icon: Megaphone },
       { name: 'Academics & Results', path: '/dashboard/super-admin/academics-results', icon: Award },
       { name: 'Course Management', path: '/dashboard/super-admin/course-management', icon: BookOpen },
