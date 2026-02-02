@@ -191,22 +191,26 @@ const Achievers = () => {
 
       {/* 2. ACHIEVER BANNER SECTION (UPDATED RESPONSIVE) */}
       {gallery.length > 0 ? (
-        <div className="relative w-full group bg-black overflow-hidden">
+        <div className="relative w-full group bg-gray-900 overflow-hidden">
             
-            {/* RESPONSIVENESS UPDATE:
-              - Matched HeroSection structure.
-              - Uses vh units and object-contain/cover logic.
-              - Replaced split mobile/desktop implementation with unified responsive image.
-            */}
-            <div className="relative w-full md:min-h-[40vh] flex items-center justify-center">
-               <img
-                 src={gallery[currentSlide].imageUrl} 
-                 alt={gallery[currentSlide].description}
-                 className="w-full h-auto object-contain md:object-cover max-h-[85vh] block"
-               />
+            {/* ✅ RESPONSIVE IMAGE IMPLEMENTATION */}
+            <div className="relative w-full flex items-center justify-center">
+               <picture className="w-full h-full block">
+                   {/* Mobile Image (Screens < 768px) */}
+                   <source 
+                        media="(max-width: 768px)" 
+                        srcSet={gallery[currentSlide].mobileImageUrl || gallery[currentSlide].imageUrl} 
+                   />
+                   {/* Desktop Image (Default) */}
+                   <img
+                     src={gallery[currentSlide].imageUrl} 
+                     alt={gallery[currentSlide].description}
+                     className="w-full h-auto object-contain md:object-cover max-h-[85vh] block transition-opacity duration-500"
+                   />
+               </picture>
             </div>
 
-            {/* Dark Overlay */}
+            {/* Dark Overlay (Desktop Only - Optional) */}
             <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
             {/* Content Layer */}

@@ -7,9 +7,9 @@ import EnquiryForm from "./EnquiryForm";
 /**
  * HeroSection Component
  * UPDATED:
- * - Banner image and description remain in the top section.
- * - Added a dedicated white section BELOW the banner for the "Enquiry Now" button.
- * - Restored Modal and Form logic to handle the enquiry request.
+ * - Implemented <picture> tag for Responsive Images.
+ * - Shows 'mobileImageUrl' on devices < 768px width.
+ * - Falls back to 'imageUrl' (Desktop) if no mobile image is set.
  */
 const HeroSection = () => {
   const [banners, setBanners] = useState([]);
@@ -22,7 +22,9 @@ const HeroSection = () => {
     const fetchBanners = async () => {
       try {
         const data = await cmsService.getBanners();
-        setBanners(data);
+        // Only show active banners
+        const activeBanners = Array.isArray(data) ? data.filter(b => b.active) : [];
+        setBanners(activeBanners);
       } catch (error) {
         console.error("Error fetching banners:", error);
       } finally {
@@ -111,22 +113,37 @@ const HeroSection = () => {
   return (
     <div className="flex flex-col">
       {/* 1. Banner Section */}
-      <div className="relative w-full group bg-black overflow-hidden">
-        {/* Responsive Image Container */}
-        <div className="relative w-full md:min-h-[40vh] flex items-center justify-center">
-          <img
-            src={currentBanner.imageUrl}
-            alt={currentBanner.title}
-            className="w-full h-auto object-contain md:object-cover max-h-[85vh] block"
-          />
+      <div className="relative w-full group bg-gray-900 overflow-hidden">
+        
+        {/* ✅ RESPONSIVE IMAGE CONTAINER */}
+        <div className="relative w-full flex items-center justify-center">
+          <a 
+            href={currentBanner.redirectUrl || '#'} 
+            className={`block w-full h-full ${!currentBanner.redirectUrl && 'cursor-default'}`}
+          >
+             <picture className="w-full h-full block">
+                {/* 1. Mobile Image (Triggered on screens < 768px) */}
+                <source 
+                   media="(max-width: 768px)" 
+                   srcSet={currentBanner.mobileImageUrl || currentBanner.imageUrl} 
+                />
+                
+                {/* 2. Desktop Image (Default) */}
+                <img
+                  src={currentBanner.imageUrl}
+                  alt={currentBanner.title}
+                  className="w-full h-auto object-contain md:object-cover max-h-[85vh] block transition-opacity duration-500"
+                />
+             </picture>
+          </a>
         </div>
 
-        {/* Content Layer (Description Only) */}
-        <div className="absolute inset-0 flex items-center justify-center md:justify-start">
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="max-w-full md:max-w-2xl text-white text-center md:text-left">
+        {/* Content Layer (Description Only - Desktop Only) */}
+        <div className="absolute inset-0 pointer-events-none hidden md:flex items-center justify-start">
+          <div className="container mx-auto px-8">
+            <div className="max-w-2xl text-white text-left">
               {currentBanner.description && (
-                <p className="text-sm sm:text-base md:text-xl mb-0 opacity-95 drop-shadow-md hidden sm:block bg-black/30 p-4 rounded-lg backdrop-blur-sm inline-block">
+                <p className="text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 p-4 rounded-lg backdrop-blur-sm inline-block">
                   {currentBanner.description}
                 </p>
               )}
@@ -138,13 +155,13 @@ const HeroSection = () => {
         {banners.length > 1 && (
           <>
             <button
-              onClick={prevSlide}
+              onClick={(e) => { e.preventDefault(); prevSlide(); }}
               className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/60 transition-colors backdrop-blur-sm z-20"
             >
               <ChevronLeft className="w-8 h-8" />
             </button>
             <button
-              onClick={nextSlide}
+              onClick={(e) => { e.preventDefault(); nextSlide(); }}
               className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/60 transition-colors backdrop-blur-sm z-20"
             >
               <ChevronRight className="w-8 h-8" />
@@ -155,7 +172,7 @@ const HeroSection = () => {
               {banners.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentSlide(index)}
+                  onClick={(e) => { e.preventDefault(); setCurrentSlide(index); }}
                   className={`h-1.5 md:h-2 rounded-full transition-all duration-300 shadow-sm ${
                     index === currentSlide
                       ? "bg-white w-6 md:w-8"

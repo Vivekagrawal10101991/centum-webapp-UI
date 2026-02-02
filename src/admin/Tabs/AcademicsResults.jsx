@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Medal, Loader, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Medal, Loader, Image as ImageIcon, Loader2, Smartphone, Monitor } from 'lucide-react';
 import { cmsService } from '../services/cmsService';
 import api from '../../services/api'; 
 import { toast } from 'react-hot-toast';
@@ -12,7 +12,7 @@ export default function AcademicsResults() {
 
   // --- Image Picker State ---
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [pickerTarget, setPickerTarget] = useState('topper');
+  const [pickerTarget, setPickerTarget] = useState(null); // 'topper', 'achiever-desktop', 'achiever-mobile'
 
   // --- Toppers State ---
   const [toppers, setToppers] = useState([]);
@@ -33,7 +33,8 @@ export default function AcademicsResults() {
   const [editingAchiever, setEditingAchiever] = useState(null);
   const [achieverForm, setAchieverForm] = useState({
     description: '',
-    imageUrl: ''
+    imageUrl: '',       // Desktop
+    mobileImageUrl: ''  // ✅ Mobile
   });
 
   // --- Fetch Data ---
@@ -106,7 +107,7 @@ export default function AcademicsResults() {
 
   // --- Achiever Handlers ---
   const handleSaveAchiever = async () => {
-    if (!achieverForm.imageUrl) return toast.error('Image is required');
+    if (!achieverForm.imageUrl) return toast.error('Desktop Image is required');
     try {
       setSubmitLoading(true);
       if (editingAchiever) {
@@ -117,7 +118,7 @@ export default function AcademicsResults() {
         toast.success('Gallery item added');
       }
       setShowAchieverForm(false);
-      setAchieverForm({ description: '', imageUrl: '' });
+      setAchieverForm({ description: '', imageUrl: '', mobileImageUrl: '' });
       fetchAchievers();
     } catch (error) {
       toast.error('Failed to save gallery item');
@@ -137,19 +138,25 @@ export default function AcademicsResults() {
     }
   };
 
+  // ✅ Unified Image Selection
+  const handleImageSelect = (url) => {
+    if (pickerTarget === 'topper') {
+        setTopperForm({ ...topperForm, imageUrl: url });
+    } else if (pickerTarget === 'achiever-desktop') {
+        setAchieverForm({ ...achieverForm, imageUrl: url });
+    } else if (pickerTarget === 'achiever-mobile') {
+        setAchieverForm({ ...achieverForm, mobileImageUrl: url });
+    }
+    setShowImagePicker(false);
+  };
+
   return (
     <div>
       <ImagePicker 
         isOpen={showImagePicker}
         onClose={() => setShowImagePicker(false)}
-        title={pickerTarget === 'topper' ? "Select Topper Image" : "Select Gallery Image"}
-        onSelect={(url) => {
-          if (pickerTarget === 'topper') {
-            setTopperForm({ ...topperForm, imageUrl: url });
-          } else {
-            setAchieverForm({ ...achieverForm, imageUrl: url });
-          }
-        }}
+        title={pickerTarget?.includes('mobile') ? "Select Mobile Image (Portrait)" : "Select Image"}
+        onSelect={handleImageSelect}
       />
 
       <div className="mb-6">
@@ -220,7 +227,7 @@ export default function AcademicsResults() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {toppers.map((topper) => (
                 <div key={topper.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex gap-4">
-                  <img src={topper.imageUrl || 'https://via.placeholder.com/150'} className="w-20 h-20 rounded-full object-cover border" />
+                  <img src={topper.imageUrl || 'https://via.placeholder.com/150'} className="w-20 h-20 rounded-full object-cover border" alt="Topper"/>
                   <div className="flex-1">
                     <div className="flex justify-between">
                       <h4 className="font-semibold">{topper.studentName}</h4>
@@ -248,8 +255,7 @@ export default function AcademicsResults() {
               onClick={() => {
                 setShowAchieverForm(true);
                 setEditingAchiever(null);
-                setAchieverForm({ description: '', imageUrl: '' });
-                setPickerTarget('achiever');
+                setAchieverForm({ description: '', imageUrl: '', mobileImageUrl: '' });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
@@ -259,13 +265,42 @@ export default function AcademicsResults() {
 
           {showAchieverForm && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <input type="text" placeholder="Caption" value={achieverForm.description} onChange={(e) => setAchieverForm({...achieverForm, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg mb-4" />
-              <div className="flex gap-2 mb-4">
-                <input type="text" readOnly value={achieverForm.imageUrl} className="flex-1 px-3 py-2 border rounded-lg bg-gray-50" placeholder="Select image..." />
-                <button onClick={() => { setPickerTarget('achiever'); setShowImagePicker(true); }} className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg border border-blue-100 flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4" /> Select
-                </button>
+              <input 
+                type="text" 
+                placeholder="Caption / Title" 
+                value={achieverForm.description} 
+                onChange={(e) => setAchieverForm({...achieverForm, description: e.target.value})} 
+                className="w-full px-3 py-2 border rounded-lg mb-4" 
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {/* Desktop Image */}
+                <div>
+                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <Monitor className="w-4 h-4 text-blue-600" /> Desktop Image *
+                   </label>
+                   <div className="flex gap-2">
+                        <input type="text" readOnly value={achieverForm.imageUrl} className="flex-1 px-3 py-2 border rounded-lg bg-gray-50 text-sm" placeholder="Desktop URL..." />
+                        <button onClick={() => { setPickerTarget('achiever-desktop'); setShowImagePicker(true); }} className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4" /> Select
+                        </button>
+                   </div>
+                </div>
+
+                {/* Mobile Image */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <Smartphone className="w-4 h-4 text-purple-600" /> Mobile Image (Optional)
+                   </label>
+                   <div className="flex gap-2">
+                        <input type="text" readOnly value={achieverForm.mobileImageUrl} className="flex-1 px-3 py-2 border rounded-lg bg-gray-50 text-sm" placeholder="Mobile URL..." />
+                        <button onClick={() => { setPickerTarget('achiever-mobile'); setShowImagePicker(true); }} className="bg-purple-50 text-purple-600 px-3 py-2 rounded-lg border border-purple-100 flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4" /> Select
+                        </button>
+                   </div>
+                </div>
               </div>
+
               <div className="flex gap-4">
                 <button onClick={handleSaveAchiever} disabled={submitLoading} className="bg-blue-600 text-white px-6 py-2 rounded-lg">{submitLoading ? 'Saving...' : 'Save Image'}</button>
                 <button onClick={() => setShowAchieverForm(false)} className="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button>
@@ -279,9 +314,22 @@ export default function AcademicsResults() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {achievers.map((item) => (
                 <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group relative">
-                  <img src={item.imageUrl} className="w-full aspect-video object-cover" />
+                   {/* Thumbnail Preview: Shows Desktop by default, Mobile indicator if present */}
+                   <div className="relative aspect-video">
+                        <img src={item.imageUrl} className="w-full h-full object-cover" alt="Gallery Item"/>
+                        {item.mobileImageUrl && (
+                            <div className="absolute top-2 right-2 bg-purple-600 text-white p-1 rounded-full shadow-md" title="Has Mobile Image">
+                                <Smartphone size={12} />
+                            </div>
+                        )}
+                   </div>
+                  
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button onClick={() => { setEditingAchiever(item); setAchieverForm(item); setShowAchieverForm(true); setPickerTarget('achiever'); }} className="p-2 bg-white text-blue-600 rounded-full"><Edit2 size={16}/></button>
+                    <button onClick={() => { setEditingAchiever(item); setAchieverForm({
+                        description: item.description || '',
+                        imageUrl: item.imageUrl || '',
+                        mobileImageUrl: item.mobileImageUrl || ''
+                    }); setShowAchieverForm(true); }} className="p-2 bg-white text-blue-600 rounded-full"><Edit2 size={16}/></button>
                     <button onClick={() => handleDeleteAchiever(item.id)} className="p-2 bg-white text-red-600 rounded-full"><Trash2 size={16}/></button>
                   </div>
                   <div className="p-2 text-sm text-gray-700 truncate">{item.description}</div>
