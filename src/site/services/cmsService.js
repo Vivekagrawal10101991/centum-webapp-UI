@@ -13,6 +13,13 @@ export const cmsService = {
     const response = await api.get('/api/tech/academic/results');
     return response.data;
   },
+  
+  // ✅ NEW: Get Success Stories (YouTube Videos) from Backend
+  getStories: async () => {
+    const response = await api.get('/api/tech/social/stories');
+    return response.data;
+  },
+
   getTestimonials: async () => {
     const response = await api.get('/api/tech/social/testimonials');
     return response.data;
@@ -28,21 +35,11 @@ export const cmsService = {
     return response.data;
   },
 
-  /**
-   * Fetches a single course by matching the Slug OR the ID.
-   * Based on your DB schema, we check 'slug' (varchar) and 'id' (varchar).
-   */
   getCourseBySlug: async (slugOrId) => {
     const response = await api.get('/api/tech/courses/all');
     const courses = response.data;
-    
     if (!Array.isArray(courses)) return null;
-
-    // Strict check based on your DB columns: id and slug
-    return courses.find(c => 
-      c.slug === slugOrId || 
-      c.id === slugOrId
-    );
+    return courses.find(c => c.slug === slugOrId || c.id === slugOrId);
   }
 };
 

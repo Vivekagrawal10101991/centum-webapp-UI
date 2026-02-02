@@ -13,8 +13,6 @@ export const cmsService = {
   },
 
   updateCourse: async (id, courseData) => {
-    // FIXED: Changed endpoint from '/api/tech/courses/all' to '/api/tech/courses/${id}'
-    // This matches the pattern used by DELETE
     const response = await api.put(`/api/tech/courses/${id}`, courseData);
     return response.data;
   },
@@ -63,6 +61,27 @@ export const cmsService = {
 
   deleteTopper: async (id) => {
     const response = await api.delete(`/api/tech/academic/toppers/${id}`);
+    return response.data;
+  },
+
+  // --- YouTube Stories (Videos) Endpoints ---
+  getStories: async () => {
+    const response = await api.get('/api/tech/social/stories');
+    return response.data;
+  },
+
+  createStory: async (storyData) => {
+    const response = await api.post('/api/tech/social/stories', storyData);
+    return response.data;
+  },
+
+  updateStory: async (id, storyData) => {
+    const response = await api.put(`/api/tech/social/stories/${id}`, storyData);
+    return response.data;
+  },
+
+  deleteStory: async (id) => {
+    const response = await api.delete(`/api/tech/social/stories/${id}`);
     return response.data;
   }
 };

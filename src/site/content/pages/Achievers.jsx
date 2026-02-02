@@ -1,155 +1,113 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ChevronLeft, ChevronRight, Sparkles, Youtube, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Loader2, ChevronLeft, ChevronRight, Sparkles, Play, X } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 import { Button, Modal } from '../../../components/common';
 import EnquiryForm from '../../components/specific/EnquiryForm';
 
 /**
- * VideosSection Component
- * Fetches and displays YouTube videos in a 3-column grid
+ * 🎨 Samsung One UI Inspired Pastel Colors
+ * Randomly assigned to cards to give that "faded/soft" professional look.
  */
-const VideosSection = () => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  // Replace with your actual YouTube API Key
-  const API_KEY = 'YOUR_YOUTUBE_API_KEY'; 
-  const CHANNEL_ID = 'UC_x5XG1OV2P6uSZw9H2of7Q'; // Derived from @CentumAcademy
+const PASTEL_COLORS = [
+  { bg: 'bg-[#E3F2FD]', text: 'text-[#1565C0]', accent: 'bg-[#BBDEFB]' }, // Soft Blue
+  { bg: 'bg-[#F3E5F5]', text: 'text-[#7B1FA2]', accent: 'bg-[#E1BEE7]' }, // Soft Purple
+  { bg: 'bg-[#E8F5E9]', text: 'text-[#2E7D32]', accent: 'bg-[#C8E6C9]' }, // Soft Green
+  { bg: 'bg-[#FFF3E0]', text: 'text-[#E65100]', accent: 'bg-[#FFE0B2]' }, // Soft Orange
+  { bg: 'bg-[#FCE4EC]', text: 'text-[#C2185B]', accent: 'bg-[#F8BBD0]' }, // Soft Pink
+  { bg: 'bg-[#E0F2F1]', text: 'text-[#00695C]', accent: 'bg-[#B2DFDB]' }, // Soft Teal
+];
 
-  useEffect(() => {
-    const fetchYouTubeVideos = async () => {
-      try {
-        // Fetching latest 3 videos from the channel
-        const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=3&type=video`
-        );
-        const data = await response.json();
-        setVideos(data.items || []);
-      } catch (error) {
-        console.error('Error fetching YouTube videos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+// Helper to extract Video ID
+const getYoutubeId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
 
-    fetchYouTubeVideos();
-  }, []);
-
-  if (videos.length === 0 && !loading) return null;
+// --- Custom Video Card Component ---
+const StoryCard = ({ story, index, onPlay }) => {
+  const theme = PASTEL_COLORS[index % PASTEL_COLORS.length];
+  const videoId = getYoutubeId(story.videoUrl);
 
   return (
-    <section className="py-20 bg-secondary-50">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-              Watch Our Success Stories
-            </h2>
-            <p className="text-secondary-600 text-lg">
-              Explore our latest educational content and student testimonials on YouTube.
-            </p>
+    <motion.div
+      whileHover={{ y: -8, scale: 1.02 }}
+      className={`relative rounded-2xl overflow-hidden ${theme.bg} shadow-sm hover:shadow-lg border border-white/60 flex flex-col h-full transition-all duration-300 group cursor-pointer`}
+      onClick={() => onPlay(videoId)}
+    >
+      {/* Thumbnail Container */}
+      {/* ✅ Changed padding to be tighter and radius to be smaller (50% reduction) */}
+      <div className="p-2 pb-0">
+        {/* ✅ Changed aspect-ratio to 'video' (16:9) for professional YouTube look */}
+        <div className="relative aspect-video rounded-xl overflow-hidden shadow-inner bg-black/10">
+          {videoId ? (
+             <img
+               src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+               alt={story.title}
+               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+             />
+          ) : (
+             <div className="w-full h-full flex items-center justify-center text-gray-400">No Preview</div>
+          )}
+          
+          {/* Custom Play Button Overlay */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <div className={`w-12 h-12 ${theme.bg} rounded-full flex items-center justify-center shadow-lg backdrop-blur-md bg-opacity-90 group-hover:scale-110 transition-transform duration-300`}>
+              <Play className={`w-5 h-5 ${theme.text} fill-current ml-1`} />
+            </div>
           </div>
-          <a 
-            href="https://www.youtube.com/@CentumAcademy" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 font-bold rounded-xl shadow-sm border border-primary-100 hover:bg-primary-50 transition-colors group"
-          >
-            Explore More
-            <ExternalLink size={18} className="group-hover:translate-x-1 transition-transform" />
-          </a>
         </div>
-
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {videos.map((video) => (
-              <motion.div 
-                key={video.id.videoId}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-secondary-100 flex flex-col h-full"
-              >
-                {/* Video Thumbnail */}
-                <div className="relative aspect-video group cursor-pointer">
-                  <img 
-                    src={video.snippet.thumbnails.high.url} 
-                    alt={video.snippet.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                    <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <Youtube size={24} fill="currentColor" />
-                    </div>
-                  </div>
-                  <a 
-                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute inset-0"
-                  />
-                </div>
-
-                {/* Video Info */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-lg font-bold text-secondary-900 mb-3 line-clamp-2 leading-snug">
-                    {video.snippet.title}
-                  </h3>
-                  <p className="text-secondary-500 text-sm line-clamp-2 mb-6 flex-1">
-                    {video.snippet.description}
-                  </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-secondary-50">
-                    <span className="text-xs font-medium text-secondary-400 uppercase tracking-wider">
-                      {new Date(video.snippet.publishedAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
-                    <a 
-                      href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-600 text-sm font-bold hover:text-primary-700"
-                    >
-                      Watch Video
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
       </div>
-    </section>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+        <div className={`inline-flex self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${theme.accent} ${theme.text} bg-opacity-60`}>
+          Success Story
+        </div>
+        <h3 className="text-lg font-bold text-gray-800 mb-2 leading-tight line-clamp-2">
+          {story.title}
+        </h3>
+        <p className="text-gray-600 text-xs leading-relaxed line-clamp-3">
+          {story.description}
+        </p>
+      </div>
+    </motion.div>
   );
 };
 
 const Achievers = () => {
   const [gallery, setGallery] = useState([]);
+  const [stories, setStories] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
+  
+  // Video Modal State
+  const [playingVideoId, setPlayingVideoId] = useState(null);
 
   useEffect(() => {
-    const fetchGallery = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await cmsService.getAchieverGallery();
-        const galleryData = Array.isArray(data) ? data : (data?.data || []);
-        setGallery(galleryData);
+        // 1. Fetch Banners (Achiever Gallery)
+        const galleryData = await cmsService.getAchieverGallery();
+        setGallery(Array.isArray(galleryData) ? galleryData : (galleryData?.data || []));
+
+        // 2. Fetch Success Stories (Backend)
+        const storiesData = await cmsService.getStories();
+        setStories(Array.isArray(storiesData) ? storiesData : []);
       } catch (error) {
-        console.error('Error fetching gallery:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchGallery();
+    fetchData();
   }, []);
 
+  // Banner Slider Logic
   useEffect(() => {
     if (gallery.length > 1) {
       const interval = setInterval(() => {
@@ -162,7 +120,6 @@ const Achievers = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % gallery.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + gallery.length) % gallery.length);
 
-  // Loading State
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -173,35 +130,31 @@ const Achievers = () => {
 
   return (
     <div className="bg-white">
-      {/* 1. BLUE HERO SECTION */}
+      {/* 1. HERO HEADER */}
       <div className="relative bg-gradient-to-br from-primary-50 via-white to-primary-100 py-16 overflow-hidden border-b border-primary-100">
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="inline-block px-3 py-1 mb-3 text-[10px] font-bold text-primary-700 bg-white/80 rounded-full uppercase tracking-widest shadow-sm border border-primary-100">
-            Success Gallery
+            Hall of Fame
           </div>
           <h1 className="text-3xl md:text-5xl font-extrabold text-secondary-900 tracking-tight mb-4">
             Our Success Gallery
           </h1>
           <p className="text-lg text-secondary-600 max-w-2xl mx-auto font-light">
-            Celebrating the extraordinary journey of our trailblazing students.
+            Celebrating the extraordinary milestones of our brilliant students.
           </p>
           <div className="w-16 h-1.5 bg-gradient-to-r from-primary-500 to-accent rounded-full mx-auto mt-6 opacity-90"></div>
         </div>
       </div>
 
-      {/* 2. ACHIEVER BANNER SECTION (UPDATED RESPONSIVE) */}
+      {/* 2. ACHIEVER BANNER SECTION */}
       {gallery.length > 0 ? (
         <div className="relative w-full group bg-gray-900 overflow-hidden">
-            
-            {/* ✅ RESPONSIVE IMAGE IMPLEMENTATION */}
             <div className="relative w-full flex items-center justify-center">
                <picture className="w-full h-full block">
-                   {/* Mobile Image (Screens < 768px) */}
                    <source 
                         media="(max-width: 768px)" 
                         srcSet={gallery[currentSlide].mobileImageUrl || gallery[currentSlide].imageUrl} 
                    />
-                   {/* Desktop Image (Default) */}
                    <img
                      src={gallery[currentSlide].imageUrl} 
                      alt={gallery[currentSlide].description}
@@ -210,10 +163,8 @@ const Achievers = () => {
                </picture>
             </div>
 
-            {/* Dark Overlay (Desktop Only - Optional) */}
             <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
-            {/* Content Layer */}
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4 h-full flex items-center">
                 <div className="max-w-3xl text-white drop-shadow-xl relative z-10">
@@ -227,7 +178,6 @@ const Achievers = () => {
                     Success Story
                   </motion.div>
                   
-                  {/* Title hidden on mobile to avoid covering small images */}
                   <motion.h1 
                     key={currentSlide}
                     initial={{ y: 20, opacity: 0 }}
@@ -270,24 +220,70 @@ const Achievers = () => {
         </div>
       )}
 
-      {/* 3. NEW YOUTUBE VIDEOS SECTION */}
-      <VideosSection />
+      {/* 3. SUCCESS STORIES SECTION (VIDEO CARDS) */}
+      {stories.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Inspiring Success Stories
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+                Watch our students share their journey, struggles, and how they achieved their dreams with Centum Academy.
+              </p>
+            </div>
+
+            {/* ✅ Updated Grid: 4 columns on large screens, reduced gap */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stories.map((story, index) => (
+                <StoryCard 
+                  key={story.id} 
+                  story={story} 
+                  index={index} 
+                  onPlay={setPlayingVideoId}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 4. FOOTER STATS SECTION */}
-      <section className="py-16 bg-white border-b border-secondary-100">
+      <section className="py-16 bg-gray-50 border-t border-gray-100">
         <div className="container mx-auto px-4 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
-              <h2 className="text-2xl font-bold text-secondary-900">Celebrating Excellence</h2>
-              <p className="text-secondary-600 mt-2">Every student at Centum Academy has a unique story of growth and achievement.</p>
+              <h2 className="text-2xl font-bold text-gray-900">Join the League of Achievers</h2>
+              <p className="text-gray-500 mt-2">Your success story starts here.</p>
             </div>
             <div className="flex gap-4">
-              <div className="px-6 py-4 bg-secondary-50 rounded-2xl text-center"><span className="block text-2xl font-bold text-primary-600">100%</span><span className="text-xs font-semibold text-secondary-500 uppercase tracking-wider">Dedication</span></div>
-              <div className="px-6 py-4 bg-secondary-50 rounded-2xl text-center"><span className="block text-2xl font-bold text-primary-600">Top</span><span className="text-xs font-semibold text-secondary-500 uppercase tracking-wider">Results</span></div>
+              <div className="px-6 py-4 bg-white border border-gray-100 rounded-2xl text-center shadow-sm"><span className="block text-2xl font-bold text-primary-600">100%</span><span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Dedication</span></div>
+              <div className="px-6 py-4 bg-white border border-gray-100 rounded-2xl text-center shadow-sm"><span className="block text-2xl font-bold text-primary-600">Top</span><span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Results</span></div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* VIDEO MODAL */}
+      {playingVideoId && (
+        <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+            <button 
+              onClick={() => setPlayingVideoId(null)}
+              className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <iframe
+              src={`https://www.youtube.com/embed/${playingVideoId}?autoplay=1&rel=0`}
+              title="YouTube video player"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
 
       <Modal isOpen={isEnquiryModalOpen} onClose={() => setIsEnquiryModalOpen(false)} title="Start Your Success Story" size="md">
         <EnquiryForm onSuccess={() => setIsEnquiryModalOpen(false)} />
