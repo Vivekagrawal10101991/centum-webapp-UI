@@ -95,15 +95,13 @@ const CourseCard = ({
       transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] 
       ${theme.hoverBorder} 
       flex flex-col 
-      w-full max-w-[360px] h-[400px]
+      w-full h-[400px]
     `}>
-      
-      {/* Image Container Changes:
-         1. Increased height to 'h-56' (was h-48) to show more image.
-         2. Removed 'p-2' and 'bg-white' to remove the box effect.
-         3. Changed back to 'object-cover' so it fills the width fully.
-         4. Removed 'group-hover:scale-105' and 'transition-transform' to stop zooming.
+      {/* UPDATED: Removed 'max-w-[360px]' from the className above.
+         This allows the card to shrink/grow based on the grid layout in the parent component.
       */}
+      
+      {/* Image Container */}
       <div className="relative h-56 w-full bg-secondary-100 shrink-0 overflow-hidden border-b border-secondary-50">
         <img 
           src={imageUrl || "https://via.placeholder.com/400x250?text=Course+Image"} 

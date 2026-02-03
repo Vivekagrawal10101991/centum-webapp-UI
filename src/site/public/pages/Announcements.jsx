@@ -11,7 +11,8 @@ import {
   BellRing
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
-import { Link } from 'react-router-dom';
+// 1. UPDATED: Import useLocation
+import { Link, useLocation } from 'react-router-dom';
 import { cmsService } from '../../services/cmsService';
 
 const Announcements = () => {
@@ -20,8 +21,14 @@ const Announcements = () => {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 2. UPDATED: Hook to access navigation state
+  const location = useLocation();
+
   // --- FETCH REAL DATA ---
   useEffect(() => {
+    // Scroll to top on load
+    window.scrollTo(0, 0);
+
     const fetchAnnouncements = async () => {
       try {
         setLoading(true);
@@ -40,6 +47,26 @@ const Announcements = () => {
 
     fetchAnnouncements();
   }, []);
+
+  // 3. UPDATED: Scroll to specific announcement if targetId exists
+  useEffect(() => {
+    if (!loading && announcements.length > 0 && location.state?.targetId) {
+      const targetId = location.state.targetId;
+      const element = document.getElementById(`announcement-${targetId}`);
+      
+      if (element) {
+        // Wait a brief moment for layout to settle
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Add a temporary ring effect for visual feedback
+          element.classList.add('ring-4', 'ring-primary-400/50');
+          setTimeout(() => {
+            element.classList.remove('ring-4', 'ring-primary-400/50');
+          }, 2000);
+        }, 300);
+      }
+    }
+  }, [loading, announcements, location.state]);
 
   const filteredList = announcements.filter(item => {
     const itemType = item.type || 'Info';
@@ -151,7 +178,12 @@ const Announcements = () => {
                 </div>
                 
                 {pinnedItems.map((item) => (
-                  <div key={item.id} className="relative group">
+                  <div 
+                    key={item.id} 
+                    // 4. UPDATED: Add ID for scrolling
+                    id={`announcement-${item.id}`}
+                    className="relative group transition-all duration-500"
+                  >
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl opacity-75 group-hover:opacity-100 transition duration-300 blur-sm"></div>
                     <div className="relative bg-white rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start">
                       
@@ -203,7 +235,12 @@ const Announcements = () => {
                     const theme = getCategoryTheme(item.type);
 
                     return (
-                      <div key={item.id} className="relative pl-8 md:pl-12 py-4 group">
+                      <div 
+                        key={item.id} 
+                        // 5. UPDATED: Add ID for scrolling
+                        id={`announcement-${item.id}`}
+                        className="relative pl-8 md:pl-12 py-4 group transition-all duration-500"
+                      >
                         {/* Timeline Dot */}
                         <div className={`absolute -left-[9px] top-10 w-4 h-4 rounded-full border-2 border-white shadow-sm transition-all duration-300 group-hover:scale-125 z-10`} style={{ backgroundColor: theme.hex }}></div>
                         
