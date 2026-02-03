@@ -14,13 +14,18 @@ export const cmsService = {
     return response.data;
   },
   
-  // YouTube Stories
+  // Success Stories (Social Proof)
   getStories: async () => {
     const response = await api.get('/api/tech/social/stories');
     return response.data;
   },
 
-  // ✅ NEW: Fetch Contributors from Backend
+  // ✅ NEW: Video Library (For Explore Videos Page)
+  getAllVideos: async () => {
+    const response = await api.get('/api/tech/videos/all');
+    return response.data;
+  },
+
   getContributors: async () => {
     const response = await api.get('/api/tech/social/contributors');
     return response.data;

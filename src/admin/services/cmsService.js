@@ -64,7 +64,31 @@ export const cmsService = {
     return response.data;
   },
 
-  // --- YouTube Stories (Videos) Endpoints ---
+  // --- Video Library Endpoints (Media Center) ---
+  getAllVideos: async () => {
+    const response = await api.get('/api/tech/videos/all');
+    return response.data;
+  },
+
+  addVideo: async (videoData) => {
+    // Matches: POST /api/tech/videos/add
+    const response = await api.post('/api/tech/videos/add', videoData);
+    return response.data;
+  },
+
+  updateVideo: async (id, videoData) => {
+    // Matches: PUT /api/tech/videos/{id}
+    const response = await api.put(`/api/tech/videos/${id}`, videoData);
+    return response.data;
+  },
+
+  deleteVideo: async (id) => {
+    // Matches: DELETE /api/tech/videos/{id}
+    const response = await api.delete(`/api/tech/videos/${id}`);
+    return response.data;
+  },
+
+  // --- Success Stories Endpoints (Social Proof) ---
   getStories: async () => {
     const response = await api.get('/api/tech/social/stories');
     return response.data;

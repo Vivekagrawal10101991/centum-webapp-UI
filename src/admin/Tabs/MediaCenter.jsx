@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Video, Users, Image as ImageIcon, Loader2, ExternalLink, PlayCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, Image as ImageIcon, Loader2, Video, ExternalLink, PlayCircle } from 'lucide-react';
 import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
 import { cmsService } from '../services/cmsService';
 import ConfirmModal from '../../components/common/ConfirmModal';
@@ -16,8 +16,8 @@ export default function MediaCenter() {
   
   // Forms Visibility
   const [showBlogForm, setShowBlogForm] = useState(false);
-  const [showVideoForm, setShowVideoForm] = useState(false);
   const [showContributorForm, setShowContributorForm] = useState(false);
+  const [showVideoForm, setShowVideoForm] = useState(false);
   
   // Image Picker State
   const [showImagePicker, setShowImagePicker] = useState(false);
@@ -25,8 +25,8 @@ export default function MediaCenter() {
 
   // Editing States
   const [editingBlog, setEditingBlog] = useState(null);
-  const [editingVideo, setEditingVideo] = useState(null);
   const [editingContributor, setEditingContributor] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,22 +34,20 @@ export default function MediaCenter() {
 
   // Data States
   const [blogs, setBlogs] = useState([]);
-  const [videos, setVideos] = useState([]);
   const [contributors, setContributors] = useState([]);
+  const [videos, setVideos] = useState([]);
 
   // --- FORMS ---
   const [blogForm, setBlogForm] = useState({
     title: '', content: '', author: '', imageUrl: '', category: '', published: true,
   });
 
-  const [videoForm, setVideoForm] = useState({
-    title: '', description: '', videoUrl: '' 
+  const [contributorForm, setContributorForm] = useState({
+    title: '', description: '', imageUrl: ''
   });
 
-  const [contributorForm, setContributorForm] = useState({
-    title: '',
-    description: '',
-    imageUrl: ''
+  const [videoForm, setVideoForm] = useState({
+    title: '', description: '', videoUrl: '', visibility: 'PUBLIC'
   });
 
   // --- EDITOR CONFIGURATION ---
@@ -71,13 +69,6 @@ export default function MediaCenter() {
   ];
 
   // --- HELPERS ---
-  const getYoutubeId = (url) => {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
   const stripHtml = (html) => {
     if (!html) return '';
     const tmp = document.createElement("DIV");
@@ -85,11 +76,18 @@ export default function MediaCenter() {
     return tmp.textContent || tmp.innerText || "";
   };
 
+  const getYoutubeId = (url) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
   // --- FETCHING DATA ---
   useEffect(() => {
     if (activeSubTab === 'blogs') fetchBlogs();
-    if (activeSubTab === 'youtube') fetchVideos();
     if (activeSubTab === 'team') fetchContributors();
+    if (activeSubTab === 'videos') fetchVideos();
   }, [activeSubTab]);
 
   const fetchBlogs = async () => {
@@ -104,18 +102,6 @@ export default function MediaCenter() {
     }
   };
 
-  const fetchVideos = async () => {
-    setLoading(true);
-    try {
-      const data = await cmsService.getStories();
-      setVideos(data || []);
-    } catch (err) {
-      toast.error('Failed to load videos');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchContributors = async () => {
     setLoading(true);
     try {
@@ -123,6 +109,18 @@ export default function MediaCenter() {
       setContributors(data || []);
     } catch (err) {
       toast.error('Failed to load contributions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchVideos = async () => {
+    setLoading(true);
+    try {
+      const data = await cmsService.getAllVideos();
+      setVideos(data || []);
+    } catch (err) {
+      toast.error('Failed to load videos');
     } finally {
       setLoading(false);
     }
@@ -153,35 +151,7 @@ export default function MediaCenter() {
     }
   };
 
-  // 2. Video Handlers
-  const handleAddVideo = async () => {
-    if (!videoForm.title || !videoForm.videoUrl) {
-      toast.error('Title and Video URL are required');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      if (editingVideo) {
-        await cmsService.updateStory(editingVideo.id, videoForm);
-        toast.success('Video updated successfully');
-      } else {
-        await cmsService.createStory(videoForm);
-        toast.success('Video added successfully');
-      }
-      await fetchVideos();
-      setVideoForm({ title: '', description: '', videoUrl: '' });
-      setShowVideoForm(false);
-      setEditingVideo(null);
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to save video');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 3. Contributor Handlers
+  // 2. Contributor Handlers
   const handleAddContributor = async () => {
     if (!contributorForm.title || !contributorForm.description) {
       toast.error('Title and Description are required');
@@ -209,6 +179,34 @@ export default function MediaCenter() {
     }
   };
 
+  // 3. Video Handlers
+  const handleAddVideo = async () => {
+    if (!videoForm.title || !videoForm.videoUrl) {
+      toast.error('Title and Video URL are required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (editingVideo) {
+        await cmsService.updateVideo(editingVideo.id, videoForm);
+        toast.success('Video updated successfully');
+      } else {
+        await cmsService.addVideo(videoForm);
+        toast.success('Video added successfully');
+      }
+      await fetchVideos();
+      setVideoForm({ title: '', description: '', videoUrl: '', visibility: 'PUBLIC' });
+      setShowVideoForm(false);
+      setEditingVideo(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save video');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // --- DELETE LOGIC ---
   const openDeleteModal = (id, type) => {
     setDeleteConfirmModal({ isOpen: true, itemId: id, type });
@@ -228,14 +226,14 @@ export default function MediaCenter() {
         await deleteBlog(itemId);
         await fetchBlogs();
         toast.success('Blog deleted');
-      } else if (type === 'video') {
-        await cmsService.deleteStory(itemId);
-        await fetchVideos();
-        toast.success('Video deleted');
       } else if (type === 'contributor') {
         await cmsService.deleteContributor(itemId);
         await fetchContributors();
         toast.success('Contribution removed');
+      } else if (type === 'video') {
+        await cmsService.deleteVideo(itemId);
+        await fetchVideos();
+        toast.success('Video deleted');
       }
     } catch (err) {
       setError(err.message);
@@ -250,8 +248,8 @@ export default function MediaCenter() {
     const { type } = deleteConfirmModal;
     switch (type) {
       case 'blog': return { title: 'Delete Blog Post', message: 'Are you sure you want to delete this blog post?' };
-      case 'video': return { title: 'Delete Video', message: 'Are you sure you want to delete this video?' };
       case 'contributor': return { title: 'Delete Contribution', message: 'Are you sure you want to remove this contribution?' };
+      case 'video': return { title: 'Delete Video', message: 'Are you sure you want to remove this video from the library?' };
       default: return { title: 'Confirm Delete', message: 'Are you sure you want to delete this item?' };
     }
   };
@@ -286,7 +284,7 @@ export default function MediaCenter() {
 
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Media Center</h2>
-        <p className="text-gray-600 mt-1">Manage content marketing and contributions</p>
+        <p className="text-gray-600 mt-1">Manage blogs, videos, and team contributions</p>
       </div>
 
       {/* Tabs */}
@@ -301,20 +299,20 @@ export default function MediaCenter() {
             Blogs
           </button>
           <button
+            onClick={() => setActiveSubTab('videos')}
+            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+              activeSubTab === 'videos' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            YouTube Videos
+          </button>
+          <button
             onClick={() => { setActiveSubTab('gallery'); setImagePickerMode('gallery'); setShowImagePicker(true); }}
             className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
               activeSubTab === 'gallery' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'
             }`}
           >
             Gallery (Uploads)
-          </button>
-          <button
-            onClick={() => setActiveSubTab('youtube')}
-            className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
-              activeSubTab === 'youtube' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            YouTube Videos
           </button>
           <button
             onClick={() => setActiveSubTab('team')}
@@ -490,21 +488,21 @@ export default function MediaCenter() {
         </div>
       )}
 
-      {/* 3. YOUTUBE VIDEOS TAB */}
-      {activeSubTab === 'youtube' && (
+      {/* 3. YOUTUBE VIDEOS TAB (NEW) */}
+      {activeSubTab === 'videos' && (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Featured YouTube content and educational videos</p>
+            <p className="text-gray-600">Manage video library for courses and resources</p>
             {hasPermission(PERMISSIONS.ADD_VIDEO) && (
               <button
                 onClick={() => {
                   setShowVideoForm(true);
                   setEditingVideo(null);
-                  setVideoForm({ title: '', description: '', videoUrl: '' });
+                  setVideoForm({ title: '', description: '', videoUrl: '', visibility: 'PUBLIC' });
                 }}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <Plus className="w-4 h-4" /> Add YouTube Video
+                <Plus className="w-4 h-4" /> Add Video
               </button>
             )}
           </div>
@@ -524,7 +522,7 @@ export default function MediaCenter() {
                       value={videoForm.title}
                       onChange={(e) => setVideoForm({ ...videoForm, title: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="JEE Physics Marathon"
+                      placeholder="Intro to Calculus"
                     />
                   </div>
                   <div>
@@ -538,13 +536,24 @@ export default function MediaCenter() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Visibility</label>
+                    <select
+                      value={videoForm.visibility}
+                      onChange={(e) => setVideoForm({ ...videoForm, visibility: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="PUBLIC">Public</option>
+                      <option value="PRIVATE">Private</option>
+                    </select>
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
                       value={videoForm.description}
                       onChange={(e) => setVideoForm({ ...videoForm, description: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={3}
-                      placeholder="Brief description of the video content..."
+                      placeholder="Brief description..."
                     />
                   </div>
                 </div>
@@ -626,6 +635,9 @@ export default function MediaCenter() {
                     >
                        <ExternalLink className="w-4 h-4" />
                     </a>
+                    {video.visibility === 'PRIVATE' && (
+                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-gray-800 text-white text-xs rounded">Private</span>
+                    )}
                   </div>
 
                   <div className="p-4">
@@ -640,7 +652,8 @@ export default function MediaCenter() {
                             setVideoForm({
                               title: video.title,
                               description: video.description,
-                              videoUrl: video.videoUrl
+                              videoUrl: video.videoUrl,
+                              visibility: video.visibility || 'PUBLIC'
                             });
                             setShowVideoForm(true);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -667,7 +680,7 @@ export default function MediaCenter() {
         </div>
       )}
 
-      {/* 4. CONTRIBUTIONS TAB (UPDATED) */}
+      {/* 4. CONTRIBUTIONS TAB */}
       {activeSubTab === 'team' && (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
