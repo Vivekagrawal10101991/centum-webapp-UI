@@ -16,10 +16,11 @@ const Footer = () => {
     { name: 'Privacy Policy', path: '/privacy' },
   ];
 
+  // UPDATED: All specific course links now redirect to the main Courses page
   const courses = [
-    { name: 'JEE Preparation', path: '/courses/jee' },
-    { name: 'NEET Preparation', path: '/courses/neet' },
-    { name: 'Foundation Course', path: '/courses/foundation' },
+    { name: 'JEE Preparation', path: '/courses' },
+    { name: 'NEET Preparation', path: '/courses' },
+    { name: 'Foundation Course', path: '/courses' },
   ];
 
   const socialLinks = [
@@ -89,7 +90,7 @@ const Footer = () => {
             <h4 className="text-white text-lg font-semibold mb-4">Our Courses</h4>
             <ul className="space-y-2">
               {courses.map((course) => (
-                <li key={course.path}>
+                <li key={course.name}> {/* Changed key to name since paths are identical */}
                   <Link
                     to={course.path}
                     className="text-sm hover:text-primary transition-colors"

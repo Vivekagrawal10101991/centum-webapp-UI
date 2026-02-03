@@ -83,5 +83,26 @@ export const cmsService = {
   deleteStory: async (id) => {
     const response = await api.delete(`/api/tech/social/stories/${id}`);
     return response.data;
+  },
+
+  // --- Contributors (Team) Endpoints ---
+  getContributors: async () => {
+    const response = await api.get('/api/tech/social/contributors');
+    return response.data;
+  },
+
+  addContributor: async (data) => {
+    const response = await api.post('/api/tech/social/contributors', data);
+    return response.data;
+  },
+
+  updateContributor: async (id, data) => {
+    const response = await api.put(`/api/tech/social/contributors/${id}`, data);
+    return response.data;
+  },
+
+  deleteContributor: async (id) => {
+    const response = await api.delete(`/api/tech/social/contributors/${id}`);
+    return response.data;
   }
 };
