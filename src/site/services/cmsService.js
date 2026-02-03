@@ -14,9 +14,15 @@ export const cmsService = {
     return response.data;
   },
   
-  // ✅ NEW: Get Success Stories (YouTube Videos) from Backend
+  // YouTube Stories
   getStories: async () => {
     const response = await api.get('/api/tech/social/stories');
+    return response.data;
+  },
+
+  // ✅ NEW: Fetch Contributors from Backend
+  getContributors: async () => {
+    const response = await api.get('/api/tech/social/contributors');
     return response.data;
   },
 

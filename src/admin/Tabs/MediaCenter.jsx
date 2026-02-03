@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Video, Users, Eye, Image as ImageIcon, Loader2, ExternalLink, PlayCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Video, Users, Image as ImageIcon, Loader2, ExternalLink, PlayCircle } from 'lucide-react';
 import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
-import { cmsService } from '../services/cmsService'; // ✅ API Service
+import { cmsService } from '../services/cmsService';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { hasPermission } from '../helpers/authHelper';
 import { PERMISSIONS } from '../helpers/rolePermissions';
 import ImagePicker from '../components/ImagePicker';
 import { toast } from 'react-hot-toast';
 
-// ✅ FIXED: USING 'react-quill-new' FOR REACT 19 SUPPORT
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -35,46 +34,22 @@ export default function MediaCenter() {
 
   // Data States
   const [blogs, setBlogs] = useState([]);
-  const [videos, setVideos] = useState([]); // ✅ Now fetches from API
-  
-  // Dummy Data for Contributors (Kept as requested)
-  const [contributors, setContributors] = useState([
-    {
-      id: 1,
-      name: 'Dr. Rajesh Sharma',
-      role: 'Physics Faculty',
-      bio: 'IIT Delhi alumnus with 15 years of teaching experience',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200',
-      qualifications: ['PhD in Physics', 'IIT Delhi'],
-      experience: '15 years',
-      email: 'rajesh@institute.com',
-    },
-    {
-      id: 2,
-      name: 'Prof. Anjali Patel',
-      role: 'Chemistry Faculty',
-      bio: 'Expert in Organic Chemistry with proven track record',
-      photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
-      qualifications: ['MSc Chemistry', 'IIT Bombay'],
-      experience: '12 years',
-      email: 'anjali@institute.com',
-    },
-  ]);
+  const [videos, setVideos] = useState([]);
+  const [contributors, setContributors] = useState([]);
 
   // --- FORMS ---
   const [blogForm, setBlogForm] = useState({
     title: '', content: '', author: '', imageUrl: '', category: '', published: true,
   });
 
-  // ✅ Updated Video Form to match API (title, description, videoUrl)
   const [videoForm, setVideoForm] = useState({
-    title: '',
-    description: '',
-    videoUrl: '' 
+    title: '', description: '', videoUrl: '' 
   });
 
   const [contributorForm, setContributorForm] = useState({
-    name: '', role: '', bio: '', photo: '', qualifications: [''], experience: '', email: '',
+    title: '',
+    description: '',
+    imageUrl: ''
   });
 
   // --- EDITOR CONFIGURATION ---
@@ -114,6 +89,7 @@ export default function MediaCenter() {
   useEffect(() => {
     if (activeSubTab === 'blogs') fetchBlogs();
     if (activeSubTab === 'youtube') fetchVideos();
+    if (activeSubTab === 'team') fetchContributors();
   }, [activeSubTab]);
 
   const fetchBlogs = async () => {
@@ -135,6 +111,18 @@ export default function MediaCenter() {
       setVideos(data || []);
     } catch (err) {
       toast.error('Failed to load videos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchContributors = async () => {
+    setLoading(true);
+    try {
+      const data = await cmsService.getContributors();
+      setContributors(data || []);
+    } catch (err) {
+      toast.error('Failed to load contributions');
     } finally {
       setLoading(false);
     }
@@ -165,7 +153,7 @@ export default function MediaCenter() {
     }
   };
 
-  // 2. Video Handlers (Stories) - ✅ Updated to use API
+  // 2. Video Handlers
   const handleAddVideo = async () => {
     if (!videoForm.title || !videoForm.videoUrl) {
       toast.error('Title and Video URL are required');
@@ -193,17 +181,32 @@ export default function MediaCenter() {
     }
   };
 
-  // 3. Contributor Handlers (Local State - No changes)
-  const handleAddContributor = () => {
-    if (editingContributor) {
-      setContributors(contributors.map(c => c.id === editingContributor.id ? { ...contributorForm, id: editingContributor.id } : c));
-      setEditingContributor(null);
-    } else {
-      setContributors([...contributors, { ...contributorForm, id: Date.now() }]);
+  // 3. Contributor Handlers
+  const handleAddContributor = async () => {
+    if (!contributorForm.title || !contributorForm.description) {
+      toast.error('Title and Description are required');
+      return;
     }
-    setContributorForm({ name: '', role: '', bio: '', photo: '', qualifications: [''], experience: '', email: '' });
-    setShowContributorForm(false);
-    toast.success('Team member saved');
+
+    setLoading(true);
+    try {
+      if (editingContributor) {
+        await cmsService.updateContributor(editingContributor.id, contributorForm);
+        toast.success('Contribution updated successfully');
+      } else {
+        await cmsService.addContributor(contributorForm);
+        toast.success('Contribution added successfully');
+      }
+      await fetchContributors();
+      setContributorForm({ title: '', description: '', imageUrl: '' });
+      setShowContributorForm(false);
+      setEditingContributor(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save contribution');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- DELETE LOGIC ---
@@ -226,13 +229,13 @@ export default function MediaCenter() {
         await fetchBlogs();
         toast.success('Blog deleted');
       } else if (type === 'video') {
-        // ✅ Delete via API
         await cmsService.deleteStory(itemId);
         await fetchVideos();
         toast.success('Video deleted');
       } else if (type === 'contributor') {
-        setContributors(contributors.filter(c => c.id !== itemId));
-        toast.success('Member removed');
+        await cmsService.deleteContributor(itemId);
+        await fetchContributors();
+        toast.success('Contribution removed');
       }
     } catch (err) {
       setError(err.message);
@@ -248,7 +251,7 @@ export default function MediaCenter() {
     switch (type) {
       case 'blog': return { title: 'Delete Blog Post', message: 'Are you sure you want to delete this blog post?' };
       case 'video': return { title: 'Delete Video', message: 'Are you sure you want to delete this video?' };
-      case 'contributor': return { title: 'Delete Team Member', message: 'Are you sure you want to remove this team member?' };
+      case 'contributor': return { title: 'Delete Contribution', message: 'Are you sure you want to remove this contribution?' };
       default: return { title: 'Confirm Delete', message: 'Are you sure you want to delete this item?' };
     }
   };
@@ -276,14 +279,14 @@ export default function MediaCenter() {
           if (showBlogForm) {
              setBlogForm({ ...blogForm, imageUrl: url });
           } else if (showContributorForm) {
-             setContributorForm({ ...contributorForm, photo: url });
+             setContributorForm({ ...contributorForm, imageUrl: url });
           }
         } : undefined}
       />
 
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Media Center</h2>
-        <p className="text-gray-600 mt-1">Manage content marketing and team information</p>
+        <p className="text-gray-600 mt-1">Manage content marketing and contributions</p>
       </div>
 
       {/* Tabs */}
@@ -319,7 +322,7 @@ export default function MediaCenter() {
               activeSubTab === 'team' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'
             }`}
           >
-            Contributors/Team
+            Contributions
           </button>
         </div>
       </div>
@@ -487,7 +490,7 @@ export default function MediaCenter() {
         </div>
       )}
 
-      {/* 3. YOUTUBE VIDEOS TAB (UPDATED) */}
+      {/* 3. YOUTUBE VIDEOS TAB */}
       {activeSubTab === 'youtube' && (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
@@ -664,7 +667,7 @@ export default function MediaCenter() {
         </div>
       )}
 
-      {/* 4. CONTRIBUTORS TAB */}
+      {/* 4. CONTRIBUTIONS TAB (UPDATED) */}
       {activeSubTab === 'team' && (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
@@ -673,55 +676,73 @@ export default function MediaCenter() {
               onClick={() => {
                 setShowContributorForm(true);
                 setEditingContributor(null);
-                setContributorForm({ name: '', role: '', bio: '', photo: '', qualifications: [''], experience: '', email: '' });
+                setContributorForm({ title: '', description: '', imageUrl: '' });
               }}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
-              <Plus className="w-4 h-4" /> Add Team Member
+              <Plus className="w-4 h-4" /> Add Contribution
             </button>
           </div>
 
           {/* Contributor Form */}
           {showContributorForm && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full">
-              <h3 className="font-semibold text-gray-800 mb-4">{editingContributor ? 'Edit Team Member' : 'Add New Team Member'}</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">{editingContributor ? 'Edit Contribution' : 'Add New Contribution'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" value={contributorForm.name} onChange={(e) => setContributorForm({ ...contributorForm, name: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="Dr. Rajesh Sharma" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <input 
+                    type="text" 
+                    value={contributorForm.title} 
+                    onChange={(e) => setContributorForm({ ...contributorForm, title: e.target.value })} 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                    placeholder="e.g. Dr. Rajesh Sharma" 
+                  />
                 </div>
+                
+                {/* Image Picker Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Role/Position</label>
-                  <input type="text" value={contributorForm.role} onChange={(e) => setContributorForm({ ...contributorForm, role: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="Physics Faculty" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
-                  <input type="text" value={contributorForm.experience} onChange={(e) => setContributorForm({ ...contributorForm, experience: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="15 years" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input type="email" value={contributorForm.email} onChange={(e) => setContributorForm({ ...contributorForm, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="rajesh@institute.com" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Photo</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
                   <div className="flex gap-2">
-                    <input type="text" readOnly value={contributorForm.photo} className="flex-1 px-3 py-2 border rounded-lg bg-gray-50" placeholder="Select profile photo..." />
-                    <button onClick={() => { setImagePickerMode('select'); setShowImagePicker(true); }} className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 flex items-center gap-2">
+                    <input 
+                      type="text" 
+                      readOnly 
+                      value={contributorForm.imageUrl} 
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" 
+                      placeholder="Select profile photo..." 
+                    />
+                    <button 
+                      onClick={() => { setImagePickerMode('select'); setShowImagePicker(true); }} 
+                      className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg border border-blue-100 flex items-center gap-2"
+                    >
                       <ImageIcon className="w-4 h-4" /> Select
                     </button>
                   </div>
                 </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                  <textarea value={contributorForm.bio} onChange={(e) => setContributorForm({ ...contributorForm, bio: e.target.value })} className="w-full px-3 py-2 border rounded-lg" rows={3} placeholder="Bio..." />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Qualifications (comma separated)</label>
-                  <input type="text" value={contributorForm.qualifications.join(', ')} onChange={(e) => setContributorForm({ ...contributorForm, qualifications: e.target.value.split(',').map(q => q.trim()) })} className="w-full px-3 py-2 border rounded-lg" />
+
+                <div className="md:col-span-2 w-full max-w-full overflow-hidden">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <div className="bg-white w-full">
+                    <ReactQuill
+                      theme="snow"
+                      value={contributorForm.description}
+                      onChange={(content) => setContributorForm({ ...contributorForm, description: content })}
+                      modules={quillModules}
+                      formats={quillFormats}
+                      className="h-64 mb-12 w-full"
+                    />
+                  </div>
                 </div>
               </div>
+
               <div className="flex items-center gap-4 mt-4">
-                <button onClick={handleAddContributor} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">{editingContributor ? 'Update Member' : 'Add Member'}</button>
+                <button 
+                  onClick={handleAddContributor} 
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : (editingContributor ? 'Update Contribution' : 'Add Contribution')}
+                </button>
                 <button onClick={() => setShowContributorForm(false)} className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg">Cancel</button>
               </div>
             </div>
@@ -729,31 +750,50 @@ export default function MediaCenter() {
 
           {/* Contributors Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {contributors.length === 0 && !loading && (
+               <div className="col-span-full text-center py-12 text-gray-500">
+                  <Users className="w-12 h-12 mx-auto mb-3 opacity-20"/>
+                  <p>No contributions found.</p>
+               </div>
+            )}
+
             {contributors.map((contributor) => (
-              <div key={contributor.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-start gap-4">
-                  <img src={contributor.photo} alt={contributor.name} className="w-24 h-24 rounded-full object-cover flex-shrink-0" />
-                  <div className="flex-1 w-0">
-                    <div className="flex justify-between">
-                      <div className="flex-1 min-w-0 pr-2">
-                        <h4 className="font-semibold text-gray-800 text-lg truncate">{contributor.name}</h4>
-                        <p className="text-blue-600 text-sm truncate">{contributor.role}</p>
-                        <p className="text-xs text-gray-500 mt-1">{contributor.experience} experience</p>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <button onClick={() => { setEditingContributor(contributor); setContributorForm(contributor); setShowContributorForm(true); }} className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => openDeleteModal(contributor.id, 'contributor')} className="p-2 bg-red-100 text-red-600 rounded-lg"><Trash2 className="w-4 h-4" /></button>
-                      </div>
+              <div key={contributor.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex items-start gap-4">
+                <img 
+                  src={contributor.imageUrl || 'https://via.placeholder.com/150'} 
+                  alt={contributor.title} 
+                  className="w-24 h-24 rounded-full object-cover flex-shrink-0 bg-gray-100" 
+                />
+                <div className="flex-1 w-0">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 min-w-0 pr-2">
+                      <h4 className="font-semibold text-gray-800 text-lg truncate">{contributor.title}</h4>
+                      <p className="text-gray-600 text-sm line-clamp-3 mt-1">{stripHtml(contributor.description)}</p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0 flex-col">
+                      <button 
+                        onClick={() => { 
+                          setEditingContributor(contributor); 
+                          setContributorForm({ 
+                            title: contributor.title, 
+                            description: contributor.description, 
+                            imageUrl: contributor.imageUrl 
+                          }); 
+                          setShowContributorForm(true); 
+                        }} 
+                        className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => openDeleteModal(contributor.id, 'contributor')} 
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-700 text-sm mt-3 mb-3">{contributor.bio}</p>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {contributor.qualifications.map((qual, index) => (
-                    <span key={index} className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-xs">{qual}</span>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 truncate">{contributor.email}</p>
               </div>
             ))}
           </div>
