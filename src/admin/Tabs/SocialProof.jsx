@@ -1,15 +1,30 @@
-import { useState } from 'react';
-import { Plus, Edit2, Trash2, Star, Quote, Video } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, Star, Quote, Video, ExternalLink, PlayCircle, Loader2 } from 'lucide-react';
+import { cmsService } from '../services/cmsService';
+import { toast } from 'react-hot-toast';
+import ConfirmModal from '../../components/common/ConfirmModal';
+import { hasPermission } from '../helpers/authHelper';
+import { PERMISSIONS } from '../helpers/rolePermissions';
 
 export default function SocialProof() {
-  const [activeSubTab, setActiveSubTab] = useState('testimonials');
+  const [activeSubTab, setActiveSubTab] = useState('stories'); // Default to Success Stories
+  
+  // Forms Visibility
   const [showTestimonialForm, setShowTestimonialForm] = useState(false);
-  const [showStoryForm, setShowStoryForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [editingTestimonial, setEditingTestimonial] = useState(null);
-  const [editingStory, setEditingStory] = useState(null);
-  const [editingReview, setEditingReview] = useState(null);
+  const [showStoryForm, setShowStoryForm] = useState(false);
 
+  // Editing States
+  const [editingTestimonial, setEditingTestimonial] = useState(null);
+  const [editingReview, setEditingReview] = useState(null);
+  const [editingStory, setEditingStory] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  
+  // Data States
+  const [stories, setStories] = useState([]); // Stores data from /api/tech/social/stories
+
+  // Mock Data (Preserved from your upload)
   const [testimonials, setTestimonials] = useState([
     {
       id: 1,
@@ -29,20 +44,6 @@ export default function SocialProof() {
       review: 'Best coaching institute! Got AIR 67 in NEET. Thank you to all teachers.',
       photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
       achievement: 'AIR 67',
-      year: 2025,
-    },
-  ]);
-
-  const [stories, setStories] = useState([
-    {
-      id: 1,
-      studentName: 'Karan Patel',
-      title: 'Journey from 45% to AIR 156',
-      story: 'I struggled initially but with consistent effort and guidance from teachers, I improved dramatically. The mock tests and doubt-clearing sessions were game-changers.',
-      course: 'JEE Mains',
-      beforeScore: '45%',
-      afterScore: 'AIR 156',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
       year: 2025,
     },
   ]);
@@ -68,37 +69,81 @@ export default function SocialProof() {
     },
   ]);
 
+  // --- FORMS ---
   const [testimonialForm, setTestimonialForm] = useState({
-    studentName: '',
-    course: '',
-    rating: 5,
-    review: '',
-    photo: '',
-    achievement: '',
-    year: 2026,
-  });
-
-  const [storyForm, setStoryForm] = useState({
-    studentName: '',
-    title: '',
-    story: '',
-    course: '',
-    beforeScore: '',
-    afterScore: '',
-    photo: '',
-    videoUrl: '',
-    year: 2026,
+    studentName: '', course: '', rating: 5, review: '', photo: '', achievement: '', year: 2026,
   });
 
   const [reviewForm, setReviewForm] = useState({
-    reviewerName: '',
-    platform: 'Google',
-    rating: 5,
-    review: '',
-    date: '',
-    verified: true,
+    reviewerName: '', platform: 'Google', rating: 5, review: '', date: '', verified: true,
   });
 
+  const [storyForm, setStoryForm] = useState({
+    title: '', description: '', videoUrl: '' 
+  });
+
+  // Delete Modal State
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ isOpen: false, itemId: null, type: null });
+
+  // --- HELPERS ---
+  const getYoutubeId = (url) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // --- FETCHING DATA ---
+  useEffect(() => {
+    if (activeSubTab === 'stories') fetchStories();
+  }, [activeSubTab]);
+
+  const fetchStories = async () => {
+    setLoading(true);
+    try {
+      // Calls GET /api/tech/social/stories
+      const data = await cmsService.getStories();
+      setStories(data || []);
+    } catch (err) {
+      toast.error('Failed to load stories');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- HANDLERS ---
+  
+  // 1. Success Stories Handlers (Connected to Backend)
+  const handleAddStory = async () => {
+    if (!storyForm.title || !storyForm.videoUrl) {
+      toast.error('Title and Video URL are required');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      if (editingStory) {
+        // Calls PUT /api/tech/social/stories/{id}
+        await cmsService.updateStory(editingStory.id, storyForm);
+        toast.success('Story updated successfully');
+      } else {
+        // Calls POST /api/tech/social/stories
+        await cmsService.createStory(storyForm);
+        toast.success('Story added successfully');
+      }
+      await fetchStories();
+      setStoryForm({ title: '', description: '', videoUrl: '' });
+      setShowStoryForm(false);
+      setEditingStory(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save story');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Testimonial Handlers (Mock)
   const handleAddTestimonial = () => {
     if (editingTestimonial) {
       setTestimonials(testimonials.map(t => t.id === editingTestimonial.id ? { ...testimonialForm, id: editingTestimonial.id } : t));
@@ -110,17 +155,7 @@ export default function SocialProof() {
     setShowTestimonialForm(false);
   };
 
-  const handleAddStory = () => {
-    if (editingStory) {
-      setStories(stories.map(s => s.id === editingStory.id ? { ...storyForm, id: editingStory.id } : s));
-      setEditingStory(null);
-    } else {
-      setStories([...stories, { ...storyForm, id: Date.now() }]);
-    }
-    setStoryForm({ studentName: '', title: '', story: '', course: '', beforeScore: '', afterScore: '', photo: '', videoUrl: '', year: 2026 });
-    setShowStoryForm(false);
-  };
-
+  // 3. Review Handlers (Mock)
   const handleAddReview = () => {
     if (editingReview) {
       setReviews(reviews.map(r => r.id === editingReview.id ? { ...reviewForm, id: editingReview.id } : r));
@@ -132,28 +167,64 @@ export default function SocialProof() {
     setShowReviewForm(false);
   };
 
+  // --- DELETE LOGIC ---
+  const openDeleteModal = (id, type) => {
+    setDeleteConfirmModal({ isOpen: true, itemId: id, type });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteConfirmModal({ isOpen: false, itemId: null, type: null });
+  };
+
+  const handleDelete = async () => {
+    const { itemId, type } = deleteConfirmModal;
+    if (!itemId) return;
+    
+    if (type === 'story') {
+       // Calls DELETE /api/tech/social/stories/{id}
+       setLoading(true);
+       try {
+         await cmsService.deleteStory(itemId);
+         await fetchStories();
+         toast.success('Story deleted');
+       } catch (err) {
+         toast.error('Delete failed');
+       } finally {
+         setLoading(false);
+       }
+    } else if (type === 'testimonial') {
+        setTestimonials(testimonials.filter(t => t.id !== itemId));
+        toast.success('Testimonial removed');
+    } else if (type === 'review') {
+        setReviews(reviews.filter(r => r.id !== itemId));
+        toast.success('Review removed');
+    }
+    closeDeleteModal();
+  };
+
   return (
-    <div>
+    <div className="w-full">
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this item? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Social Proof</h2>
-        <p className="text-gray-600 mt-1">Build trust with testimonials and success stories</p>
+        <p className="text-gray-600 mt-1">Manage success stories and student testimonials.</p>
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-gray-200">
-        <button
-          onClick={() => setActiveSubTab('testimonials')}
-          className={`pb-3 px-4 font-medium transition-colors ${
-            activeSubTab === 'testimonials'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Student Testimonials
-        </button>
+      <div className="flex gap-4 mb-6 border-b border-gray-200 overflow-x-auto pb-1">
         <button
           onClick={() => setActiveSubTab('stories')}
-          className={`pb-3 px-4 font-medium transition-colors ${
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
             activeSubTab === 'stories'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
@@ -162,18 +233,205 @@ export default function SocialProof() {
           Success Stories
         </button>
         <button
+          onClick={() => setActiveSubTab('testimonials')}
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+            activeSubTab === 'testimonials'
+              ? 'text-blue-600 border-b-2 border-blue-600'
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
+        >
+          Student Testimonials
+        </button>
+        <button
           onClick={() => setActiveSubTab('reviews')}
-          className={`pb-3 px-4 font-medium transition-colors ${
+          className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
             activeSubTab === 'reviews'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
           }`}
         >
-          Google/Web Reviews
+          Web Reviews
         </button>
       </div>
 
-      {/* Testimonials Tab */}
+      {/* 1. SUCCESS STORIES TAB (Previously YouTube Videos) */}
+      {activeSubTab === 'stories' && (
+        <div className="w-full">
+          <div className="flex justify-between items-center mb-4">
+            <p className="text-gray-600">Inspiring student success stories and video testimonials</p>
+            {hasPermission(PERMISSIONS.ADD_VIDEO) && (
+              <button
+                onClick={() => {
+                  setShowStoryForm(true);
+                  setEditingStory(null);
+                  setStoryForm({ title: '', description: '', videoUrl: '' });
+                }}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add Success Story
+              </button>
+            )}
+          </div>
+
+          {/* Story Form */}
+          {showStoryForm && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full animate-in fade-in slide-in-from-top-4">
+              <h3 className="font-semibold text-gray-800 mb-4">
+                {editingStory ? 'Edit Success Story' : 'Add New Success Story'}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Story Title</label>
+                    <input
+                      type="text"
+                      value={storyForm.title}
+                      onChange={(e) => setStoryForm({ ...storyForm, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="JEE Physics Marathon / AIR 1 Story"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Video URL (YouTube)</label>
+                    <input
+                      type="text"
+                      value={storyForm.videoUrl}
+                      onChange={(e) => setStoryForm({ ...storyForm, videoUrl: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://youtube.com/watch?v=..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      value={storyForm.description}
+                      onChange={(e) => setStoryForm({ ...storyForm, description: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                      placeholder="Brief description of the success story..."
+                    />
+                  </div>
+                </div>
+
+                {/* Live Preview */}
+                <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center">
+                   <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Preview</span>
+                   {getYoutubeId(storyForm.videoUrl) ? (
+                     <div className="w-full aspect-video rounded-lg overflow-hidden shadow-md relative group">
+                        <img 
+                          src={`https://img.youtube.com/vi/${getYoutubeId(storyForm.videoUrl)}/mqdefault.jpg`} 
+                          alt="Thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                           <PlayCircle className="w-12 h-12 text-white opacity-80" />
+                        </div>
+                     </div>
+                   ) : (
+                     <div className="w-full aspect-video bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        <Video className="w-12 h-12 opacity-20" />
+                     </div>
+                   )}
+                   <p className="mt-3 font-medium text-gray-700 text-center w-full truncate px-4">
+                     {storyForm.title || "Story Title"}
+                   </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 mt-6">
+                <button
+                  onClick={handleAddStory}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : (editingStory ? 'Update Story' : 'Add Story')}
+                </button>
+                <button
+                  onClick={() => setShowStoryForm(false)}
+                  className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Stories Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stories.length === 0 && !loading && (
+               <div className="col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                 <Video className="w-12 h-12 mx-auto mb-3 opacity-20"/>
+                 <p>No success stories found. Add your first story!</p>
+               </div>
+            )}
+
+            {stories.map((story) => {
+              const videoId = getYoutubeId(story.videoUrl);
+              return (
+                <div key={story.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
+                  <div className="relative h-48 bg-gray-100">
+                    {videoId ? (
+                       <img
+                        src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                        alt={story.title}
+                        className="w-full h-full object-cover"
+                       />
+                    ) : (
+                       <div className="w-full h-full flex items-center justify-center text-gray-400">
+                         <Video className="w-10 h-10" />
+                       </div>
+                    )}
+                    <a 
+                       href={story.videoUrl} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors backdrop-blur-sm"
+                       title="Open on YouTube"
+                    >
+                       <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+
+                  <div className="p-4">
+                    <h4 className="font-semibold text-gray-800 mb-2 line-clamp-1" title={story.title}>{story.title}</h4>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2 h-10">{story.description}</p>
+                    
+                    <div className="flex gap-2 border-t pt-3">
+                      {hasPermission(PERMISSIONS.EDIT_VIDEO) && (
+                        <button
+                          onClick={() => {
+                            setEditingStory(story);
+                            setStoryForm({
+                              title: story.title,
+                              description: story.description,
+                              videoUrl: story.videoUrl
+                            });
+                            setShowStoryForm(true);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="flex-1 p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1.5 font-medium text-xs"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      )}
+                      {hasPermission(PERMISSIONS.DELETE_VIDEO) && (
+                        <button
+                          onClick={() => openDeleteModal(story.id, 'story')}
+                          className="flex-1 p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5 font-medium text-xs"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 2. Testimonials Tab */}
       {activeSubTab === 'testimonials' && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -291,7 +549,6 @@ export default function SocialProof() {
             </div>
           )}
 
-          {/* Testimonials List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {testimonials.map((testimonial) => (
               <div key={testimonial.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -327,7 +584,7 @@ export default function SocialProof() {
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => setTestimonials(testimonials.filter(t => t.id !== testimonial.id))}
+                      onClick={() => openDeleteModal(testimonial.id, 'testimonial')}
                       className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -345,215 +602,7 @@ export default function SocialProof() {
         </div>
       )}
 
-      {/* Success Stories Tab */}
-      {activeSubTab === 'stories' && (
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Detailed student transformation stories</p>
-            <button
-              onClick={() => {
-                setShowStoryForm(true);
-                setEditingStory(null);
-                setStoryForm({ studentName: '', title: '', story: '', course: '', beforeScore: '', afterScore: '', photo: '', videoUrl: '', year: 2026 });
-              }}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Success Story
-            </button>
-          </div>
-
-          {/* Story Form */}
-          {showStoryForm && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="font-semibold text-gray-800 mb-4">
-                {editingStory ? 'Edit Success Story' : 'Add New Success Story'}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name</label>
-                  <input
-                    type="text"
-                    value={storyForm.studentName}
-                    onChange={(e) => setStoryForm({ ...storyForm, studentName: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Karan Patel"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Story Title</label>
-                  <input
-                    type="text"
-                    value={storyForm.title}
-                    onChange={(e) => setStoryForm({ ...storyForm, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Journey from 45% to AIR 156"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
-                  <input
-                    type="text"
-                    value={storyForm.course}
-                    onChange={(e) => setStoryForm({ ...storyForm, course: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="JEE Mains"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                  <input
-                    type="number"
-                    value={storyForm.year}
-                    onChange={(e) => setStoryForm({ ...storyForm, year: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="2026"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Before Score</label>
-                  <input
-                    type="text"
-                    value={storyForm.beforeScore}
-                    onChange={(e) => setStoryForm({ ...storyForm, beforeScore: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="45%"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">After Score</label>
-                  <input
-                    type="text"
-                    value={storyForm.afterScore}
-                    onChange={(e) => setStoryForm({ ...storyForm, afterScore: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="AIR 156"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Photo URL</label>
-                  <input
-                    type="text"
-                    value={storyForm.photo}
-                    onChange={(e) => setStoryForm({ ...storyForm, photo: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/photo.jpg"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Video URL (Optional)</label>
-                  <input
-                    type="text"
-                    value={storyForm.videoUrl}
-                    onChange={(e) => setStoryForm({ ...storyForm, videoUrl: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://youtube.com/watch?v=..."
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Story</label>
-                  <textarea
-                    value={storyForm.story}
-                    onChange={(e) => setStoryForm({ ...storyForm, story: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={4}
-                    placeholder="I struggled initially but with consistent effort and guidance..."
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-4 mt-4">
-                <button
-                  onClick={handleAddStory}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {editingStory ? 'Update Story' : 'Add Story'}
-                </button>
-                <button
-                  onClick={() => {
-                    setShowStoryForm(false);
-                    setEditingStory(null);
-                  }}
-                  className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Stories List */}
-          <div className="space-y-6">
-            {stories.map((story) => (
-              <div key={story.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-start gap-6">
-                  <img
-                    src={story.photo}
-                    alt={story.studentName}
-                    className="w-32 h-32 rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-gray-800 text-lg">{story.studentName}</h4>
-                        <p className="text-blue-600 font-medium">{story.title}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-sm text-gray-600">{story.course}</span>
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                            {story.year}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingStory(story);
-                            setStoryForm(story);
-                            setShowStoryForm(true);
-                          }}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => setStories(stories.filter(s => s.id !== story.id))}
-                          className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 mb-3">
-                      <div className="bg-red-50 px-4 py-2 rounded">
-                        <p className="text-xs text-gray-600">Before</p>
-                        <p className="font-semibold text-red-600">{story.beforeScore}</p>
-                      </div>
-                      <div className="text-gray-400">→</div>
-                      <div className="bg-green-50 px-4 py-2 rounded">
-                        <p className="text-xs text-gray-600">After</p>
-                        <p className="font-semibold text-green-600">{story.afterScore}</p>
-                      </div>
-                      {story.videoUrl && (
-                        <a
-                          href={story.videoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-blue-600 text-sm hover:underline"
-                        >
-                          <Video className="w-4 h-4" />
-                          Watch Video
-                        </a>
-                      )}
-                    </div>
-                    <p className="text-gray-700 text-sm">{story.story}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Reviews Tab */}
+      {/* 3. Reviews Tab */}
       {activeSubTab === 'reviews' && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -663,7 +712,6 @@ export default function SocialProof() {
             </div>
           )}
 
-          {/* Reviews List */}
           <div className="space-y-4">
             {reviews.map((review) => (
               <div key={review.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
