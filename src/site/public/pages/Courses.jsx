@@ -105,16 +105,17 @@ const Courses = () => {
             <h2 className="text-3xl font-bold text-secondary-900">Regular Batches</h2>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-8">
+          {/* UPDATED: Uses CSS Grid for 4 items per row on XL screens */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {regularBatches.map((course, index) => (
               <CourseCard 
                 key={course._id || course.id} 
-                id={course.slug || course.id || course._id} // Prefer slug for cleaner URLs
+                id={course.slug || course.id || course._id}
                 title={course.title}
                 shortDescription={course.shortDescription}
                 imageUrl={course.imageUrl}
                 tag={course.tag}
-                colorTheme={getColor(index)} // Assign dynamic color
+                colorTheme={getColor(index)}
               />
             ))}
           </div>
@@ -130,7 +131,8 @@ const Courses = () => {
               <h2 className="text-3xl font-bold text-secondary-900">Crash Courses</h2>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-8">
+            {/* UPDATED: Uses CSS Grid for 4 items per row on XL screens */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {crashCourses.map((course, index) => (
                 <CourseCard 
                   key={course._id || course.id}
@@ -139,7 +141,7 @@ const Courses = () => {
                   shortDescription={course.shortDescription}
                   imageUrl={course.imageUrl}
                   tag={course.tag}
-                  colorTheme={getColor(index + 2)} // Offset index for variety
+                  colorTheme={getColor(index + 2)}
                 />
               ))}
             </div>
@@ -155,7 +157,8 @@ const Courses = () => {
             <h2 className="text-3xl font-bold text-secondary-900">Test Series</h2>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-8">
+          {/* UPDATED: Uses CSS Grid for 4 items per row on XL screens */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {testSeries.map((course, index) => (
               <CourseCard 
                 key={course._id || course.id}
@@ -164,7 +167,7 @@ const Courses = () => {
                 shortDescription={course.shortDescription}
                 imageUrl={course.imageUrl}
                 tag={course.tag}
-                colorTheme={getColor(index + 5)} // Offset index for variety
+                colorTheme={getColor(index + 5)}
               />
             ))}
           </div>
