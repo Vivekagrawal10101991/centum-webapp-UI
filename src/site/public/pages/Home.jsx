@@ -43,8 +43,6 @@ import FoundationPrograme from '../../../assets/Home/Foundation-Programe.png';
 
 /**
  * Home Page Component
- * Updates:
- * 1. Buttons in "Course Offerings" now navigate to the main '/courses' page.
  */
 const Home = () => {
   const navigate = useNavigate();
@@ -101,7 +99,7 @@ const Home = () => {
                 </p>
               </div>
 
-              {/* Samsung UI Faded Card Grid */}
+              {/* Feature Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="bg-[#eef2ff] p-6 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-blue-100/50 hover:border-blue-300 transition-all duration-300 group hover:-translate-y-1">
                   <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-[#002B6B] transition-colors duration-300">
@@ -167,7 +165,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* ==================== 1. JEE PROGRAM ==================== */}
+          {/* JEE PROGRAM */}
           <div className="flex flex-col lg:flex-row gap-16 mb-32">
             <div className="w-full lg:w-7/12">
               <div className="mb-10 text-left">
@@ -217,7 +215,6 @@ const Home = () => {
                   <p className="text-[#002B6B] font-bold text-lg italic mb-6">
                     Take your first step toward becoming a top-ranked engineer with Centum Academy!
                   </p>
-                  {/* UPDATED: Navigates to /courses */}
                   <Button 
                     onClick={() => navigate('/courses')}
                     className="bg-[#002B6B] hover:bg-[#001c45] text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
@@ -243,7 +240,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* ==================== 2. NEET PROGRAM ==================== */}
+          {/* NEET PROGRAM */}
           <div className="flex flex-col-reverse lg:flex-row gap-16 mb-32">
             
             <div className="w-full lg:w-5/12">
@@ -317,7 +314,6 @@ const Home = () => {
                   <p className="text-emerald-800 font-bold text-lg italic mb-6">
                     Turn your medical career dreams into reality with Centum Academy’s NEET program!
                   </p>
-                  {/* UPDATED: Navigates to /courses */}
                   <Button 
                     onClick={() => navigate('/courses')}
                     className="bg-emerald-700 hover:bg-emerald-800 text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
@@ -330,7 +326,7 @@ const Home = () => {
 
           </div>
 
-          {/* ==================== 3. FOUNDATION COURSES ==================== */}
+          {/* FOUNDATION COURSES */}
           <div className="flex flex-col lg:flex-row gap-16">
             <div className="w-full lg:w-7/12">
               <div className="mb-10 text-left">
@@ -343,7 +339,6 @@ const Home = () => {
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Point 1 */}
                   <div className="bg-[#fff7ed] p-5 rounded-[1.5rem] border border-orange-100 hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-3 mb-2">
                       <BrainCircuit className="text-orange-600 w-5 h-5" />
@@ -352,7 +347,6 @@ const Home = () => {
                     <p className="text-sm text-gray-500">Focus on understanding concepts, not rote learning.</p>
                   </div>
 
-                  {/* Point 2 */}
                   <div className="bg-[#fef2f2] p-5 rounded-[1.5rem] border border-red-100 hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-3 mb-2">
                       <Award className="text-red-600 w-5 h-5" />
@@ -361,7 +355,6 @@ const Home = () => {
                     <p className="text-sm text-gray-500">Develop an edge in Mathematics and Science.</p>
                   </div>
 
-                  {/* Point 3 */}
                   <div className="bg-[#f0f9ff] p-5 rounded-[1.5rem] border border-sky-100 hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-3 mb-2">
                       <Bus className="text-sky-600 w-5 h-5" />
@@ -370,7 +363,6 @@ const Home = () => {
                     <p className="text-sm text-gray-500">Connect academics to real-world industrial applications.</p>
                   </div>
 
-                  {/* Point 4 */}
                   <div className="bg-[#f5f3ff] p-5 rounded-[1.5rem] border border-violet-100 hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-3 mb-2">
                       <Users className="text-violet-600 w-5 h-5" />
@@ -379,7 +371,6 @@ const Home = () => {
                     <p className="text-sm text-gray-500">Ensure personalized mentoring and focus on individual aptitude.</p>
                   </div>
 
-                   {/* Point 5 */}
                    <div className="bg-[#ecfccb] p-5 rounded-[1.5rem] border border-lime-100 hover:shadow-md transition-all duration-300 md:col-span-2">
                     <div className="flex items-center gap-3 mb-2">
                       <Compass className="text-lime-700 w-5 h-5" />
@@ -394,7 +385,6 @@ const Home = () => {
                   <p className="text-orange-800 font-bold text-lg italic mb-6">
                     Start early to lead tomorrow with Centum Academy's Foundation Program!
                   </p>
-                  {/* UPDATED: Navigates to /courses */}
                   <Button 
                     onClick={() => navigate('/courses')}
                     className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
@@ -431,7 +421,6 @@ const Home = () => {
       <section className="py-20 bg-gray-50 overflow-hidden">
         <div className="max-container px-4">
           
-          {/* Centered Heading */}
           <div className="mb-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 tracking-tight">
               The Centum Advantage
@@ -444,10 +433,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            {/* 1. Small Batch Sizes */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-indigo-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors duration-300">
                 <Users className="text-indigo-600 group-hover:text-white w-7 h-7" />
@@ -456,7 +442,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Personalized attention for every student to ensure no one is left behind.</p>
             </div>
 
-            {/* 2. Concept Building */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-pink-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-pink-600 transition-colors duration-300">
                 <Brain className="text-pink-600 group-hover:text-white w-7 h-7" />
@@ -465,7 +450,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Strengthen fundamentals before progressing to advanced problems.</p>
             </div>
 
-            {/* 3. Rigorous Testing */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-teal-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-600 transition-colors duration-300">
                 <ClipboardCheck className="text-teal-600 group-hover:text-white w-7 h-7" />
@@ -474,7 +458,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Regular evaluations with detailed performance analysis and feedback.</p>
             </div>
 
-            {/* 4. Mock Exams */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-orange-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors duration-300">
                 <Clock className="text-orange-600 group-hover:text-white w-7 h-7" />
@@ -483,7 +466,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Practice with the latest exam patterns to build speed and accuracy.</p>
             </div>
 
-            {/* 5. 24/7 Doubt Support */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-blue-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
                 <Smartphone className="text-blue-600 group-hover:text-white w-7 h-7" />
@@ -492,7 +474,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Access faculty anytime for instant help via mobile apps and chats.</p>
             </div>
 
-            {/* 6. Specialized Study Material */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-violet-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-violet-600 transition-colors duration-300">
                 <BookOpen className="text-violet-600 group-hover:text-white w-7 h-7" />
@@ -501,7 +482,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Resources tailored to JEE and NEET requirements for focused study.</p>
             </div>
 
-             {/* 7. Proven Track Record */}
              <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-yellow-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-yellow-500 transition-colors duration-300">
                 <Trophy className="text-yellow-600 group-hover:text-white w-7 h-7" />
@@ -510,7 +490,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">Centum students consistently secure top ranks in JEE & NEET exams.</p>
             </div>
 
-            {/* 8. Student Wellness Support */}
             <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-rose-50 group hover:-translate-y-2">
               <div className="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500 transition-colors duration-300">
                 <Heart className="text-rose-500 group-hover:text-white w-7 h-7" />
@@ -518,15 +497,17 @@ const Home = () => {
               <h3 className="font-bold text-xl text-gray-900 mb-3">Wellness Support</h3>
               <p className="text-gray-600 leading-relaxed">Counseling sessions to manage stress, build resilience, and stay focused.</p>
             </div>
-
           </div>
         </div>
       </section>
 
-      <TestimonialsSection />
-      
       {/* 5. Mentors Section */}
       <MentorsSection />
+
+      {/* ✅ MOVED: Testimonials section is now at the end with a dedicated background wrapper */}
+      <div className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
+        <TestimonialsSection />
+      </div>
     </div>
   );
 };

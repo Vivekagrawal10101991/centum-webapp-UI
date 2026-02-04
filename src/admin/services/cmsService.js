@@ -71,19 +71,16 @@ export const cmsService = {
   },
 
   addVideo: async (videoData) => {
-    // Matches: POST /api/tech/videos/add
     const response = await api.post('/api/tech/videos/add', videoData);
     return response.data;
   },
 
   updateVideo: async (id, videoData) => {
-    // Matches: PUT /api/tech/videos/{id}
     const response = await api.put(`/api/tech/videos/${id}`, videoData);
     return response.data;
   },
 
   deleteVideo: async (id) => {
-    // Matches: DELETE /api/tech/videos/{id}
     const response = await api.delete(`/api/tech/videos/${id}`);
     return response.data;
   },
@@ -106,6 +103,27 @@ export const cmsService = {
 
   deleteStory: async (id) => {
     const response = await api.delete(`/api/tech/social/stories/${id}`);
+    return response.data;
+  },
+
+  // --- Testimonials Endpoints (UPDATED & CONNECTED) ---
+  getTestimonials: async () => {
+    const response = await api.get('/api/tech/social/testimonials');
+    return response.data;
+  },
+
+  createTestimonial: async (data) => {
+    const response = await api.post('/api/tech/social/testimonials', data);
+    return response.data;
+  },
+
+  updateTestimonial: async (id, data) => {
+    const response = await api.put(`/api/tech/social/testimonials/${id}`, data);
+    return response.data;
+  },
+
+  deleteTestimonial: async (id) => {
+    const response = await api.delete(`/api/tech/social/testimonials/${id}`);
     return response.data;
   },
 
