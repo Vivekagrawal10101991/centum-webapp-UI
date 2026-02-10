@@ -6,7 +6,7 @@ import { ROLES } from '../../utils/roles';
 import { PERMISSIONS } from '../helpers/rolePermissions';
 
 // Super Admin Components
-import { SuperAdminDashboard } from '../dashboard/super-admin';
+import UserManagement from '../dashboard/super-admin/pages/UserManagement';
 import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
 import Dashboard from '../Tabs/Dashboard';
 import PromotionsBanners from '../Tabs/PromotionsBanners';
@@ -16,13 +16,10 @@ import SocialProof from '../Tabs/SocialProof';
 import MediaCenter from '../Tabs/MediaCenter';
 import LeadsEnquiries from '../Tabs/LeadsEnquiries';
 import Settings from '../Tabs/Settings';
-import LmsManagement from '../Tabs/LmsManagement'; // <--- LMS Import
+import LmsManagement from '../Tabs/LmsManagement';
 
 // Admin Components
-import {
-  AdminDashboard,
-  UsersPage,
-} from '../dashboard/admin';
+import { AdminDashboard, UsersPage } from '../dashboard/admin';
 
 // Technical Components
 import { TechnicalDashboard } from '../dashboard/technical';
@@ -44,16 +41,42 @@ export const AdminRoutes = () => {
   return (
     <>
       {/* ================= SUPER ADMIN ROUTES ================= */}
+      
+      {/* Root Landing Redirect */}
       <Route
         path="/dashboard/super-admin"
+        element={<Navigate to="/dashboard/super-admin/dashboard" replace />}
+      />
+
+      {/* Analytical Dashboard (Overview) */}
+      <Route
+        path="/dashboard/super-admin/dashboard"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.SUPER_ADMIN]} 
+            requiredPermissions={[PERMISSIONS.VIEW_REPORTS, PERMISSIONS.SYSTEM_ADMIN]}
+            routePath="/dashboard/super-admin/dashboard"
+          >
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+
+      {/* User Management Hub */}
+      <Route
+        path="/dashboard/super-admin/user-management"
         element={
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
-              <SuperAdminDashboard />
+              <UserManagement />
             </DashboardLayout>
           </ProtectedRoute>
         }
       />
+
+      {/* Individual User Pages */}
       <Route
         path="/dashboard/super-admin/add-user"
         element={
@@ -85,21 +108,7 @@ export const AdminRoutes = () => {
         }
       />
       
-      {/* CMS & Reports Routes */}
-      <Route
-        path="/dashboard/super-admin/dashboard"
-        element={
-          <PermissionProtectedRoute 
-            allowedRoles={[ROLES.SUPER_ADMIN]} 
-            requiredPermissions={[PERMISSIONS.VIEW_REPORTS, PERMISSIONS.SYSTEM_ADMIN]}
-            routePath="/dashboard/super-admin/dashboard"
-          >
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
-          </PermissionProtectedRoute>
-        }
-      />
+      {/* CMS Management Routes */}
       <Route
         path="/dashboard/super-admin/promotions-banners"
         element={
@@ -143,7 +152,7 @@ export const AdminRoutes = () => {
         }
       />
 
-      {/* ✅ NEW: LMS CENTER ROUTE */}
+      {/* LMS Center Route */}
       <Route
         path="/dashboard/super-admin/lms-center"
         element={
@@ -326,8 +335,7 @@ export const AdminRoutes = () => {
         }
       />
 
-      {/* ================= STUDENT ROUTES (FIXED) ================= */}
-      {/* 1. Main Dashboard */}
+      {/* ================= STUDENT ROUTES ================= */}
       <Route
         path="/dashboard/student"
         element={
@@ -338,8 +346,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* 2. My Courses (Passes 'courses' section) */}
       <Route
         path="/dashboard/student/courses"
         element={
@@ -350,8 +356,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* 3. Assignments (Passes 'assignments' section) */}
       <Route
         path="/dashboard/student/assignments"
         element={
@@ -362,8 +366,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* 4. Schedule (Passes 'schedule' section) */}
       <Route
         path="/dashboard/student/schedule"
         element={
@@ -374,14 +376,10 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* 5. Grades (Redirects to dashboard for now) */}
       <Route
         path="/dashboard/student/grades"
         element={<Navigate to="/dashboard/student" replace />}
       />
-
-      {/* 6. Settings */}
       <Route
         path="/dashboard/student/settings"
         element={
@@ -414,7 +412,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* Redirects for missing Parent pages to prevent white screen */}
       <Route path="/dashboard/parent/*" element={<Navigate to="/dashboard/parent" replace />} />
     </>
   );
