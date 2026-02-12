@@ -6,19 +6,21 @@ import { Button, Modal } from '../../../components/common';
 import EnquiryForm from '../../components/specific/EnquiryForm';
 
 /**
- * 🎨 Samsung One UI Inspired Pastel Colors
- * Randomly assigned to cards to give that "faded/soft" professional look.
+ * Achievers Page
+ * UPDATED:
+ * - Fixed banner container height: h-[50vh] (mobile) -> h-[70vh] (tablet) -> h-[85vh] (desktop).
+ * - Image constrained to fixed size using w-full h-full object-cover.
  */
+
 const PASTEL_COLORS = [
-  { bg: 'bg-[#E3F2FD]', text: 'text-[#1565C0]', accent: 'bg-[#BBDEFB]' }, // Soft Blue
-  { bg: 'bg-[#F3E5F5]', text: 'text-[#7B1FA2]', accent: 'bg-[#E1BEE7]' }, // Soft Purple
-  { bg: 'bg-[#E8F5E9]', text: 'text-[#2E7D32]', accent: 'bg-[#C8E6C9]' }, // Soft Green
-  { bg: 'bg-[#FFF3E0]', text: 'text-[#E65100]', accent: 'bg-[#FFE0B2]' }, // Soft Orange
-  { bg: 'bg-[#FCE4EC]', text: 'text-[#C2185B]', accent: 'bg-[#F8BBD0]' }, // Soft Pink
-  { bg: 'bg-[#E0F2F1]', text: 'text-[#00695C]', accent: 'bg-[#B2DFDB]' }, // Soft Teal
+  { bg: 'bg-[#E3F2FD]', text: 'text-[#1565C0]', accent: 'bg-[#BBDEFB]' }, 
+  { bg: 'bg-[#F3E5F5]', text: 'text-[#7B1FA2]', accent: 'bg-[#E1BEE7]' }, 
+  { bg: 'bg-[#E8F5E9]', text: 'text-[#2E7D32]', accent: 'bg-[#C8E6C9]' }, 
+  { bg: 'bg-[#FFF3E0]', text: 'text-[#E65100]', accent: 'bg-[#FFE0B2]' }, 
+  { bg: 'bg-[#FCE4EC]', text: 'text-[#C2185B]', accent: 'bg-[#F8BBD0]' }, 
+  { bg: 'bg-[#E0F2F1]', text: 'text-[#00695C]', accent: 'bg-[#B2DFDB]' }, 
 ];
 
-// Helper to extract Video ID
 const getYoutubeId = (url) => {
   if (!url) return null;
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -26,7 +28,6 @@ const getYoutubeId = (url) => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
-// --- Custom Video Card Component ---
 const StoryCard = ({ story, index, onPlay }) => {
   const theme = PASTEL_COLORS[index % PASTEL_COLORS.length];
   const videoId = getYoutubeId(story.videoUrl);
@@ -37,10 +38,7 @@ const StoryCard = ({ story, index, onPlay }) => {
       className={`relative rounded-2xl overflow-hidden ${theme.bg} shadow-sm hover:shadow-lg border border-white/60 flex flex-col h-full transition-all duration-300 group cursor-pointer`}
       onClick={() => onPlay(videoId)}
     >
-      {/* Thumbnail Container */}
-      {/* ✅ Changed padding to be tighter and radius to be smaller (50% reduction) */}
       <div className="p-2 pb-0">
-        {/* ✅ Changed aspect-ratio to 'video' (16:9) for professional YouTube look */}
         <div className="relative aspect-video rounded-xl overflow-hidden shadow-inner bg-black/10">
           {videoId ? (
              <img
@@ -52,7 +50,6 @@ const StoryCard = ({ story, index, onPlay }) => {
              <div className="w-full h-full flex items-center justify-center text-gray-400">No Preview</div>
           )}
           
-          {/* Custom Play Button Overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
             <div className={`w-12 h-12 ${theme.bg} rounded-full flex items-center justify-center shadow-lg backdrop-blur-md bg-opacity-90 group-hover:scale-110 transition-transform duration-300`}>
               <Play className={`w-5 h-5 ${theme.text} fill-current ml-1`} />
@@ -61,7 +58,6 @@ const StoryCard = ({ story, index, onPlay }) => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <div className={`inline-flex self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${theme.accent} ${theme.text} bg-opacity-60`}>
           Success Story
@@ -84,18 +80,14 @@ const Achievers = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
   
-  // Video Modal State
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // 1. Fetch Banners (Achiever Gallery)
         const galleryData = await cmsService.getAchieverGallery();
         setGallery(Array.isArray(galleryData) ? galleryData : (galleryData?.data || []));
-
-        // 2. Fetch Success Stories (Backend)
         const storiesData = await cmsService.getStories();
         setStories(Array.isArray(storiesData) ? storiesData : []);
       } catch (error) {
@@ -107,7 +99,6 @@ const Achievers = () => {
     fetchData();
   }, []);
 
-  // Banner Slider Logic
   useEffect(() => {
     if (gallery.length > 1) {
       const interval = setInterval(() => {
@@ -130,7 +121,7 @@ const Achievers = () => {
 
   return (
     <div className="bg-white">
-      {/* 1. HERO HEADER */}
+      {/* HERO HEADER */}
       <div className="relative bg-gradient-to-br from-primary-50 via-white to-primary-100 py-16 overflow-hidden border-b border-primary-100">
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="inline-block px-3 py-1 mb-3 text-[10px] font-bold text-primary-700 bg-white/80 rounded-full uppercase tracking-widest shadow-sm border border-primary-100">
@@ -146,10 +137,10 @@ const Achievers = () => {
         </div>
       </div>
 
-      {/* 2. ACHIEVER BANNER SECTION */}
+      {/* 2. ACHIEVER BANNER SECTION - FIXED RESPONSIVE HEIGHT */}
       {gallery.length > 0 ? (
-        <div className="relative w-full group bg-gray-900 overflow-hidden">
-            <div className="relative w-full flex items-center justify-center">
+        <div className="relative w-full h-[50vh] md:h-[70vh] lg:h-[85vh] group bg-gray-900 overflow-hidden">
+            <div className="relative w-full h-full flex items-center justify-center">
                <picture className="w-full h-full block">
                    <source 
                         media="(max-width: 768px)" 
@@ -158,7 +149,7 @@ const Achievers = () => {
                    <img
                      src={gallery[currentSlide].imageUrl} 
                      alt={gallery[currentSlide].description}
-                     className="w-full h-auto object-contain md:object-cover max-h-[85vh] block transition-opacity duration-500"
+                     className="w-full h-full object-cover object-center block transition-opacity duration-500"
                    />
                </picture>
             </div>
@@ -220,7 +211,7 @@ const Achievers = () => {
         </div>
       )}
 
-      {/* 3. SUCCESS STORIES SECTION (VIDEO CARDS) */}
+      {/* SUCCESS STORIES SECTION */}
       {stories.length > 0 && (
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
@@ -233,7 +224,6 @@ const Achievers = () => {
               </p>
             </div>
 
-            {/* ✅ Updated Grid: 4 columns on large screens, reduced gap */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {stories.map((story, index) => (
                 <StoryCard 
@@ -248,7 +238,7 @@ const Achievers = () => {
         </section>
       )}
 
-      {/* 4. FOOTER STATS SECTION */}
+      {/* FOOTER STATS SECTION */}
       <section className="py-16 bg-gray-50 border-t border-gray-100">
         <div className="container mx-auto px-4 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">

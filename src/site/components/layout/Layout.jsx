@@ -6,13 +6,12 @@ import AnnouncementBar from './AnnouncementBar';
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1. Blue Navbar (Top) */}
-      <Navbar />
-
-      {/* 2. White Announcement Bar (Directly Below) */}
+      {/* Positioned at the very top */}
       <AnnouncementBar />
       
-      {/* 3. Page Content */}
+      {/* Navbar directly below the blue bar */}
+      <Navbar />
+      
       <main className="flex-grow">
         {children}
       </main>
