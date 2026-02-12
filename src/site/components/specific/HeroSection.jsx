@@ -7,9 +7,8 @@ import EnquiryForm from "./EnquiryForm";
 /**
  * HeroSection Component
  * UPDATED:
- * - Implemented <picture> tag for Responsive Images.
- * - Shows 'mobileImageUrl' on devices < 768px width.
- * - Falls back to 'imageUrl' (Desktop) if no mobile image is set.
+ * - Fixed banner container height: h-[50vh] (mobile) -> h-[70vh] (tablet) -> h-[85vh] (desktop).
+ * - Forced image to fill fixed dimensions using w-full h-full object-cover.
  */
 const HeroSection = () => {
   const [banners, setBanners] = useState([]);
@@ -22,7 +21,6 @@ const HeroSection = () => {
     const fetchBanners = async () => {
       try {
         const data = await cmsService.getBanners();
-        // Only show active banners
         const activeBanners = Array.isArray(data) ? data.filter(b => b.active) : [];
         setBanners(activeBanners);
       } catch (error) {
@@ -53,10 +51,10 @@ const HeroSection = () => {
     setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
   };
 
-  // Loading State
+  // Loading State - Matches the fixed responsive height
   if (loading) {
     return (
-      <div className="w-full h-[30vh] md:h-[40vh] bg-gray-100 flex items-center justify-center">
+      <div className="w-full h-[50vh] md:h-[70vh] lg:h-[85vh] bg-gray-100 flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
           <div className="text-gray-400 text-sm">Loading Banner...</div>
@@ -69,7 +67,7 @@ const HeroSection = () => {
   if (banners.length === 0) {
     return (
       <div className="flex flex-col">
-        <div className="relative w-full py-20 md:py-32 bg-gradient-to-r from-[#002B6B] to-indigo-900 flex items-center">
+        <div className="relative w-full h-[50vh] md:h-[70vh] lg:h-[85vh] bg-gradient-to-r from-[#002B6B] to-indigo-900 flex items-center">
           <div className="container mx-auto px-4 text-center md:text-left">
             <div className="max-w-2xl text-white mx-auto md:mx-0">
               <h1 className="text-2xl md:text-5xl font-bold mb-4">
@@ -82,7 +80,6 @@ const HeroSection = () => {
           </div>
         </div>
         
-        {/* Call to Action Section (Fallback) */}
         <div className="bg-white py-8 border-b border-gray-100">
           <div className="container mx-auto px-4 text-center">
              <h3 className="text-xl font-bold text-gray-800 mb-4">Start Your Journey With Us</h3>
@@ -95,7 +92,6 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Modal */}
         <Modal
           isOpen={isEnquiryModalOpen}
           onClose={() => setIsEnquiryModalOpen(false)}
@@ -112,33 +108,32 @@ const HeroSection = () => {
 
   return (
     <div className="flex flex-col">
-      {/* 1. Banner Section */}
-      <div className="relative w-full group bg-gray-900 overflow-hidden">
+      {/* 1. Banner Section - FIXED RESPONSIVE HEIGHT */}
+      <div className="relative w-full h-[50vh] md:h-[70vh] lg:h-[85vh] group bg-gray-900 overflow-hidden">
         
-        {/* ✅ RESPONSIVE IMAGE CONTAINER */}
-        <div className="relative w-full flex items-center justify-center">
+        <div className="relative w-full h-full flex items-center justify-center">
           <a 
             href={currentBanner.redirectUrl || '#'} 
             className={`block w-full h-full ${!currentBanner.redirectUrl && 'cursor-default'}`}
           >
              <picture className="w-full h-full block">
-                {/* 1. Mobile Image (Triggered on screens < 768px) */}
+                {/* Mobile Image (< 768px) */}
                 <source 
                    media="(max-width: 768px)" 
                    srcSet={currentBanner.mobileImageUrl || currentBanner.imageUrl} 
                 />
                 
-                {/* 2. Desktop Image (Default) */}
+                {/* Desktop Image */}
                 <img
                   src={currentBanner.imageUrl}
                   alt={currentBanner.title}
-                  className="w-full h-auto object-contain md:object-cover max-h-[85vh] block transition-opacity duration-500"
+                  className="w-full h-full object-cover object-center block transition-opacity duration-500"
                 />
              </picture>
           </a>
         </div>
 
-        {/* Content Layer (Description Only - Desktop Only) */}
+        {/* Content Layer (Desktop Only) */}
         <div className="absolute inset-0 pointer-events-none hidden md:flex items-center justify-start">
           <div className="container mx-auto px-8">
             <div className="max-w-2xl text-white text-left">
@@ -186,7 +181,7 @@ const HeroSection = () => {
         )}
       </div>
 
-      {/* 2. Call To Action Section (Below Banner) */}
+      {/* 2. Call To Action Section */}
       <div className="bg-white py-8 border-b border-gray-100 shadow-sm relative z-10">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
           <div>
@@ -204,7 +199,6 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Modal */}
       <Modal
         isOpen={isEnquiryModalOpen}
         onClose={() => setIsEnquiryModalOpen(false)}

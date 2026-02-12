@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ExternalLink, Megaphone } from 'lucide-react';
+import { X, ExternalLink, Megaphone, Search } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 
+/**
+ * Refined Premium AnnouncementBar Component
+ * - Typography: Updated to font-medium for better readability ("a little bold").
+ * - Sizing: Announcement message remains synchronized with the label size.
+ * - Layout: Maintained left-side spacing and high-contrast interactive elements.
+ */
 const AnnouncementBar = () => {
   const [announcements, setAnnouncements] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-
-  // 1. Define a palette of "light faded" but visible colors
-  const colorVariants = [
-    "bg-blue-100 border-blue-200 text-blue-900 hover:bg-blue-200",
-    "bg-purple-100 border-purple-200 text-purple-900 hover:bg-purple-200",
-    "bg-amber-100 border-amber-200 text-amber-900 hover:bg-amber-200",
-    "bg-emerald-100 border-emerald-200 text-emerald-900 hover:bg-emerald-200",
-    "bg-rose-100 border-rose-200 text-rose-900 hover:bg-rose-200",
-  ];
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -36,80 +35,110 @@ const AnnouncementBar = () => {
     fetchAnnouncements();
   }, []);
 
+  useEffect(() => {
+    if (announcements.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % announcements.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [announcements.length]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
+
   if (!isVisible || loading || announcements.length === 0) return null;
 
+  const currentItem = announcements[currentIndex];
+
   return (
-    <div className="bg-white border-b border-gray-200 shadow-sm relative z-30">
-      <div className="container mx-auto flex items-center h-12 md:h-14 px-4 gap-4">
+    <div className="relative z-[60] w-full bg-[#1a154d] border-b border-white/10 shadow-2xl">
+      <div className="container mx-auto flex items-center h-10 md:h-12 px-4 gap-6">
         
-        {/* Red Badge */}
-        <div className="flex-shrink-0 flex items-center gap-2">
-          <span className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:py-1.5 rounded-md uppercase tracking-wider shadow-sm flex items-center gap-1.5">
-            <Megaphone size={12} className="text-white" />
-            Updates
+        {/* Left: Icon + Label with refined bolding and spacing */}
+        <div className="flex-shrink-0 flex items-center gap-2.5 pl-4 md:pl-6">
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 bg-amber-400/30 blur-md rounded-full animate-pulse" />
+            <Megaphone 
+              size={16} 
+              className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)] relative z-10" 
+              fill="currentColor" 
+            />
+          </div>
+          <span className="text-white text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] hidden sm:inline-block">
+            Announcements
           </span>
         </div>
 
-        {/* Scrolling Area */}
-        <div className="flex-1 overflow-hidden relative h-full flex items-center mask-image-gradient">
-          <div className="animate-marquee whitespace-nowrap flex items-center absolute">
-            {[...announcements, ...announcements].map((item, index) => {
-              
-              const styleClass = colorVariants[index % colorVariants.length];
-              const uniqueKey = item.id || item._id;
-
-              return (
-                <div 
-                  key={`${uniqueKey}-${index}`}
-                  // 1. UPDATED: Navigate with state (targetId)
-                  onClick={() => navigate('/announcements', { state: { targetId: uniqueKey } })} 
-                  className={`inline-flex items-center mx-2 px-4 py-1.5 md:py-2 rounded-full border shadow-sm transition-all duration-200 cursor-pointer ${styleClass} group`}
-                >
-                  <span className="text-xs md:text-sm font-semibold tracking-wide">
-                    {item.message}
-                  </span>
-
-                  {/* Link (Only if linkUrl exists) */}
-                  {item.linkUrl && (
-                    <a 
-                      href={item.linkUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()} 
-                      className="ml-3 pl-3 border-l border-black/10 flex items-center gap-1 text-[10px] md:text-xs font-bold hover:underline"
-                    >
-                      Check it out <ExternalLink size={10} />
-                    </a>
-                  )}
-                </div>
-              );
-            })}
+        {/* Middle: Announcement Display (Medium weight for readability) */}
+        <div className="flex-1 overflow-hidden relative h-full flex items-center">
+          <div 
+            key={currentIndex}
+            onClick={() => navigate('/announcements', { state: { targetId: currentItem.id || currentItem._id } })} 
+            className="flex items-center gap-4 cursor-pointer group animate-slide-up"
+          >
+            <span className="text-[11px] md:text-xs font-medium text-white group-hover:text-amber-200 transition-colors tracking-wide truncate max-w-[140px] sm:max-w-xs md:max-w-md lg:max-w-3xl">
+              {currentItem.message}
+            </span>
+            {currentItem.linkUrl && (
+              <a 
+                href={currentItem.linkUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()} 
+                className="hidden lg:flex items-center gap-1.5 text-[10px] text-white/60 hover:text-white transition-all uppercase font-medium tracking-widest border-b border-white/20 hover:border-white"
+              >
+                Details <ExternalLink size={10} />
+              </a>
+            )}
           </div>
         </div>
 
-        {/* Close Button */}
-        <button
-          onClick={() => setIsVisible(false)}
-          className="flex-shrink-0 p-1.5 md:p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
-        >
-          <X size={18} />
-        </button>
+        {/* Right: Counter, Search & Close */}
+        <div className="flex items-center gap-4 lg:gap-8 pr-2">
+          
+          {/* Announcement Counter */}
+          <div className="text-white/80 text-[11px] md:text-xs font-medium tracking-widest tabular-nums border-l border-white/20 pl-4 lg:pl-8">
+            {currentIndex + 1}<span className="mx-1.5 opacity-40">/</span>{announcements.length}
+          </div>
+
+          {/* Functional Search bar (Maintained brightness) */}
+          <form onSubmit={handleSearch} className="hidden md:flex items-center relative">
+            <input
+              type="text"
+              placeholder="Search courses..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-white/10 border border-white/30 text-white text-[11px] px-3 py-1.5 pr-8 rounded focus:outline-none focus:bg-white/15 focus:border-white/60 placeholder:text-white/50 transition-all w-32 lg:w-48 font-normal shadow-inner"
+            />
+            <button type="submit" className="absolute right-2 text-white/60 hover:text-white transition-colors">
+              <Search size={14} />
+            </button>
+          </form>
+
+          {/* Close Button */}
+          <button
+            onClick={() => setIsVisible(false)}
+            className="p-1 text-white/40 hover:text-white hover:bg-white/10 rounded-full transition-all"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
       <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-100%); }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .animate-marquee {
-          animation: marquee 45s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-        .mask-image-gradient {
-          mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
-          -webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+        .animate-slide-up {
+          animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
       `}</style>
     </div>
