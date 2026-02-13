@@ -1,98 +1,116 @@
-import React, { useState } from 'react';
-
-// --- IMPORTING IMAGES ---
-// Note: Ensure these images exist in your assets folder as they were used in About.jsx
-import tusharImg from '../../../assets/About/Tushar Sinha.png';
-import dheerajImg from '../../../assets/About/Dheeraj Singh.png';
-import akhilImg from '../../../assets/About/Akhil Kumar.png';
-
-// --- MENTOR CARD COMPONENT ---
-const MentorCard = ({ name, degree, college, shortBio, fullBio, image }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:shadow-[0_15px_30px_rgb(0,0,0,0.08)] hover:border-blue-200 transition-all duration-500 group flex flex-col h-full transform hover:-translate-y-2">
-      <div className="h-72 bg-gradient-to-b from-blue-50 via-blue-50/30 to-white relative flex items-end justify-center pt-8 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-white/40 to-transparent"></div>
-        <img 
-          src={image} 
-          alt={name} 
-          className="h-full w-auto object-contain drop-shadow-sm transition-transform duration-500 group-hover:scale-105 relative z-10"
-        />
-      </div>
-      <div className="p-8 text-center flex flex-col flex-grow relative z-10 bg-white">
-        <h3 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">{name}</h3>
-        <p className="text-blue-600 text-sm font-bold uppercase tracking-wide mb-4">{degree}</p>
-        <div className="mb-6">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:border-blue-200 transition-colors shadow-sm">
-            {college}
-          </span>
-        </div>
-        <p className="text-gray-500 text-sm leading-relaxed mb-8 flex-grow transition-all duration-300 font-light">
-          {isExpanded ? fullBio : shortBio}
-        </p>
-        <div className="mt-auto">
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center text-gray-900 font-bold text-sm hover:text-blue-600 transition-colors group/btn"
-          >
-            {isExpanded ? "Read Less" : "Read More"}
-            <span className={`ml-2 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover/btn:bg-blue-600 group-hover/btn:text-white transition-all duration-300 transform ${isExpanded ? 'rotate-180' : ''}`}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import React from 'react';
+import { motion } from "framer-motion";
+import { Mail, GraduationCap, Sparkles } from "lucide-react";
 
 const MentorsSection = () => {
+  const facultyMembers = [
+    {
+      name: "Dr. Rajesh Kumar",
+      title: "Professor",
+      qualification: "Ph.D. (IIT Delhi)",
+      department: "PHYSICS",
+      specialization: "IIT-JEE Physics & Mechanics",
+      email: "rajesh.kumar@centumacademy.com",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+    },
+    {
+      name: "Prof. Sneha Sharma",
+      title: "Associate Professor",
+      qualification: "M.Sc. (Delhi University)",
+      department: "CHEMISTRY",
+      specialization: "Organic & Inorganic Chemistry",
+      email: "sneha.sharma@centumacademy.com",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop"
+    },
+    {
+      name: "Dr. Amit Verma",
+      title: "Professor",
+      qualification: "Ph.D. (IIT Bombay)",
+      department: "MATHEMATICS",
+      specialization: "Advanced Calculus & Algebra",
+      email: "amit.verma@centumacademy.com",
+      image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop"
+    },
+    {
+      name: "Ms. Priya Reddy",
+      title: "Assistant Professor",
+      qualification: "M.Sc. (AIIMS)",
+      department: "BIOLOGY",
+      specialization: "NEET Biology & Zoology",
+      email: "priya.reddy@centumacademy.com",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop"
+    }
+  ];
+
   return (
-    <section className="py-24 bg-white border-t border-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header - Styled to match Home Page Aesthetics */}
-        <div className="mb-20 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 tracking-tight">
-              Meet Our
-            </h2>
-            <div className="relative inline-block">
-              <span className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 font-serif tracking-wide">
-                Expert Mentors
-              </span>
-              <div className="absolute -bottom-2 left-0 right-0 h-1 bg-yellow-400 rounded-full w-1/2 mx-auto shadow-sm"></div>
-            </div>
-            <p className="text-gray-500 text-lg mt-6 font-medium max-w-xl mx-auto">
-                Learn directly from those who have cracked the toughest exams.
-            </p>
+    <section className="py-24 bg-white px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full mb-4">
+            <GraduationCap className="h-4 w-4" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Expert Faculty</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+            Learn from the <span className="text-emerald-600">Best Minds</span>
+          </h2>
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            Our mentors are IIT & AIIMS alumni with years of experience in training students for competitive excellence.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <MentorCard 
-            image={tusharImg}
-            name="Tushar Sinha"
-            degree="B.Tech & M.Tech"
-            college="IIT Kharagpur"
-            shortBio="Tushar is an IIT Kharagpur alumnus in Mechanical & Manufacturing Systems. With experience in AI and Robotics research..."
-            fullBio="Tushar is an IIT Kharagpur alumnus in Mechanical & Manufacturing Systems. With experience in AI and Robotics research and industry exposure in manufacturing, he followed his passion for teaching. Today, he leads a team dedicated to simplifying learning for school students."
-          />
-          <MentorCard 
-            image={dheerajImg}
-            name="Dheeraj Singh"
-            degree="B.Tech & M.Tech"
-            college="IIT Bombay"
-            shortBio="Dheeraj, an IIT Bombay graduate and former Lead Analyst at Honeywell, combines academic brilliance with corporate expertise."
-            fullBio="Dheeraj, an IIT Bombay graduate and former Lead Analyst at Honeywell, combines academic brilliance with corporate expertise. He is passionate about Physics, making it relatable to daily life through engaging examples. His mission: help students develop strong problem-solving skills using advanced visualisation techniques."
-          />
-          <MentorCard 
-            image={akhilImg}
-            name="Akhil Kumar"
-            degree="B.Tech & M.Tech"
-            college="IIT Kharagpur"
-            shortBio="Akhil is an IIT Kharagpur alumnus in Electrical Engineering. With professional experience in Austin, Texas..."
-            fullBio="Akhil is an IIT Kharagpur alumnus in Electrical Engineering. With professional experience in Austin, Texas, he left a promising corporate career to pursue his vision: “Padhega India, Badhega India.” An ardent lover of Mathematics, he is dedicated to making math accessible, enjoyable, and deeply impactful for every student."
-          />
+        {/* Faculty Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {facultyMembers.map((faculty, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group"
+            >
+              {/* Image Container */}
+              <div className="relative h-72 overflow-hidden bg-slate-100">
+                <img
+                  src={faculty.image}
+                  alt={faculty.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute top-4 left-4">
+                   <div className="bg-emerald-600 text-white px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg">
+                    {faculty.department}
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="text-xl font-black text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                  {faculty.name}
+                </h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+                  {faculty.qualification}
+                </p>
+                <p className="text-sm text-slate-600 mb-6 leading-relaxed italic">
+                  "{faculty.specialization}"
+                </p>
+
+                {/* Contact */}
+                <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <a 
+                    href={`mailto:${faculty.email}`}
+                    className="h-10 w-10 bg-slate-50 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 rounded-xl flex items-center justify-center transition-all"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </a>
+                  <button className="text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:translate-x-1 transition-transform">
+                    View Profile
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

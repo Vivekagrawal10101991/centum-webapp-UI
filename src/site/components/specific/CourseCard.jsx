@@ -1,164 +1,88 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Clock, Users } from 'lucide-react';
-import Button from '../../../components/common/Button';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
+import { BookOpen, Clock, Users, CheckCircle, IndianRupee, ArrowRight } from 'lucide-react';
 
-const CourseCard = ({ 
-  id, 
-  title, 
-  shortDescription, 
-  imageUrl, 
-  tag,
-  duration,
-  colorTheme = 'blue' 
-}) => {
-  
-  const themeColors = {
-    blue: {
-      badge: 'bg-blue-600 text-white shadow-sm',
-      accent: 'text-blue-600',
-      hoverBorder: 'hover:border-blue-500',
-      iconBg: 'bg-blue-50',
-      btnClass: 'bg-blue-600 hover:bg-blue-700 text-white border-transparent'
-    },
-    emerald: {
-      badge: 'bg-emerald-600 text-white shadow-sm',
-      accent: 'text-emerald-600',
-      hoverBorder: 'hover:border-emerald-500',
-      iconBg: 'bg-emerald-50',
-      btnClass: 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent'
-    },
-    rose: {
-      badge: 'bg-rose-600 text-white shadow-sm',
-      accent: 'text-rose-600',
-      hoverBorder: 'hover:border-rose-500',
-      iconBg: 'bg-rose-50',
-      btnClass: 'bg-rose-600 hover:bg-rose-700 text-white border-transparent'
-    },
-    purple: {
-      badge: 'bg-purple-600 text-white shadow-sm',
-      accent: 'text-purple-600',
-      hoverBorder: 'hover:border-purple-500',
-      iconBg: 'bg-purple-50',
-      btnClass: 'bg-purple-600 hover:bg-purple-700 text-white border-transparent'
-    },
-    orange: {
-      badge: 'bg-orange-600 text-white shadow-sm',
-      accent: 'text-orange-600',
-      hoverBorder: 'hover:border-orange-500',
-      iconBg: 'bg-orange-50',
-      btnClass: 'bg-orange-600 hover:bg-orange-700 text-white border-transparent'
-    },
-    teal: {
-      badge: 'bg-teal-600 text-white shadow-sm',
-      accent: 'text-teal-600',
-      hoverBorder: 'hover:border-teal-500',
-      iconBg: 'bg-teal-50',
-      btnClass: 'bg-teal-600 hover:bg-teal-700 text-white border-transparent'
-    },
-    cyan: {
-      badge: 'bg-cyan-600 text-white shadow-sm',
-      accent: 'text-cyan-600',
-      hoverBorder: 'hover:border-cyan-500',
-      iconBg: 'bg-cyan-50',
-      btnClass: 'bg-cyan-600 hover:bg-cyan-700 text-white border-transparent'
-    },
-    pink: {
-      badge: 'bg-pink-600 text-white shadow-sm',
-      accent: 'text-pink-600',
-      hoverBorder: 'hover:border-pink-500',
-      iconBg: 'bg-pink-50',
-      btnClass: 'bg-pink-600 hover:bg-pink-700 text-white border-transparent'
-    },
-    indigo: {
-      badge: 'bg-indigo-600 text-white shadow-sm',
-      accent: 'text-indigo-600',
-      hoverBorder: 'hover:border-indigo-500',
-      iconBg: 'bg-indigo-50',
-      btnClass: 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'
-    },
-    red: {
-      badge: 'bg-red-600 text-white shadow-sm',
-      accent: 'text-red-600',
-      hoverBorder: 'hover:border-red-500',
-      iconBg: 'bg-red-50',
-      btnClass: 'bg-red-600 hover:bg-red-700 text-white border-transparent'
-    }
+const CourseCard = ({ course }) => {
+  const navigate = useNavigate();
+
+  // Map categories to Figma gradients
+  const categoryStyles = {
+    JEE: "from-[#7E3AF2] to-[#6749D4]",
+    NEET: "from-[#00A67E] to-[#065F46]",
+    Foundation: "from-[#F59E0B] to-[#D97706]",
+    Crash: "from-[#EF4444] to-[#B91C1C]",
+    Test: "from-[#1C64F2] to-[#1E40AF]"
   };
 
-  const theme = themeColors[colorTheme] || themeColors.blue;
+  const gradient = categoryStyles[course.category] || categoryStyles.JEE;
+
+  // Function to handle clicking anywhere on the card or the button
+  const handleViewDetails = () => {
+    // Navigate using the slug or ID
+    const path = course.slug || course.id || course._id;
+    navigate(`/courses/${path}`);
+  };
 
   return (
-    <div className={`
-      group bg-white rounded-xl overflow-hidden 
-      border border-secondary-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] 
-      transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] 
-      ${theme.hoverBorder} 
-      flex flex-col 
-      w-full h-[400px]
-    `}>
-      {/* UPDATED: Removed 'max-w-[360px]' from the className above.
-         This allows the card to shrink/grow based on the grid layout in the parent component.
-      */}
-      
-      {/* Image Container */}
-      <div className="relative h-56 w-full bg-secondary-100 shrink-0 overflow-hidden border-b border-secondary-50">
-        <img 
-          src={imageUrl || "https://via.placeholder.com/400x250?text=Course+Image"} 
-          alt={title} 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        
-        {/* Badge/Tag */}
-        {tag && (
-          <div className={`absolute top-3 right-3 ${theme.badge} text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full z-20 shadow-sm`}>
-            {tag}
+    <div 
+      onClick={handleViewDetails}
+      className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:-translate-y-2 cursor-pointer"
+    >
+      {/* Course Header */}
+      <div className={`bg-gradient-to-br ${gradient} p-6 text-white relative`}>
+        <div className="flex items-start justify-between mb-4">
+          <div className="p-3 bg-white/20 backdrop-blur-md rounded-xl border border-white/30">
+            <BookOpen className="h-6 w-6" />
           </div>
-        )}
+          <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/30">
+            {course.category}
+          </span>
+        </div>
+        <h3 className="text-xl font-black mb-2 leading-tight group-hover:scale-105 transition-transform origin-left">
+          {course.title || course.name}
+        </h3>
+        <p className="text-sm text-white/80 line-clamp-2">{course.shortDescription || course.description}</p>
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-grow relative">
-        {/* Meta Info (Duration Only) */}
-        {duration && (
-          <div className="flex items-center gap-4 mb-3 text-xs text-secondary-500 font-medium">
-            <div className="flex items-center gap-1.5">
-              <Clock className={`w-3.5 h-3.5 ${theme.accent}`} />
-              <span>{duration}</span>
-            </div>
+      {/* Course Details */}
+      <div className="p-6">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-tighter">
+            <Clock className="h-4 w-4 text-purple-500" />
+            <span>{course.duration || "2 Years"}</span>
           </div>
-        )}
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-tighter">
+            <Users className="h-4 w-4 text-purple-500" />
+            <span>{course.batchSize || "30-35 Students"}</span>
+          </div>
+        </div>
 
-        {/* Title */}
-        <h3 className="text-lg font-bold text-secondary-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
-          <Link to={`/courses/${id}`}>
-            {title}
-          </Link>
-        </h3>
-        
-        {/* Description */}
-        <p className="text-secondary-600 text-sm line-clamp-3 mb-4 flex-grow">
-          {shortDescription}
-        </p>
-        
-        {/* Footer / Action */}
-        <div className="mt-auto pt-4 border-t border-secondary-100 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-secondary-500 font-medium">
-            <div className={`p-1.5 rounded-full ${theme.iconBg}`}>
-              <Users className={`w-4 h-4 ${theme.accent}`} />
+        {/* Features Preview */}
+        <div className="mb-6 space-y-2">
+          {(course.features || []).slice(0, 3).map((feature, idx) => (
+            <div key={idx} className="flex items-center gap-2 text-sm text-slate-600">
+              <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+              <span className="font-medium">{feature}</span>
             </div>
-            <span>Enrolling</span>
+          ))}
+        </div>
+
+        {/* Price & Action */}
+        <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Full Course Fee</p>
+            <div className="flex items-center gap-1">
+              <IndianRupee className="h-4 w-4 text-slate-900" />
+              <span className="text-2xl font-black text-slate-900">
+                {(course.price || 0).toLocaleString()}
+              </span>
+            </div>
           </div>
-          
-          <Link to={`/courses/${id}`}>
-            <Button 
-              size="sm" 
-              className={`rounded-lg px-4 gap-1.5 group-hover:gap-2 transition-all ${theme.btnClass}`}
-            >
-              View Details
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
+          <button 
+            className="h-12 w-12 bg-slate-900 hover:bg-purple-600 text-white rounded-xl flex items-center justify-center transition-all shadow-lg active:scale-90"
+          >
+            <ArrowRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </div>

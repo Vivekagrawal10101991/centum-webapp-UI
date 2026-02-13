@@ -1,68 +1,28 @@
+import React from 'react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Linkedin } from 'lucide-react';
-import logo from '../../../assets/logo.png';
 
-/**
- * Footer Component
- * Site footer with links and contact information
- */
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  const quickLinks = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Courses', path: '/courses' },
-    { name: 'Contact', path: '/contact' },
-    { name: 'Privacy Policy', path: '/privacy' },
-  ];
-
-  // UPDATED: All specific course links now redirect to the main Courses page
-  const courses = [
-    { name: 'JEE Preparation', path: '/courses' },
-    { name: 'NEET Preparation', path: '/courses' },
-    { name: 'Foundation Course', path: '/courses' },
-  ];
-
-  const socialLinks = [
-    { icon: Facebook, href: 'https://www.facebook.com/centumacademy', label: 'Facebook' },
-    { icon: Twitter, href: 'https://x.com/centumacademy', label: 'Twitter' },
-    { icon: Instagram, href: 'https://www.instagram.com/centumacademy/', label: 'Instagram' },
-    { icon: Youtube, href: 'https://www.youtube.com/centumacademy', label: 'YouTube' },
-    { icon: Linkedin, href: 'https://www.linkedin.com/company/centum-academy/', label: 'LinkedIn' },
-  ];
-
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* About Section */}
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <img 
-                src={logo} 
-                alt="Centum Academy" 
-                className="h-12 w-12 rounded-lg object-cover shadow-md"
-              />
+    <footer className="bg-slate-900 text-white">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand Info */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-purple-600 rounded-full flex items-center justify-center font-bold text-lg">C</div>
               <div>
-                <h3 className="text-white text-xl font-bold">Centum Academy</h3>
-                <p className="text-primary-300 text-xs italic">Education with Emotion</p>
+                <h3 className="font-bold text-lg">CENTUM ACADEMY</h3>
+                <p className="text-xs text-purple-400 font-bold italic">Education with Emotion</p>
               </div>
             </div>
-            <p className="text-sm mb-4">
-              Empowering students to achieve their dreams through quality education
-              and personalized guidance.
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Empowering students through concept-driven learning. Founded by IIT alumni, we focus on quality mentorship and building a future-ready ecosystem.
             </p>
-            <div className="flex space-x-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="text-gray-400 hover:text-primary transition-colors"
-                >
-                  <social.icon className="w-5 h-5" />
+            <div className="flex gap-4">
+              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+                <a key={i} href="#" className="h-10 w-10 bg-slate-800 rounded-xl flex items-center justify-center hover:bg-purple-600 transition-all hover:-translate-y-1">
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
@@ -70,65 +30,64 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-sm hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-bold text-purple-400 mb-6 uppercase text-sm tracking-widest">Quick Links</h4>
+            <ul className="space-y-3 text-sm text-slate-400">
+              <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/courses" className="hover:text-white transition-colors">JEE Preparation</Link></li>
+              <li><Link to="/courses" className="hover:text-white transition-colors">NEET Preparation</Link></li>
+              <li><Link to="/student-success" className="hover:text-white transition-colors">Success Stories</Link></li>
+              <li><Link to="/blogs" className="hover:text-white transition-colors">Blog</Link></li>
             </ul>
           </div>
 
-          {/* Courses */}
+          {/* Programs */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-4">Our Courses</h4>
-            <ul className="space-y-2">
-              {courses.map((course) => (
-                <li key={course.name}> {/* Changed key to name since paths are identical */}
-                  <Link
-                    to={course.path}
-                    className="text-sm hover:text-primary transition-colors"
-                  >
-                    {course.name}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-bold text-purple-400 mb-6 uppercase text-sm tracking-widest">Programs</h4>
+            <ul className="space-y-3 text-sm text-slate-400">
+              <li><Link to="/courses" className="hover:text-white transition-colors">JEE Main + Advanced</Link></li>
+              <li><Link to="/courses" className="hover:text-white transition-colors">NEET Coaching</Link></li>
+              <li><Link to="/courses" className="hover:text-white transition-colors">KCET Prep</Link></li>
+              <li><Link to="/courses" className="hover:text-white transition-colors">Foundation (8-10)</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-4">Contact Us</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-sm">
-                  123 Education Street, Learning City, 560001
-                </span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-sm">+91 6366-411473</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-sm">info@centumacademy.com</span>
-              </li>
-            </ul>
+            <h4 className="font-bold text-purple-400 mb-6 uppercase text-sm tracking-widest">Contact Us</h4>
+            <div className="space-y-4 text-sm">
+              <div className="flex items-start gap-3">
+                <Mail className="h-4 w-4 text-purple-400 mt-1" />
+                <div>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase">Email</p>
+                  <p className="text-white">contactus@centumacademy.com</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="h-4 w-4 text-purple-400 mt-1" />
+                <div>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase">Phone</p>
+                  <p className="text-white">+91 91089 3332</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 text-purple-400 mt-1" />
+                <div>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase">Location</p>
+                  <p className="text-white leading-relaxed">HSR Layout, Bengaluru,<br/>Karnataka</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-sm">
-            © {currentYear} Centum Academy. All rights reserved.
-          </p>
+      <div className="border-t border-slate-800 py-6 bg-slate-950/50">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+          <p>© 2026 Centum Academy. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-purple-400">Terms of Service</a>
+            <a href="#" className="hover:text-purple-400">Privacy Policy</a>
+          </div>
         </div>
       </div>
     </footer>
