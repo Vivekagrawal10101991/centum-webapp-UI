@@ -1,47 +1,51 @@
 import React from 'react';
+
+// Standard exports
 import { 
   HeroSection, 
   StatsSection, 
-  ToppersSection, 
   TestimonialsSection,
   MentorsSection 
 } from '../../components/specific';
 
-// These components are derived from your Figma codebase to ensure exact styling
+// Direct imports for specific sections
 import { CourseOfferings } from '../../components/specific/CourseOfferings';
 import { CallToAction } from '../../components/specific/CallToAction';
+import EducationWithEmotion from '../../components/specific/EducationWithEmotion';
+import FeaturedCourses from '../../components/specific/FeaturedCourses';
 import AchieversGrid from '../../components/specific/AchieversGrid';
 
-/**
- * FULLY UPDATED HOME PAGE
- * Matches the exact sequence and design logic of the Centum Academy Figma export.
- */
 const Home = () => {
   return (
     <div className="flex flex-col gap-0 bg-white font-sans overflow-x-hidden">
-      {/* 1. HERO CAROUSEL: High-impact entrance with dynamic slides (Figma: HeroCarousel.tsx) */}
+      
+      {/* 1. HERO CAROUSEL */}
       <HeroSection />
 
-      {/* 2. RESULTS BANNER: Hall of Fame infinite scroll for social proof (Figma: ResultsBanner.tsx) */}
-      <ToppersSection />
+      {/* 2. EDUCATION WITH EMOTION */}
+      <EducationWithEmotion />
 
-      {/* 3. PROGRAM OFFERINGS: Category-based discovery hub for JEE, NEET, and Foundation (Figma: CourseOfferings.tsx) */}
+      {/* 3. DISCOVER YOUR PATH (Program Categories & Highlights) */}
       <CourseOfferings />
 
-      {/* 4. STATISTICS: Animated achievement metrics using modern grid layout (Figma: Statistics.tsx) */}
-      <StatsSection />
+      {/* 4. EXPLORE ALL PROGRAMS (6 Cards & Counseling Banner) */}
+      <FeaturedCourses />
 
-      {/* 5. FACULTY: Authority section highlighting IIT/AIIMS alumni mentors (Figma: Faculty.tsx) */}
-      <MentorsSection />
-
-      {/* 6. ACHIEVERS GRID: Detailed student profiles and success stories (Figma: StudentProfiles.tsx) */}
+      {/* 5. SUCCESS STORIES MARQUEE (Moved up to be exactly here!) */}
       <AchieversGrid />
 
-      {/* 7. PARENT TESTIMONIALS: Auto-scrolling horizontal feedback carousel (Figma: ParentTestimonials.tsx) */}
+      {/* 6. STATS SECTION (Why Choose Centum Academy) */}
+      <StatsSection />
+
+      {/* 7. EXPERT FACULTY */}
+      <MentorsSection />
+
+      {/* 8. PARENT TESTIMONIALS (Community Voice) */}
       <TestimonialsSection />
 
-      {/* 8. CALL TO ACTION: The final conversion engine with animated background elements (Figma: CallToAction.tsx) */}
+      {/* 9. FINAL CALL TO ACTION */}
       <CallToAction />
+
     </div>
   );
 };
