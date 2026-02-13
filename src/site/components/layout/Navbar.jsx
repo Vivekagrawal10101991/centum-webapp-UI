@@ -1,287 +1,101 @@
-import { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Menu,
-  X,
-  User,
-  ChevronDown,
-  Home,
-  Info,
-  BookOpen,
-  Trophy,
-  Video,
-  Mail,
-  Megaphone, 
-  LogOut,
-  LayoutDashboard
-} from "lucide-react";
+import { Menu, X, ChevronDown, Search, Megaphone, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../../assets/logo.png";
 
-/**
- * Premium Navbar Component
- * UPDATED: 
- * - Tagline font size increased.
- */
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
-  const timeoutRef = useRef(null);
 
-  const handleLogout = () => {
-    logout(); 
-    setIsUserMenuOpen(false);
-    navigate('/'); 
-  };
-
-  const handleDashboard = () => {
-    navigate('/dashboard');
-    setIsUserMenuOpen(false);
-  };
-
-  const navLinks = [
-    { name: "Home", path: "/", icon: Home, dropdown: null },
-    {
-      name: "About",
-      path: "/about",
-      icon: Info,
-      dropdown: [
-        { name: "About Us", path: "/about", icon: Info },
-        { name: "Contributions", path: "/contributions", icon: Trophy },
-      ],
-    },
-    { name: "Courses", path: "/courses", icon: BookOpen, dropdown: null },
-    { name: "Announcements", path: "/announcements", icon: Megaphone, dropdown: null },
-    {
-      name: "Success Stories",
-      path: "/success-stories",
-      icon: Trophy,
-      dropdown: [
-        { name: "Achievers", path: "/achievers", icon: Trophy },
-        { name: "Student Success", path: "/student-success", icon: Trophy },
-      ],
-    },
-    {
-      name: "Media",
-      path: "/media",
-      icon: Video,
-      dropdown: [
-        { name: "Blogs", path: "/blogs", icon: BookOpen },
-        { name: "Explore Videos", path: "/videos", icon: Video },
-      ],
-    },
-    { name: "Contact", path: "/contact", icon: Mail, dropdown: null },
+  // News ticker state from Figma
+  const [newsIdx, setNewsIdx] = useState(0);
+  const news = [
+    "Admissions Open for JEE/NEET 2026 Batch",
+    "97% Students Secured Top Ranks in JEE Advanced",
+    "New Foundation Program Launched for Class 8-10"
   ];
 
-  const handleMouseEnter = (index) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setActiveDropdown(index);
-  };
+  useEffect(() => {
+    const timer = setInterval(() => setNewsIdx(p => (p + 1) % news.length), 4000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setActiveDropdown(null), 150);
-  };
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { 
+      name: "About Us", 
+      path: "/about",
+      submenu: [{ name: "Our Story", path: "/about" }, { name: "Contributions", path: "/contributions" }]
+    },
+    { name: "Courses", path: "/courses" },
+    { name: "Success Stories", path: "/student-success" },
+    { name: "Media", path: "/blogs" },
+    { name: "Contact", path: "/contact" }
+  ];
 
   return (
-    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 transition-all duration-300 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          
-          {/* Logo Section */}
-          <Link to="/" className="flex items-center gap-4 group">
-            <div className="relative overflow-hidden rounded-lg">
-              <img
-                src={logo}
-                alt="Centum Academy"
-                className="h-10 w-10 md:h-12 md:w-12 object-cover transition-transform duration-500"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              {/* Main Title: Playfair Display, Uppercase, Larger Size */}
-              <span 
-                className="text-xl md:text-2xl font-bold leading-none tracking-wide uppercase"
-                style={{ 
-                    color: '#2a2275', 
-                    fontFamily: "'Playfair Display', serif" 
-                }}
-              >
-                CENTUM ACADEMY
-              </span>
-              {/* Tagline: Playfair Display, Italic, Wide Tracking. Size increased from text-[10px] md:text-xs */}
-              <span 
-                className="text-xs md:text-sm font-medium italic tracking-[0.1em] mt-1 opacity-90"
-                style={{ 
-                    color: '#2a2275', 
-                    fontFamily: "'Playfair Display', serif" 
-                }}
-              >
-                Education with emotion
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navLinks.map((link, index) => {
-              const Icon = link.icon;
-              const isActive = activeDropdown === index;
-
-              return (
-                <div
-                  key={link.path}
-                  className="relative group/item"
-                  onMouseEnter={() => link.dropdown && handleMouseEnter(index)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  {link.dropdown ? (
-                    <>
-                      <button 
-                        className={`flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all duration-200 rounded-md
-                          ${isActive ? 'text-[#2a2275] bg-blue-50/50' : 'text-gray-600 hover:text-[#2a2275] hover:bg-gray-50'}`}
-                      >
-                        <span>{link.name}</span>
-                        <ChevronDown 
-                          className={`w-3.5 h-3.5 transition-transform duration-300 ${isActive ? "rotate-180" : ""}`} 
-                        />
-                      </button>
-
-                      {isActive && (
-                        <div className="absolute top-full left-0 pt-2 w-60 z-50" onMouseEnter={() => clearTimeout(timeoutRef.current)} onMouseLeave={handleMouseLeave}>
-                          <div className="bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden ring-1 ring-black/5">
-                            {link.dropdown.map((item) => (
-                              <Link
-                                key={item.path}
-                                to={item.path}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:text-[#2a2275] hover:bg-gray-50 transition-colors border-l-2 border-transparent hover:border-[#2a2275]"
-                                onClick={() => setActiveDropdown(null)}
-                              >
-                                <item.icon className="w-4 h-4 opacity-70" />
-                                <span className="font-medium">{item.name}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      to={link.path}
-                      className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-gray-600 hover:text-[#2a2275] hover:bg-gray-50 transition-all duration-200 rounded-md"
-                    >
-                      <span>{link.name}</span>
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
+    <nav className="sticky top-0 z-50 bg-white">
+      {/* 1. News Bar (Figma Design) */}
+      <div className="bg-slate-900 text-white py-2 overflow-hidden border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Megaphone className="h-3.5 w-3.5 text-amber-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">Update:</span>
+            <p className="text-[11px] font-bold animate-fade-in">{news[newsIdx]}</p>
           </div>
-
-          {/* Right Section: Auth & Mobile Toggle */}
-          <div className="flex items-center gap-4">
-            
-            <div className="hidden lg:flex items-center gap-3">
-              {isAuthenticated && user ? (
-                <div className="relative">
-                  <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="group p-0.5 rounded-full ring-2 ring-transparent hover:ring-[#2a2275]/20 transition-all">
-                    <div 
-                      className="w-9 h-9 rounded-full text-white flex items-center justify-center shadow-md transition-transform group-hover:scale-105"
-                      style={{ backgroundColor: '#2a2275' }}
-                    >
-                      <User className="w-5 h-5" />
-                    </div>
-                  </button>
-
-                  {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 ring-1 ring-black/5">
-                      <div className="px-4 py-3 border-b border-gray-50">
-                         <p className="text-sm font-bold text-gray-900 truncate">{user.name || "User"}</p>
-                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                      </div>
-                      <button onClick={handleDashboard} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors">
-                        <LayoutDashboard className="w-4 h-4" /> Dashboard
-                      </button>
-                      <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors">
-                        <LogOut className="w-4 h-4" /> Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link 
-                  to="/login"
-                  className="px-6 py-2.5 text-white text-sm font-bold tracking-wide rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-                  style={{ backgroundColor: '#2a2275' }}
-                >
-                  Login
-                </Link>
-              )}
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-2 bg-slate-800 rounded-lg px-3 py-1 border border-white/10">
+              <Search className="h-3 w-3 text-slate-400" />
+              <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-[10px] w-24" />
             </div>
-
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-[#2a2275] hover:bg-gray-100 rounded-md transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {!isAuthenticated && <Link to="/login" className="text-[10px] font-black uppercase tracking-widest hover:text-purple-400">Login</Link>}
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white absolute top-full left-0 right-0 shadow-xl z-40">
-            <div className="flex flex-col p-4 space-y-1">
-              {navLinks.map((link) => (
-                <div key={link.path}>
-                  {link.dropdown ? (
-                    <div>
-                      <button
-                        onClick={() => setActiveDropdown(activeDropdown === link.name ? null : link.name)}
-                        className="w-full flex items-center justify-between px-4 py-3 text-gray-700 hover:text-[#2a2275] hover:bg-gray-50 font-medium rounded-lg transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <link.icon className="w-5 h-5 opacity-70" />
-                          <span>{link.name}</span>
-                        </div>
-                        <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === link.name ? "rotate-180" : ""}`} />
-                      </button>
-                      {activeDropdown === link.name && (
-                        <div className="ml-4 mt-1 border-l-2 border-gray-100 pl-4 space-y-1">
-                          {link.dropdown.map((item) => (
-                            <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:text-[#2a2275] text-sm rounded-md">
-                              <span>{item.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <Link to={link.path} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-[#2a2275] hover:bg-gray-50 font-medium rounded-lg transition-colors">
-                      <link.icon className="w-5 h-5 opacity-70" />
-                      <span>{link.name}</span>
-                    </Link>
-                  )}
-                </div>
-              ))}
-              
-              <div className="pt-4 mt-2 border-t border-gray-100">
-                {!isAuthenticated && (
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block w-full text-center px-4 py-3 text-white rounded-lg shadow-md font-bold text-sm"
-                    style={{ backgroundColor: '#2a2275' }}
-                  >
-                    Login
-                  </Link>
-                )}
-              </div>
-            </div>
+      {/* 2. Main Navigation (Figma Design) */}
+      <div className="max-w-7xl mx-auto px-6 h-20 md:h-24 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="h-12 w-12 bg-purple-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg">C</div>
+          <div className="flex flex-col">
+            <span className="text-xl font-black text-slate-900 leading-none">CENTUM ACADEMY</span>
+            <span className="text-[10px] font-bold italic text-emerald-600 uppercase mt-1 tracking-widest">Education with emotion</span>
           </div>
-        )}
+        </Link>
+
+        {/* Desktop Links */}
+        <div className="hidden lg:flex items-center gap-2">
+          {navLinks.map((link, idx) => (
+            <div key={idx} className="relative group" onMouseEnter={() => setActiveDropdown(idx)} onMouseLeave={() => setActiveDropdown(null)}>
+              <Link to={link.path} className="px-4 py-2 text-[11px] font-black uppercase tracking-[0.15em] text-slate-600 hover:text-purple-600 transition-all flex items-center gap-1">
+                {link.name}
+                {link.submenu && <ChevronDown className="h-3 w-3" />}
+              </Link>
+              {link.submenu && activeDropdown === idx && (
+                <div className="absolute top-full left-0 pt-2 w-48 animate-fade-in">
+                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 overflow-hidden">
+                    {link.submenu.map((sub, sIdx) => (
+                      <Link key={sIdx} to={sub.path} className="block px-6 py-3 text-[11px] font-bold text-slate-500 hover:bg-purple-50 hover:text-purple-600">
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          <Link to="/contact" className="ml-4 bg-purple-600 hover:bg-purple-700 text-white px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-purple-600/20 transition-all">
+            Enquire Now
+          </Link>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2 bg-slate-50 rounded-xl">
+          {isMobileMenuOpen ? <X /> : <Menu />}
+        </button>
       </div>
     </nav>
   );
