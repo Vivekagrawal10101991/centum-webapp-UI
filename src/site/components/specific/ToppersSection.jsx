@@ -1,5 +1,6 @@
 import React from 'react';
-import { Trophy, Award, Star, Sparkles } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Trophy, Award } from "lucide-react";
 
 const ToppersSection = () => {
   const results = [
@@ -13,12 +14,18 @@ const ToppersSection = () => {
   const scrollItems = [...results, ...results];
 
   return (
-    <section className="bg-slate-900 py-12 overflow-hidden border-y border-white/5">
+    <motion.section 
+      className="bg-slate-900 py-12 overflow-hidden border-y border-white/5 font-sans"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="max-w-7xl mx-auto px-6 mb-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 px-3 py-1 rounded-full mb-3 border border-amber-400/20">
             <Trophy className="h-3 w-3" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Hall of Fame</span>
+            <span className="text-sm font-bold uppercase tracking-widest">Hall of Fame</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
             Our <span className="text-amber-400">Achievers</span> 2025
@@ -44,7 +51,7 @@ const ToppersSection = () => {
           </div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

@@ -4,7 +4,13 @@ import { ArrowRight, Phone, Mail } from "lucide-react";
 
 export const CallToAction = () => {
   return (
-    <section className="relative py-24 px-6 bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0D9488] overflow-hidden rounded-[4rem] mx-6 mb-12">
+    <motion.section 
+      className="relative py-24 px-6 bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0D9488] overflow-hidden rounded-[4rem] mx-6 mb-12 font-sans"
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="absolute inset-0 opacity-20">
         <motion.div 
           className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"
@@ -14,23 +20,48 @@ export const CallToAction = () => {
       </div>
 
       <div className="max-w-5xl mx-auto text-center relative z-10 text-white">
-        <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter">
+        <motion.h2 
+          className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
           Start Your Academic Journey <br/>with Centum Academy
-        </h2>
-        <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
-          Join thousands of successful students who achieved their dreams with our expert guidance and personalized mentorship.
-        </p>
+        </motion.h2>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-          <button className="bg-white text-[#1E3A8A] px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
+        <motion.p 
+          className="text-xl text-white/90 mb-12 max-w-3xl mx-auto font-medium leading-relaxed"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          Join thousands of successful students who achieved their dreams with our expert guidance and personalized mentorship.
+        </motion.p>
+        
+        <motion.div 
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          <button className="bg-white text-[#1E3A8A] px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
             Enquire Today <ArrowRight className="h-4 w-4" />
           </button>
-          <button className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white hover:text-slate-900 transition-all">
+          <button className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white hover:text-slate-900 transition-all">
             Download Brochure
           </button>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-sm font-black uppercase tracking-widest">
+        <motion.div 
+          className="flex flex-col md:flex-row items-center justify-center gap-8 text-sm font-black uppercase tracking-widest"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+        >
           <div className="flex items-center gap-3">
              <div className="h-10 w-10 bg-white/20 rounded-full flex items-center justify-center"><Phone className="h-4 w-4" /></div>
              <span>+91 91089 3332</span>
@@ -40,8 +71,8 @@ export const CallToAction = () => {
              <div className="h-10 w-10 bg-white/20 rounded-full flex items-center justify-center"><Mail className="h-4 w-4" /></div>
              <span>contactus@centumacademy.com</span>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };

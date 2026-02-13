@@ -5,11 +5,11 @@ import AnnouncementBar from './AnnouncementBar';
 
 const Layout = ({ children }) => {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Positioned at the very top */}
+    <div className="flex flex-col min-h-screen font-sans">
+      {/* Positioned at the very top (Dark, Fading News) */}
       <AnnouncementBar />
       
-      {/* Navbar directly below the blue bar */}
+      {/* Navbar directly below (White, Sticky) */}
       <Navbar />
       
       <main className="flex-grow">
