@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from "framer-motion";
-import { Mail, GraduationCap, Sparkles } from "lucide-react";
+import { Mail, GraduationCap } from "lucide-react";
 
 const MentorsSection = () => {
   const facultyMembers = [
@@ -42,32 +42,61 @@ const MentorsSection = () => {
     }
   ];
 
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
   return (
-    <section className="py-24 bg-white px-6">
+    <section className="py-24 bg-white px-6 font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full mb-4">
             <GraduationCap className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Expert Faculty</span>
+            <span className="text-sm font-bold uppercase tracking-widest">Expert Faculty</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             Learn from the <span className="text-emerald-600">Best Minds</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          <p className="text-lg font-normal text-slate-500 max-w-2xl mx-auto">
             Our mentors are IIT & AIIMS alumni with years of experience in training students for competitive excellence.
           </p>
-        </div>
+        </motion.div>
 
         {/* Faculty Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div 
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {facultyMembers.map((faculty, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={cardVariants}
               className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group"
             >
               {/* Image Container */}
@@ -111,7 +140,7 @@ const MentorsSection = () => {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

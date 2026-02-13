@@ -34,17 +34,21 @@ const TestimonialsSection = () => {
   const scrollItems = [...testimonials, ...testimonials];
 
   return (
-    <section className="py-24 bg-slate-50 overflow-hidden">
+    <section className="py-24 bg-slate-50 overflow-hidden font-sans">
       <div className="max-w-7xl mx-auto px-6 mb-16">
         <div className="text-center">
           <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full mb-4">
             <Sparkles className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Community Voice</span>
+            <span className="text-sm font-bold uppercase tracking-widest">Community Voice</span>
           </div>
+          
+          {/* Section Title: text-4xl md:text-5xl font-black */}
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             What <span className="text-purple-600">Parents</span> Say
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          
+          {/* Body Text: text-lg font-normal */}
+          <p className="text-lg font-normal text-slate-500 max-w-2xl mx-auto">
             Trusted by hundreds of families for delivering concept-driven excellence.
           </p>
         </div>
@@ -72,19 +76,22 @@ const TestimonialsSection = () => {
               <Quote className="h-12 w-12 text-slate-100 absolute top-8 right-8 group-hover:text-purple-50 transition-colors" />
               
               <div className="relative z-10">
-                <p className="text-lg text-slate-600 leading-relaxed italic mb-8">
+                {/* Testimonial Text: text-base font-normal (Italic style retained) */}
+                <p className="text-base font-normal text-slate-600 leading-relaxed italic mb-8">
                   "{item.quote}"
                 </p>
                 
                 <div className="pt-8 border-t border-slate-50">
-                  <h4 className="font-black text-slate-900 text-lg mb-1">{item.parent}</h4>
-                  <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">{item.student}</p>
+                  {/* Parent Name: text-lg font-bold */}
+                  <h4 className="font-bold text-slate-900 text-lg mb-1">{item.parent}</h4>
+                  {/* Designation: text-sm font-medium */}
+                  <p className="text-sm font-bold text-purple-600 uppercase tracking-widest">{item.student}</p>
                 </div>
               </div>
 
               {/* Decorative Accent */}
               <div 
-                className="absolute bottom-0 left-10 right-10 h-1 rounded-full transition-all duration-500 group-hover:h-2"
+                className="absolute bottom-0 left-10 right-10 h-1.5 rounded-full transition-all duration-500 group-hover:h-2"
                 style={{ backgroundColor: item.color }}
               />
             </div>
