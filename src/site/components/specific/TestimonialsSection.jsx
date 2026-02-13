@@ -1,194 +1,95 @@
-import { useState, useEffect, useCallback } from 'react';
-import { 
-  Star, 
-  Quote, 
-  ChevronLeft, 
-  ChevronRight, 
-  MessageCircle, 
-  Heart, 
-  UserCircle2, 
-  Sparkles 
-} from 'lucide-react';
-import { cmsService } from '../../services/cmsService';
+import React from 'react';
+import { motion } from "framer-motion";
+import { Quote, Sparkles } from "lucide-react";
 
-/**
- * TestimonialsSection Component
- * Enhanced with auto-sliding, infinite loop, and decorative background icons.
- */
 const TestimonialsSection = () => {
-  const [testimonials, setTestimonials] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Fetch testimonials from backend
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        const data = await cmsService.getTestimonials();
-        // Filter only published testimonials
-        const publishedData = Array.isArray(data) ? data.filter(t => t.published !== false) : [];
-        setTestimonials(publishedData);
-      } catch (error) {
-        console.error('Error fetching testimonials:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTestimonials();
-  }, []);
-
-  const nextTestimonial = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  // Auto-sliding logic
-  useEffect(() => {
-    let interval;
-    if (isAutoPlaying && testimonials.length > 0) {
-      interval = setInterval(() => {
-        nextTestimonial();
-      }, 5000); // Slide every 5 seconds
+  const testimonials = [
+    {
+      parent: "Mrs. Lakshmi Sharma",
+      student: "Mother of Aarav (AIR 15, JEE Adv)",
+      quote: "Centum Academy provided the perfect blend of academic rigor and emotional support. The faculty's dedication to each student's success is truly remarkable.",
+      color: "#7E3AF2"
+    },
+    {
+      parent: "Dr. Rajesh Kumar",
+      student: "Father of Priya (AIR 42, NEET)",
+      quote: "The personalized attention and systematic approach made all the difference. We're grateful for the transformative education she received.",
+      color: "#1C64F2"
+    },
+    {
+      parent: "Mr. Suresh Patel",
+      student: "Father of Rohan (99.98%ile, JEE Main)",
+      quote: "What sets Centum apart is their holistic approach. They focus not just on scores but on building character and critical thinking.",
+      color: "#00A67E"
+    },
+    {
+      parent: "Mrs. Meena Iyer",
+      student: "Mother of Sneha (AIR 89, NEET)",
+      quote: "The caring environment and excellent teaching methodology helped our daughter achieve her dream of becoming a doctor.",
+      color: "#F59E0B"
     }
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, testimonials.length, nextTestimonial]);
+  ];
 
-  if (loading || testimonials.length === 0) return null;
-
-  const current = testimonials[currentIndex];
+  // Duplicate for seamless loop
+  const scrollItems = [...testimonials, ...testimonials];
 
   return (
-    <section className="py-24 bg-[#f8faff] overflow-hidden relative">
-      
-      {/* --- DECORATIVE BACKGROUND ELEMENTS --- */}
-      <div className="absolute top-20 left-10 text-blue-100 opacity-20 rotate-12 animate-float hidden lg:block">
-        <MessageCircle size={120} />
-      </div>
-      <div className="absolute bottom-20 right-10 text-indigo-100 opacity-20 -rotate-12 animate-float-delayed hidden lg:block">
-        <Quote size={150} />
-      </div>
-      <div className="absolute top-1/2 left-1/4 text-purple-100 opacity-10 animate-pulse">
-        <Heart size={40} />
-      </div>
-      <div className="absolute top-1/3 right-1/4 text-yellow-100 opacity-20 animate-bounce">
-        <Sparkles size={30} />
-      </div>
-
-      <div className="max-container px-4 relative z-10">
-        
-        {/* Updated Heading based on your request */}
-        <div className="mb-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 tracking-tight">
-            Explore Genuine Feedback
-          </h2>
-          <div className="relative inline-block">
-            <span className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 font-serif tracking-wide">
-              from Happy Parents
-            </span>
-            <div className="absolute -bottom-2 left-0 right-0 h-1 bg-yellow-400 rounded-full w-1/2 mx-auto shadow-sm"></div>
+    <section className="py-24 bg-slate-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 mb-16">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full mb-4">
+            <Sparkles className="h-4 w-4" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Community Voice</span>
           </div>
-          <p className="text-gray-500 text-lg mt-8 font-medium max-w-2xl mx-auto leading-relaxed">
-            Education with emotion. Discover why parents trust Centum Academy 
-            for their children's academic excellence and future success.
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+            What <span className="text-purple-600">Parents</span> Say
+          </h2>
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            Trusted by hundreds of families for delivering concept-driven excellence.
           </p>
         </div>
+      </div>
 
-        {/* Enhanced UI Card with Pause on Hover */}
-        <div 
-          className="max-w-4xl mx-auto relative group"
-          onMouseEnter={() => setIsAutoPlaying(false)}
-          onMouseLeave={() => setIsAutoPlaying(true)}
+      {/* Infinite Scroll Container */}
+      <div className="relative flex">
+        <motion.div 
+          className="flex gap-8 px-4"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 30,
+              ease: "linear"
+            }
+          }}
         >
-          <div className="bg-white p-8 md:p-16 rounded-[3rem] shadow-[0_20px_60px_rgba(79,70,229,0.08)] border border-blue-50 relative overflow-hidden transition-all duration-500 hover:shadow-[0_30px_80px_rgba(79,70,229,0.12)]">
-            
-            {/* Inner background highlight */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-transparent rounded-bl-full -z-0"></div>
-
-            <div className="flex flex-col items-center text-center relative z-10">
+          {scrollItems.map((item, idx) => (
+            <div 
+              key={idx}
+              className="w-[400px] flex-shrink-0 bg-white p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative group"
+            >
+              <Quote className="h-12 w-12 text-slate-100 absolute top-8 right-8 group-hover:text-purple-50 transition-colors" />
               
-              {/* Star Rating */}
-              <div className="flex gap-1 mb-8">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`w-6 h-6 ${i < (current.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} 
-                  />
-                ))}
-              </div>
-
-              {/* Message with smooth fade animation class */}
-              <div className="relative mb-10 px-4 md:px-10 min-h-[120px] flex items-center justify-center">
-                <Quote className="absolute -top-6 -left-4 w-12 h-12 text-indigo-500/10" />
-                <p className="text-xl md:text-2xl text-gray-700 leading-relaxed font-medium italic transition-opacity duration-500">
-                  "{current.message || current.content}"
+              <div className="relative z-10">
+                <p className="text-lg text-slate-600 leading-relaxed italic mb-8">
+                  "{item.quote}"
                 </p>
-                <Quote className="absolute -bottom-6 -right-4 w-12 h-12 text-indigo-500/10 rotate-180" />
-              </div>
-
-              {/* Author Info */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 mb-4 p-1 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-2xl shadow-lg">
-                  <div className="w-full h-full bg-white rounded-xl flex items-center justify-center text-indigo-600 text-2xl font-bold">
-                    {current.image ? (
-                        <img src={current.image} alt={current.name} className="w-full h-full object-cover rounded-xl" />
-                    ) : (
-                        <UserCircle2 className="w-12 h-12 opacity-80" />
-                    )}
-                  </div>
+                
+                <div className="pt-8 border-t border-slate-50">
+                  <h4 className="font-black text-slate-900 text-lg mb-1">{item.parent}</h4>
+                  <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">{item.student}</p>
                 </div>
-                <h4 className="text-xl font-bold text-[#1e1b4b] uppercase tracking-wider">
-                  {current.name}
-                </h4>
-                <p className="text-indigo-600 text-sm font-semibold mt-1">
-                    {current.designation || "Proud Parent"}
-                </p>
               </div>
-            </div>
-          </div>
 
-          {/* Navigation Controls - Visible on Hover */}
-          {testimonials.length > 1 && (
-            <>
-              <button
-                onClick={prevTestimonial}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-8 w-14 h-14 bg-white text-indigo-600 rounded-full flex items-center justify-center shadow-xl border border-gray-50 hover:bg-indigo-600 hover:text-white transition-all active:scale-90 z-20 opacity-0 group-hover:opacity-100"
-                aria-label="Previous testimonial"
-              >
-                <ChevronLeft className="w-8 h-8" />
-              </button>
-              <button
-                onClick={nextTestimonial}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-8 w-14 h-14 bg-white text-indigo-600 rounded-full flex items-center justify-center shadow-xl border border-gray-50 hover:bg-indigo-600 hover:text-white transition-all active:scale-90 z-20 opacity-0 group-hover:opacity-100"
-                aria-label="Next testimonial"
-              >
-                <ChevronRight className="w-8 h-8" />
-              </button>
-            </>
-          )}
-
-          {/* Progress Dots Indicator */}
-          {testimonials.length > 1 && (
-            <div className="flex justify-center mt-12 space-x-3">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`h-2.5 rounded-full transition-all duration-500 ${
-                    index === currentIndex 
-                    ? 'bg-indigo-600 w-12 shadow-[0_0_10px_rgba(79,70,229,0.4)]' 
-                    : 'bg-gray-300 w-2.5 hover:bg-indigo-300'
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
+              {/* Decorative Accent */}
+              <div 
+                className="absolute bottom-0 left-10 right-10 h-1 rounded-full transition-all duration-500 group-hover:h-2"
+                style={{ backgroundColor: item.color }}
+              />
             </div>
-          )}
-        </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

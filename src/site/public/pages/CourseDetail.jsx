@@ -1,285 +1,250 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
-  Clock, 
-  BookOpen, 
-  CheckCircle2, 
-  AlertCircle, 
-  FileText,
-  Share2,
-  Calendar,
-  Award
-} from 'lucide-react';
+  X, Clock, Users, BookOpen, Award, CheckCircle, Star, 
+  Calendar, Target, TrendingUp, Phone, Mail, ArrowRight,
+  Sparkles, ShieldCheck, GraduationCap
+} from "lucide-react";
 import { cmsService } from '../../services/cmsService';
-import Button from '../../../components/common/Button';
 
 const CourseDetail = () => {
   const { slug } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    const fetchCourseData = async () => {
+    window.scrollTo(0, 0);
+    const fetchDetail = async () => {
       try {
         setLoading(true);
         const data = await cmsService.getCourseBySlug(slug);
-        
-        if (!data) {
-          setError('Course not found');
-        } else {
-          setCourse(data);
-        }
+        setCourse(data);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load course details');
+        console.error("Error fetching course detail:", err);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchCourseData();
+    fetchDetail();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin h-10 w-10 border-4 border-purple-600 border-t-transparent rounded-full"></div>
+    </div>
+  );
 
-  if (error || !course) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-        <AlertCircle className="w-16 h-16 text-gray-400 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Course Not Found</h2>
-        <p className="text-gray-600 mb-6">The course you are looking for does not exist or has been removed.</p>
-        <Link to="/courses">
-          <Button variant="outline">Browse All Courses</Button>
-        </Link>
-      </div>
-    );
-  }
+  if (!course) return <div className="text-center py-20 font-black">Course Not Found</div>;
 
-  // --- DATA MAPPING (DB Schema -> Component) ---
-  const title = course.title;
-  const tag = course.tag;
-  const image = course.image_url || course.imageUrl || "https://via.placeholder.com/1920x600?text=Course+Banner";
-  const desc = course.short_description || course.shortDescription;
-  
-  // Parse the JSONB 'details' column
-  const details = course.details || {};
-  const { 
-    about, 
-    curriculum = [], 
-    price = { original: 0, discounted: 0 } 
-  } = details;
-
-  const discountPercentage = price.original > 0 
-    ? Math.round(((price.original - price.discounted) / price.original) * 100) 
-    : 0;
+  // Map category to Figma gradients
+  const gradients = {
+    JEE: "from-[#1C64F2] to-[#1E40AF]",
+    NEET: "from-[#00A67E] to-[#065F46]",
+    Foundation: "from-[#F59E0B] to-[#D97706]"
+  };
+  const activeGradient = gradients[course.category] || gradients.JEE;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      
-      {/* --- HERO SECTION --- */}
-      <div className="relative bg-blue-900 text-white overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={image} 
-            alt={title} 
-            className="w-full h-full object-cover opacity-20"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/80 to-blue-900/60"></div>
-        </div>
-
-        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
-          <div className="max-w-4xl">
-            {tag && (
-              <span className="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-widest uppercase bg-blue-500/30 border border-blue-400/50 rounded-full text-blue-100">
-                {tag}
-              </span>
-            )}
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
-              {title}
-            </h1>
-            <p className="text-xl text-blue-100/90 font-light leading-relaxed max-w-2xl mb-8">
-              {desc}
-            </p>
-            
-            <div className="flex flex-wrap gap-6 text-sm font-medium text-blue-200">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-400" />
-                <span>New Batch Starting Soon</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-blue-400" />
-                <span>Certified Program</span>
-              </div>
+    <div className="min-h-screen bg-white">
+      {/* 1. Header with Gradient (Figma Design) */}
+      <div className={`bg-gradient-to-br ${activeGradient} py-20 px-6 relative overflow-hidden`}>
+        {/* Background Decorations */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10 text-white">
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            {/* Program Icon */}
+            <div className="h-24 w-24 rounded-[2rem] bg-white/20 backdrop-blur-xl border-2 border-white/30 flex items-center justify-center shadow-2xl">
+              <GraduationCap className="h-12 w-12" />
             </div>
+
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 mb-4">
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                <span className="text-[10px] font-black uppercase tracking-widest">{course.tag || course.category}</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter leading-tight">
+                {course.title || course.name}
+              </h1>
+              <p className="text-xl text-white/90 font-medium max-w-3xl leading-relaxed">
+                {course.shortDescription || "Comprehensive preparation program designed by IIT Alumni for academic excellence."}
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+            {[
+              { icon: Clock, label: "Duration", val: course.duration || "2 Years" },
+              { icon: Users, label: "Batch Size", val: course.batchSize || "30-35" },
+              { icon: Award, label: "Success Rate", val: "95%+" },
+              { icon: Star, label: "Rating", val: "4.8/5" }
+            ].map((stat, i) => (
+              <div key={i} className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <stat.icon className="h-6 w-6 mb-3 opacity-80" />
+                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-xl font-black">{stat.val}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* --- MAIN CONTENT GRID --- */}
-      <div className="container mx-auto px-4 -mt-10 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* 2. Main Content Grid */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid lg:grid-cols-3 gap-16">
           
-          {/* LEFT COLUMN: Content */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* LEFT: Content Details */}
+          <div className="lg:col-span-2 space-y-20">
             
-            {/* Navigation Tabs */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2 flex overflow-x-auto">
-              <button 
-                onClick={() => setActiveTab('overview')}
-                className={`flex-1 py-3 px-6 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
-                  activeTab === 'overview' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Overview
-              </button>
-              <button 
-                onClick={() => setActiveTab('curriculum')}
-                className={`flex-1 py-3 px-6 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
-                  activeTab === 'curriculum' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Curriculum ({curriculum.length})
-              </button>
-            </div>
+            {/* Program Highlights */}
+            <section>
+              <div className="flex items-center gap-3 mb-10">
+                <Target className="h-8 w-8 text-purple-600" />
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Program Highlights</h2>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {(course.highlights || [
+                  "IIT & AIIMS Alumni Faculty",
+                  "Small Batch Sizes for Individual Focus",
+                  "Comprehensive Study Material",
+                  "Regular Mock Tests & Analytics"
+                ]).map((item, idx) => (
+                  <div key={idx} className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex items-start gap-4">
+                    <CheckCircle className="h-5 w-5 text-emerald-500 mt-1 flex-shrink-0" />
+                    <span className="font-bold text-slate-700 leading-relaxed">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-            {/* Content Area */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 min-h-[400px]">
-              
-              {activeTab === 'overview' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <FileText className="w-6 h-6 text-blue-600" />
-                    About This Course
-                  </h3>
-                  
-                  {/* ✅ FIXED: 
-                      Added custom classes to force list visibility:
-                      - [&_ul]:list-disc  -> Makes unordered lists have bullets
-                      - [&_ul]:pl-5       -> Adds indentation for bullets
-                      - [&_ol]:list-decimal -> Makes ordered lists have numbers
-                      - [&_ol]:pl-5       -> Adds indentation for numbers
-                  */}
-                  <div 
-                    className="prose prose-blue max-w-none text-gray-600 leading-relaxed break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
-                    dangerouslySetInnerHTML={{ __html: about || "No detailed description available for this course yet." }}
-                  />
-                </div>
-              )}
+            {/* Curriculum Sections */}
+            <section>
+              <div className="flex items-center gap-3 mb-10">
+                <BookOpen className="h-8 w-8 text-blue-600" />
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Curriculum Overview</h2>
+              </div>
+              <div className="space-y-6">
+                {(course.curriculum || [
+                  { phase: "Foundation Phase", topics: ["Basic Physics Concepts", "Calculus Essentials", "Atomic Structure"] },
+                  { phase: "Advanced Applications", topics: ["Mechanics Mastery", "Organic Synthesis", "Complex Algebra"] }
+                ]).map((phase, idx) => (
+                  <div key={idx} className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100">
+                    <h3 className="text-xl font-black text-blue-700 mb-4">{phase.phase}</h3>
+                    <ul className="grid md:grid-cols-2 gap-3">
+                      {phase.topics.map((topic, tIdx) => (
+                        <li key={tIdx} className="flex items-center gap-2 text-slate-600 font-medium text-sm">
+                          <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                          {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-              {activeTab === 'curriculum' && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <BookOpen className="w-6 h-6 text-blue-600" />
-                    Syllabus & Topics
-                  </h3>
-                  
-                  {curriculum.length > 0 ? (
-                    curriculum.map((item, idx) => (
-                      <div key={idx} className="border border-gray-200 rounded-xl overflow-hidden hover:border-blue-300 transition-colors">
-                        <div className="bg-gray-50 p-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
-                          <span className="font-bold text-gray-800 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">
-                              {idx + 1}
-                            </span>
-                            {item.subject}
-                          </span>
-                        </div>
-                        <div className="p-4 bg-white text-sm text-gray-600 border-t border-gray-100">
-                          {Array.isArray(item.topics) ? (
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                              {item.topics.map((topic, tIdx) => (
-                                <li key={tIdx} className="flex items-start gap-2">
-                                  <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                                  <span>{topic}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p>{item.topics || "Topics to be announced."}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-10 text-gray-400">
-                      <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      <p>Curriculum details coming soon.</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-            </div>
+            {/* Expert Faculty */}
+            <section>
+              <div className="flex items-center gap-3 mb-10">
+                <Users className="h-8 w-8 text-amber-500" />
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Expert Mentors</h2>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {(course.faculty || [
+                  { name: "Dr. Rajesh Kumar", info: "IIT Delhi Alumni, 12+ Years Exp" },
+                  { name: "Prof. Anita Sharma", info: "Organic Chemistry Specialist" }
+                ]).map((f, i) => (
+                  <div key={i} className="bg-slate-900 text-white p-8 rounded-[2.5rem] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+                    <h4 className="text-xl font-black mb-2">{f.name}</h4>
+                    <p className="text-amber-400 text-xs font-black uppercase tracking-widest">{f.info}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
 
-          {/* RIGHT COLUMN: Sidebar (Pricing & Action) */}
+          {/* RIGHT: Sticky Enrollment Sidebar (Figma Design) */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-24">
-              <div className="mb-6">
-                <p className="text-sm text-gray-500 font-medium mb-1">Total Course Fee</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-extrabold text-gray-900">
-                    ₹{price.discounted?.toLocaleString()}
-                  </span>
-                  {price.original > price.discounted && (
-                    <span className="text-lg text-gray-400 line-through">
-                      ₹{price.original?.toLocaleString()}
-                    </span>
-                  )}
+            <div className="sticky top-28 bg-white rounded-[3rem] border border-slate-200 shadow-2xl p-10 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 to-blue-600"></div>
+              
+              <h3 className="text-2xl font-black text-slate-900 mb-8 tracking-tight">Enroll Now</h3>
+              
+              {/* Fee Information */}
+              <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Full Course Fee</p>
+                <div className="flex items-baseline gap-1">
+                   <span className="text-3xl font-black text-slate-900">₹{course.price?.toLocaleString() || "85,000"}</span>
+                   <span className="text-slate-400 text-xs font-bold">/ Year</span>
                 </div>
-                {discountPercentage > 0 && (
-                  <div className="mt-2 inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wide">
-                    {discountPercentage}% Discount Active
-                  </div>
-                )}
+                <div className="mt-4 pt-4 border-t border-slate-200">
+                  <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">EMI Starting from ₹6,500/mo</p>
+                </div>
               </div>
 
-              <Link to="/contact">
-                <Button className="w-full py-4 text-lg font-bold shadow-blue-200 shadow-xl mb-4">
-                  Enroll Now
-                </Button>
-              </Link>
-              
-              <Link to="/contact">
-                <button className="w-full py-3 text-gray-600 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                  Request Callback
-                </button>
-              </Link>
+              {/* Course Details List */}
+              <div className="space-y-6 mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Schedule</p>
+                    <p className="text-sm font-bold text-slate-700">Mon - Sat | 4PM - 8PM</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mode</p>
+                    <p className="text-sm font-bold text-slate-700">Hybrid (Online + Offline)</p>
+                  </div>
+                </div>
+              </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-100 space-y-4">
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <span>Flexible Schedule</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <span>Comprehensive Material</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
-                    <Share2 className="w-4 h-4" />
-                  </div>
-                  <span>Lifetime Access</span>
-                </div>
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                <button className="w-full py-5 bg-slate-900 hover:bg-purple-600 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2">
+                  Apply Today <ArrowRight className="h-4 w-4" />
+                </button>
+                <button className="w-full py-5 border-2 border-slate-100 hover:bg-slate-50 text-slate-600 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-2">
+                  <Phone className="h-4 w-4" /> Book Free Demo
+                </button>
+              </div>
+
+              <div className="mt-8 text-center">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Limited Seats Available for 2026</p>
               </div>
             </div>
           </div>
-
         </div>
       </div>
+
+      {/* 3. Bottom Success Banner (Social Proof) */}
+      <section className="bg-slate-50 py-24 px-6 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Success Stories from this Program</h2>
+        </div>
+        <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar">
+          {[1, 2, 3].map((_, i) => (
+             <div key={i} className="min-w-[400px] bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100">
+               <div className="flex items-center gap-2 mb-4">
+                 {[1,2,3,4,5].map(s => <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
+               </div>
+               <p className="text-lg text-slate-600 font-medium italic mb-8">
+                 "The personalized mentorship in this batch helped me clear my doubts immediately. Truly transformative!"
+               </p>
+               <h4 className="text-xl font-black text-slate-900">Student Name {i+1}</h4>
+               <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">AIR {i * 10 + 42} (2025)</p>
+             </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
