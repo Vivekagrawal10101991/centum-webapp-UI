@@ -25,23 +25,23 @@ const Home = () => {
       {/* 2. EDUCATION WITH EMOTION */}
       <EducationWithEmotion />
 
-      {/* 3. DISCOVER YOUR PATH (Program Categories & Highlights) */}
+      {/* 3. DISCOVER YOUR PATH */}
       <CourseOfferings />
 
-      {/* 4. EXPLORE ALL PROGRAMS (6 Cards & Counseling Banner) */}
+      {/* 4. EXPLORE ALL PROGRAMS */}
       <FeaturedCourses />
 
-      {/* 5. SUCCESS STORIES MARQUEE (Moved up to be exactly here!) */}
+      {/* 5. OUR STUDENTS' ACHIEVEMENTS */}
       <AchieversGrid />
 
-      {/* 6. STATS SECTION (Why Choose Centum Academy) */}
+      {/* 6. WHAT PARENTS SAY ABOUT US - MOVED EXACTLY HERE */}
+      <TestimonialsSection />
+
+      {/* 7. STATS SECTION */}
       <StatsSection />
 
-      {/* 7. EXPERT FACULTY */}
+      {/* 8. EXPERT FACULTY */}
       <MentorsSection />
-
-      {/* 8. PARENT TESTIMONIALS (Community Voice) */}
-      <TestimonialsSection />
 
       {/* 9. FINAL CALL TO ACTION */}
       <CallToAction />

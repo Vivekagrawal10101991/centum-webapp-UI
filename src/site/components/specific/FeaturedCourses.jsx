@@ -43,16 +43,16 @@ const FeaturedCourses = () => {
   };
 
   return (
-    <section className="py-24 px-6 bg-white font-sans overflow-hidden">
+    <section className="py-24 px-6 bg-slate-100 font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
-        {/* Section Header */}
+        {/* SECTION HEADER - text-4xl md:text-5xl font-black (Matches Achievements) */}
         <div className="text-center mb-16">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 px-4 py-2 rounded-full mb-6 border border-purple-100"
+            className="inline-flex items-center gap-2 bg-white text-[#4F46E5] px-5 py-2.5 rounded-full mb-6 border border-slate-200 shadow-sm"
           >
             <Sparkles className="h-4 w-4" />
             <span className="text-sm font-bold uppercase tracking-widest">Explore Programs</span>
@@ -65,14 +65,14 @@ const FeaturedCourses = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight"
           >
-            Explore All <span className="text-purple-600">Programs</span>
+            Explore all <span className="text-[#4F46E5]">programs</span>
           </motion.h2>
         </div>
 
         {/* Courses Grid */}
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
-            <Loader2 className="w-10 h-10 text-purple-600 animate-spin mb-4" />
+            <Loader2 className="w-10 h-10 text-[#4F46E5] animate-spin mb-4" />
             <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Loading Programs...</span>
           </div>
         ) : (
@@ -85,6 +85,7 @@ const FeaturedCourses = () => {
           >
             {courses.map((course, idx) => (
               <motion.div key={course.id || course._id || idx} variants={itemVariants}>
+                {/* Cards remain white (bg-white is standard for CourseCard) to pop against gray */}
                 <CourseCard course={course} index={idx} />
               </motion.div>
             ))}
@@ -99,39 +100,36 @@ const FeaturedCourses = () => {
           className="flex justify-center mb-24"
         >
           <Link to="/courses">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-xl text-base font-bold uppercase tracking-wider shadow-lg shadow-purple-600/20 transition-all flex items-center gap-2 hover:-translate-y-1">
+            <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-xl text-base font-bold uppercase tracking-wider shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 hover:-translate-y-1">
               Explore More Courses <ArrowRight className="h-5 w-5" />
             </button>
           </Link>
         </motion.div>
 
-        {/* --- NEW: "Not Sure Which Program is Right for You?" Banner --- */}
+        {/* Counseling Banner */}
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-[#6366F1] to-[#3B82F6] rounded-[2.5rem] p-10 md:p-16 text-center shadow-2xl shadow-indigo-500/20 max-w-5xl mx-auto"
+          className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-[2.5rem] p-10 md:p-16 text-center shadow-2xl shadow-indigo-500/20 max-w-5xl mx-auto"
         >
           <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
-            Not Sure Which Program is Right for You?
+            Not sure which program is right for you?
           </h3>
-          <p className="text-white/90 text-base md:text-lg max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+          <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
             Our expert counselors will help you choose the perfect program based on your goals, current preparation level, and career aspirations.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
-            {/* Button 1: Solid White */}
-            <button className="bg-white text-indigo-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
+            <button className="bg-white text-indigo-900 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
               Get Free Counseling
             </button>
             
-            {/* Button 2: Outline / Glass (Fixed visibility) */}
             <button className="bg-white/10 border-2 border-white/50 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm">
               Download Brochure
             </button>
           </div>
         </motion.div>
-        {/* ----------------------------------------------------------------- */}
 
       </div>
     </section>
