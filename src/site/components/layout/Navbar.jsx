@@ -14,7 +14,12 @@ const Navbar = () => {
     { 
       name: "About Us", 
       path: "/about",
-      submenu: [{ name: "Our Story", path: "/about" }, { name: "Contributions", path: "/contributions" }]
+      submenu: [
+        { name: "Our Story", path: "/about" }, 
+        { name: "Vision & Mission", path: "/vision-mission" }, 
+        { name: "Founders", path: "/founders" }, 
+        { name: "Contributions", path: "/contributions" }
+      ]
     },
     { name: "Courses", path: "/courses" },
     { name: "Success Stories", path: "/student-success" },

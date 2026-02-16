@@ -11,6 +11,8 @@ import {
   Contact, 
   Courses, 
   Announcements,
+  VisionMission,
+  Founders,
   JeeMains,
   JeeAdvance,
   NeetCourses,
@@ -30,6 +32,8 @@ export const SiteRoutes = () => {
       {/* Public Routes with Layout */}
       <Route path="/" element={<Layout><Home /></Layout>} />
       <Route path="/about" element={<Layout><About /></Layout>} />
+      <Route path="/vision-mission" element={<Layout><VisionMission /></Layout>} />
+      <Route path="/founders" element={<Layout><Founders /></Layout>} />
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
       
       {/* Announcements */}

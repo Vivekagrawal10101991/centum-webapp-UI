@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Sparkles, Target, Award, BookOpen, Heart, 
   CheckCircle, HandHeart, Library, GraduationCap, 
-  TrendingUp, ExternalLink, Trophy, Star, Zap 
+  TrendingUp, ExternalLink, Trophy, Star, Zap,
+  ShieldCheck, Clock 
 } from 'lucide-react';
 
 // Animated Counter for Journey Stats
@@ -56,6 +57,14 @@ const About = () => {
     calc(); window.addEventListener('resize', calc);
     return () => window.removeEventListener('resize', calc);
   }, []);
+
+  // Impact Statistics Data with Custom Gradients
+  const impactStats = [
+    { icon: Award, value: "4,800+", label: "JEE Adv Selections", gradient: "from-[#F59E0B] to-[#D97706]" },
+    { icon: ShieldCheck, value: "26,000+", label: "JEE Main Qualified", gradient: "from-[#1C64F2] to-[#1E40AF]" },
+    { icon: Target, value: "3,400+", label: "NEET Selections", gradient: "from-[#00A67E] to-[#047857]" },
+    { icon: Clock, value: "13 Years", label: "Of Excellence", gradient: "from-[#7E3AF2] to-[#6D28D9]" }
+  ];
 
   return (
     <div className="min-h-screen bg-white font-sans overflow-hidden">
@@ -119,7 +128,6 @@ const About = () => {
             </h3>
           </div>
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* NDLI Card */}
             <motion.div whileHover={{ y: -5 }} className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 text-white">
                 <div className="flex items-start justify-between mb-4"><Library className="h-12 w-12 text-white" /><span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Since 2020</span></div>
@@ -137,7 +145,6 @@ const About = () => {
                 <a href="https://ndl.iitkgp.ac.in/" target="_blank" className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-800 transition-colors uppercase text-xs tracking-widest">Visit NDLI Platform <ExternalLink className="h-4 w-4" /></a>
               </div>
             </motion.div>
-            {/* PRAYAS Card */}
             <motion.div whileHover={{ y: -5 }} className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
               <div className="bg-gradient-to-br from-green-500 to-green-600 p-8 text-white">
                 <div className="flex items-start justify-between mb-4"><GraduationCap className="h-12 w-12 text-white" /><span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Since 2020</span></div>
@@ -158,17 +165,15 @@ const About = () => {
         </div>
       </section>
 
-      {/* 5. OUR JOURNEY - REDUCED TITLE SIZE */}
+      {/* 5. OUR JOURNEY */}
       <section className="py-24 bg-white overflow-hidden relative min-h-[950px] flex flex-col justify-center border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 relative z-20 mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] rounded-full mb-6 shadow-lg"><TrendingUp className="h-5 w-5 text-white" /><span className="text-sm font-bold text-white uppercase tracking-wider">2014 - 2026</span></div>
-          {/* UPDATED TITLE SIZE TO MATCH CONTRIBUTIONS SECTION */}
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-6">Our <span className="bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] bg-clip-text text-transparent">Journey</span></h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">Climbing the ladder of success - 13 years of transforming dreams into reality</p>
         </div>
 
         <div className="relative min-h-[640px] overflow-hidden">
-          {/* Gradient Masks */}
           <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-white via-purple-50/10 to-transparent z-10 pointer-events-none"></div>
           <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-white via-purple-50/10 to-transparent z-10 pointer-events-none"></div>
           <div className="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-white via-purple-50/10 to-transparent z-10 pointer-events-none"></div>
@@ -208,6 +213,60 @@ const About = () => {
               );
             })}
           </motion.div>
+        </div>
+      </section>
+
+      {/* 6. IMPACT STATISTICS (MODIFIED: 50% REDUCED HEIGHT, GRADIENT CARDS & REDUCED RADIUS) */}
+      <section className="py-16 bg-white border-t border-slate-100 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {impactStats.map((stat, idx) => (
+              <motion.div 
+                key={idx} 
+                className="relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* 50% Reduced Height (p-5), Reduced Radius (rounded-2xl) and Solid Theme Gradient */}
+                <div 
+                  className={`text-center rounded-2xl p-5 shadow-lg transition-all duration-500 flex flex-col items-center justify-center border border-transparent hover:shadow-xl bg-gradient-to-br ${stat.gradient}`}
+                >
+                  {/* Smaller Icon Container */}
+                  <motion.div
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-3 bg-white/20 shadow-inner"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 + 0.2 }}
+                  >
+                    <stat.icon className="h-5 w-5 text-white" />
+                  </motion.div>
+
+                  {/* Smaller Value Text Size */}
+                  <motion.h3 
+                    className="text-2xl lg:text-3xl font-black text-white mb-1 tracking-tight"
+                    initial={{ scale: 0.9 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: idx * 0.1 + 0.3 }}
+                  >
+                    {stat.value}
+                  </motion.h3>
+
+                  {/* Smaller Label Text Size */}
+                  <p className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest opacity-90">
+                    {stat.label}
+                  </p>
+
+                  {/* Smaller Decorative Accent */}
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-white/20 transition-all duration-500"></div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
