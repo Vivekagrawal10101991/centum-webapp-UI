@@ -2,7 +2,9 @@ export { default as Home } from './Home';
 export { default as About } from './About';
 export { default as Contact } from './Contact';
 export { default as Courses } from './Courses';
-export { default as Announcements } from './Announcements'; // NEW EXPORT
+export { default as Announcements } from './Announcements';
+export { default as VisionMission } from './VisionMission';
+export { default as Founders } from './Founders';
 
 // Specific Course Pages
 export { default as JeeMains } from './JeeMains';
