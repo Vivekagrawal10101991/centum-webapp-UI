@@ -14,7 +14,6 @@ import {
   Sparkles,
   BarChart3
 } from 'lucide-react';
-import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 
 // Asset Imports
@@ -35,6 +34,7 @@ const Innovations = () => {
         { icon: LayoutDashboard, label: "Parent Dashboard" }
       ],
       linkText: "Explore ClassBuzz",
+      linkTo: "/ai-innovation/class-buzz",
       reverse: false
     },
     {
@@ -47,6 +47,7 @@ const Innovations = () => {
         { icon: ChevronRight, label: "Stream Selection" }
       ],
       linkText: "Explore Mindgauge",
+      linkTo: "/ai-innovation/mindgauge",
       reverse: true
     },
     {
@@ -59,6 +60,7 @@ const Innovations = () => {
         { icon: Target, label: "Practice Tests" }
       ],
       linkText: "Explore Learn with Dash",
+      linkTo: "/ai-innovation/learn-with-dash",
       reverse: false
     },
     {
@@ -71,6 +73,7 @@ const Innovations = () => {
         { icon: Zap, label: "Rewards & Rankings" }
       ],
       linkText: "Download App",
+      linkTo: "/ai-innovation/centum-aiqu",
       reverse: true
     }
   ];
@@ -79,6 +82,7 @@ const Innovations = () => {
     <div className="min-h-screen bg-slate-50 font-sans overflow-x-hidden">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0D9488] text-white py-20 md:py-32 overflow-hidden">
+        {/* Background Pattern */}
         <div className="absolute inset-0 bg-black/10"></div>
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -137,7 +141,7 @@ const Innovations = () => {
                     );
                   })}
                 </div>
-                <Link to="/contact">
+                <Link to={item.linkTo}>
                   <Button variant="ghost" className="text-purple-600 font-bold flex items-center gap-2 group p-0 hover:bg-transparent">
                     {item.linkText} <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
                   </Button>
@@ -205,7 +209,7 @@ const Innovations = () => {
               </div>
             </div>
 
-            {/* Right: Glassmorphism Floating UI (Matching Figma PDF) */}
+            {/* Right: Glassmorphism Floating UI */}
             <div className="hidden lg:block relative h-full">
               <motion.div 
                 animate={{ y: [0, -15, 0] }}
