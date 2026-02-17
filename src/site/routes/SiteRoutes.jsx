@@ -27,6 +27,7 @@ import ClassBuzzDetail from '../public/pages/ClassBuzzDetail';
 import MindgaugeDetail from '../public/pages/MindgaugeDetail';
 import LearnWithDashDetail from '../public/pages/LearnWithDashDetail';
 import CentumAiQuDetail from '../public/pages/CentumAiQuDetail';
+import Library from '../public/pages/Library'; // Import Library Page
 
 // Import the new Dynamic Template
 import CourseDetail from '../public/pages/CourseDetail';
@@ -45,12 +46,15 @@ export const SiteRoutes = () => {
       <Route path="/associations" element={<Layout><Associations /></Layout>} />
       <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} />
       
-      {/* --- NEW INNOVATION DETAIL ROUTES --- */}
+      {/* --- INNOVATION DETAIL ROUTES --- */}
       <Route path="/ai-innovation/class-buzz" element={<Layout><ClassBuzzDetail /></Layout>} />
       <Route path="/ai-innovation/mindgauge" element={<Layout><MindgaugeDetail /></Layout>} />
       <Route path="/ai-innovation/learn-with-dash" element={<Layout><LearnWithDashDetail /></Layout>} />
       <Route path="/ai-innovation/centum-aiqu" element={<Layout><CentumAiQuDetail /></Layout>} />
       
+      {/* --- NEW LIBRARY ROUTE --- */}
+      <Route path="/library" element={<Layout><Library /></Layout>} />
+
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
       
       {/* Announcements */}
