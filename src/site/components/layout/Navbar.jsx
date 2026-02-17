@@ -23,7 +23,7 @@ const Navbar = () => {
         { name: "Contributions", path: "/contributions" }
       ]
     },
-    { name: "Courses", path: "/courses" },
+    { name: "Programs", path: "/courses" }, // Renamed from Courses to Programs
     { name: "Success Stories", path: "/student-success" },
     { name: "Media", path: "/blogs" },
     { name: "Contact", path: "/contact" }
