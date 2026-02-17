@@ -23,7 +23,8 @@ const Navbar = () => {
         { name: "Contributions", path: "/contributions" }
       ]
     },
-    { name: "Programs", path: "/courses" }, // Renamed from Courses to Programs
+    { name: "Programs", path: "/courses" },
+    { name: "Library", path: "/library" }, // Added Library Link
     { name: "Success Stories", path: "/student-success" },
     { name: "Media", path: "/blogs" },
     { name: "Contact", path: "/contact" }
