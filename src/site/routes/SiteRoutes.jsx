@@ -13,6 +13,8 @@ import {
   Announcements,
   VisionMission,
   Founders,
+  Associations,
+  Innovations, // Added Innovations component import
   JeeMains,
   JeeAdvance,
   NeetCourses,
@@ -34,6 +36,8 @@ export const SiteRoutes = () => {
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/vision-mission" element={<Layout><VisionMission /></Layout>} />
       <Route path="/founders" element={<Layout><Founders /></Layout>} />
+      <Route path="/associations" element={<Layout><Associations /></Layout>} />
+      <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} /> {/* Added AI Innovation Route */}
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
       
       {/* Announcements */}
