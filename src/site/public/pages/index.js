@@ -5,6 +5,8 @@ export { default as Courses } from './Courses';
 export { default as Announcements } from './Announcements';
 export { default as VisionMission } from './VisionMission';
 export { default as Founders } from './Founders';
+export { default as Associations } from './Associations';
+export { default as Innovations } from './Innovations'; // Added Innovations
 
 // Specific Course Pages
 export { default as JeeMains } from './JeeMains';
