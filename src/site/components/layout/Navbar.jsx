@@ -24,10 +24,25 @@ const Navbar = () => {
       ]
     },
     { name: "Programs", path: "/courses" },
-    { name: "Library", path: "/library" }, // Added Library Link
+    { name: "Library", path: "/library" },
     { name: "Success Stories", path: "/student-success" },
-    { name: "Media", path: "/blogs" },
-    { name: "Contact", path: "/contact" }
+    { 
+      name: "Media", 
+      path: "#", 
+      submenu: [
+        { name: "Blogs", path: "/blogs" },
+        { name: "Explore Youtube", path: "https://www.youtube.com/@centumacademy", external: true }
+      ]
+    },
+    // UPDATED CONTACT DROPDOWN
+    { 
+      name: "Contact", 
+      path: "#", 
+      submenu: [
+        { name: "Course Enquiry", path: "/contact" },
+        { name: "Career", path: "/careers" }
+      ]
+    }
   ];
 
   return (
@@ -54,9 +69,13 @@ const Navbar = () => {
               onMouseEnter={() => setActiveDropdown(idx)} 
               onMouseLeave={() => setActiveDropdown(null)}
             >
+              {/* Main Link / Dropdown Trigger */}
               <Link 
                 to={link.path} 
                 className="px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-slate-600 hover:text-purple-600 transition-all flex items-center gap-1"
+                onClick={(e) => {
+                  if (link.submenu) e.preventDefault(); // Prevent navigation if it's just a dropdown trigger
+                }}
               >
                 {link.name}
                 {link.submenu && <ChevronDown className="h-4 w-4 opacity-50" />}
@@ -67,13 +86,27 @@ const Navbar = () => {
                 <div className="absolute top-full left-0 pt-4 w-56 animate-fade-in z-50">
                   <div className="bg-white rounded-xl shadow-xl border border-slate-100 py-2 overflow-hidden">
                     {link.submenu.map((sub, sIdx) => (
-                      <Link 
-                        key={sIdx} 
-                        to={sub.path} 
-                        className="block px-6 py-3 text-sm font-medium text-slate-500 hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                      >
-                        {sub.name}
-                      </Link>
+                      sub.external ? (
+                        // External Link
+                        <a 
+                          key={sIdx}
+                          href={sub.path}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-6 py-3 text-sm font-medium text-slate-500 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        >
+                          {sub.name}
+                        </a>
+                      ) : (
+                        // Internal Link
+                        <Link 
+                          key={sIdx} 
+                          to={sub.path} 
+                          className="block px-6 py-3 text-sm font-medium text-slate-500 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        >
+                          {sub.name}
+                        </Link>
+                      )
                     ))}
                   </div>
                 </div>
@@ -114,14 +147,27 @@ const Navbar = () => {
                     </div>
                     <div className="pl-4 border-l-2 border-slate-100 ml-4 space-y-1">
                       {link.submenu.map((sub, sIdx) => (
-                        <Link
-                          key={sIdx}
-                          to={sub.path}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="block px-4 py-2 text-sm font-medium text-slate-500 hover:text-purple-600"
-                        >
-                          {sub.name}
-                        </Link>
+                        sub.external ? (
+                          <a
+                            key={sIdx}
+                            href={sub.path}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block px-4 py-2 text-sm font-medium text-slate-500 hover:text-purple-600"
+                          >
+                            {sub.name}
+                          </a>
+                        ) : (
+                          <Link
+                            key={sIdx}
+                            to={sub.path}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block px-4 py-2 text-sm font-medium text-slate-500 hover:text-purple-600"
+                          >
+                            {sub.name}
+                          </Link>
+                        )
                       ))}
                     </div>
                   </div>
