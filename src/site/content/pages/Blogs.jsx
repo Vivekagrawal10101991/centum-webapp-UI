@@ -1,230 +1,372 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BookOpen, Calendar, User, ArrowRight, Search, 
-  Sparkles, Filter, ChevronRight, Clock, Share2 
-} from 'lucide-react';
-import { cmsService } from '../../services/cmsService';
-import { Link } from 'react-router-dom';
+import { Search, Calendar, User, ArrowRight, Tag, TrendingUp, BookOpen, Clock } from 'lucide-react';
+import { Card, Button } from '../../../components/common';
+import { cmsService } from '../../services/cmsService'; 
+import { Link } from 'react-router-dom'; // Added for navigation
+
+// Helper to strip HTML tags for excerpts
+const stripHtml = (html) => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>?/gm, '').substring(0, 150) + "...";
+};
+
+// Helper to format dates
+const formatDate = (dateString) => {
+  if (!dateString) return "Recent";
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  // 1. Define Static Data (The Figma Design)
+  const staticFeaturedBlog = {
+    id: 'static-1',
+    title: "The Ultimate Guide to JEE Main 2026: Preparation Strategies That Work",
+    excerpt: "Discover proven strategies and time-tested techniques that have helped thousands of students crack JEE Main with top ranks. Learn from IIT alumni and expert educators.",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80",
+    author: "Mr. Tushar Sinha",
+    date: "February 5, 2026",
+    category: "JEE Preparation",
+    readTime: "8 min read",
+    featured: true
+  };
 
+  const staticBlogPosts = [
+    {
+      id: 'static-2',
+      title: "NEET 2026: How to Master Biology in 6 Months",
+      excerpt: "A comprehensive roadmap for NEET aspirants to build a strong foundation in Biology and excel in the medical entrance exam.",
+      image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&q=80",
+      author: "Mr. Dheeraj Singh",
+      date: "February 3, 2026",
+      category: "NEET Preparation",
+      readTime: "6 min read"
+    },
+    {
+      id: 'static-3',
+      title: "Time Management Secrets for Competitive Exam Success",
+      excerpt: "Learn how to optimize your study schedule, balance multiple subjects, and maximize productivity during exam preparation.",
+      image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&q=80",
+      author: "Mr. Akhil Upadhyay",
+      date: "January 30, 2026",
+      category: "Study Tips",
+      readTime: "5 min read"
+    },
+    {
+      id: 'static-4',
+      title: "Foundation Programs: Building Strong Basics for Class 9 & 10",
+      excerpt: "Why early preparation matters and how foundation courses set students up for success in competitive exams.",
+      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80",
+      author: "Centum Faculty",
+      date: "January 28, 2026",
+      category: "Foundation",
+      readTime: "4 min read"
+    },
+    {
+      id: 'static-5',
+      title: "Mock Tests: Your Secret Weapon for JEE & NEET",
+      excerpt: "Understanding the power of regular testing, performance analysis, and how to leverage mock tests for maximum benefit.",
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80",
+      author: "Mr. Tushar Sinha",
+      date: "January 25, 2026",
+      category: "Test Strategy",
+      readTime: "7 min read"
+    },
+    {
+      id: 'static-6',
+      title: "Parent's Guide: Supporting Your Child Through Competitive Exams",
+      excerpt: "Practical advice for parents on how to provide emotional support, manage expectations, and create a positive learning environment.",
+      image: "https://images.unsplash.com/photo-1516534775068-ba3e7458af70?w=600&q=80",
+      author: "Mr. Dheeraj Singh",
+      date: "January 22, 2026",
+      category: "Parent Guide",
+      readTime: "5 min read"
+    },
+    {
+      id: 'static-7',
+      title: "Physics Problem-Solving: Techniques from IIT Alumni",
+      excerpt: "Expert strategies to approach complex physics problems, develop intuition, and build conceptual clarity.",
+      image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80",
+      author: "Mr. Akhil Upadhyay",
+      date: "January 20, 2026",
+      category: "Subject Focus",
+      readTime: "6 min read"
+    },
+    {
+      id: 'static-8',
+      title: "Overcoming Exam Anxiety: Mental Health Tips for Students",
+      excerpt: "Evidence-based techniques to manage stress, build confidence, and maintain mental wellness during preparation.",
+      image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80",
+      author: "Centum Faculty",
+      date: "January 18, 2026",
+      category: "Mental Health",
+      readTime: "5 min read"
+    },
+    {
+      id: 'static-9',
+      title: "Chemistry for NEET: Mastering Organic & Inorganic",
+      excerpt: "A structured approach to tackle Chemistry effectively, with mnemonics, shortcuts, and concept-building strategies.",
+      image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=80",
+      author: "Mr. Dheeraj Singh",
+      date: "January 15, 2026",
+      category: "NEET Preparation",
+      readTime: "7 min read"
+    }
+  ];
+
+  const categories = [
+    "All Posts",
+    "JEE Preparation",
+    "NEET Preparation",
+    "Study Tips",
+    "Foundation",
+    "Test Strategy",
+    "Parent Guide",
+    "Subject Focus",
+    "Mental Health"
+  ];
+
+  // 2. State Management
+  const [displayBlogs, setDisplayBlogs] = useState(staticBlogPosts);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 3. Fetch Real Blogs & Merge
   useEffect(() => {
-    window.scrollTo(0, 0);
-    const fetchBlogs = async () => {
+    const fetchAndMergeBlogs = async () => {
       try {
-        const data = await cmsService.getBlogs();
-        setBlogs(data || []);
+        const backendBlogs = await cmsService.getBlogs();
+        
+        if (backendBlogs && backendBlogs.length > 0) {
+          // Transform Backend Data to match Figma Design Structure
+          const formattedBackendBlogs = backendBlogs.map(blog => ({
+            id: blog.id || blog._id,
+            title: blog.title,
+            excerpt: stripHtml(blog.content), // Strip HTML for excerpt
+            image: blog.imageUrl || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070", // Fallback image
+            author: blog.author || "Centum Team",
+            date: formatDate(blog.createdAt),
+            category: blog.category || "General",
+            readTime: "5 min read" // Default if not calculated
+          }));
+
+          // Merge: Backend blogs first, then static blogs
+          setDisplayBlogs([...formattedBackendBlogs, ...staticBlogPosts]);
+        }
       } catch (err) {
-        console.error("Error fetching blogs:", err);
+        console.error("Error fetching backend blogs:", err);
+        // On error, we still show static blogs, so no empty screen
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
-    fetchBlogs();
+
+    fetchAndMergeBlogs();
   }, []);
 
-  const categories = ['All', 'JEE', 'NEET', 'Mentorship', 'Parenting', 'News'];
-
-  const filteredBlogs = blogs.filter(blog => {
-    const matchesCategory = activeCategory === 'All' || blog.category === activeCategory;
-    const matchesSearch = blog.title?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  // Extract the first blog as the Featured Post (Figma Layout)
-  const featuredBlog = blogs[0];
-  const regularBlogs = filteredBlogs.slice(activeCategory === 'All' ? 1 : 0);
-
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin h-10 w-10 border-4 border-purple-600 border-t-transparent rounded-full"></div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#F9FAFB] font-sans pb-20">
-      {/* 1. FIGMA HERO HEADER */}
-      <section className="bg-white pt-24 pb-16 px-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-50 rounded-full blur-[120px] -mr-64 -mt-64 opacity-60"></div>
-        <div className="max-w-7xl mx-auto relative z-10 text-center">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 bg-purple-600 text-white px-5 py-2 rounded-full mb-8 shadow-xl shadow-purple-200"
-          >
-            <Sparkles className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Centum Insights</span>
-          </motion.div>
-          <h1 className="text-5xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-none">
-            Perspective <span className="text-purple-600">&</span> Knowledge
-          </h1>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">
-            Deep dives into competitive excellence, conceptual mastery, and the future of ed-tech.
-          </p>
-        </div>
-      </section>
-
-      {/* 2. SEARCH & FILTER DUAL-BAR (Figma Design) */}
-      <div className="sticky top-[80px] z-[40] bg-white/80 backdrop-blur-xl border-y border-slate-100 py-6 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex flex-wrap items-center gap-3">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  activeCategory === cat 
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-200' 
-                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-[#7E3AF2] via-[#1C64F2] to-[#0D9488] text-white py-20 md:py-32">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative max-w-7xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full mb-6">
+            <BookOpen className="h-6 w-6" />
+            <span className="text-sm font-semibold uppercase tracking-wider">Centum Insights</span>
           </div>
-          <div className="relative w-full md:w-80 group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-purple-600" />
-            <input 
-              type="text" 
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-6 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none font-bold text-slate-900 placeholder:text-slate-400"
-            />
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Educational Blogs & Resources
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+            Expert insights, study strategies, and success tips from IIT alumni and experienced educators
+          </p>
+          
+          {/* Search Bar */}
+          <div className="mt-10 max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search for topics, strategies, exam tips..."
+                className="w-full pl-12 pr-4 py-4 rounded-full text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 mt-16">
-        {/* 3. FEATURED POST (Exclusive to Figma Layout) */}
-        {activeCategory === 'All' && featuredBlog && !searchQuery && (
-          <motion.section 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-20"
-          >
-            <Link to={`/blogs/${featuredBlog.slug || featuredBlog.id}`} className="group relative block bg-slate-900 rounded-[3.5rem] overflow-hidden min-h-[500px] shadow-3xl">
-              <div className="absolute inset-0">
-                <img 
-                  src={featuredBlog.image || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070"} 
-                  className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-1000"
-                  alt="Featured"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
-              </div>
-              <div className="absolute bottom-0 left-0 p-10 md:p-20 z-10 max-w-4xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="bg-purple-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">Featured Story</span>
-                  <div className="text-white/60 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                    <Clock className="h-3.5 w-3.5" /> 10 Min Read
-                  </div>
-                </div>
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tighter">
-                  {featuredBlog.title}
-                </h2>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 p-0.5">
-                       <div className="w-full h-full bg-slate-700 rounded-full flex items-center justify-center font-black">C</div>
-                    </div>
-                    <div>
-                      <p className="text-white font-black text-sm uppercase">Editorial Team</p>
-                      <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Academic Board</p>
-                    </div>
-                  </div>
-                  <button className="h-14 w-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all shadow-xl">
-                    <ArrowRight className="h-6 w-6" />
-                  </button>
-                </div>
-              </div>
-            </Link>
-          </motion.section>
-        )}
-
-        {/* 4. BLOG GRID */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <AnimatePresence>
-            {regularBlogs.map((blog, idx) => (
-              <motion.article 
-                key={blog.id || idx}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="group bg-white rounded-[3rem] overflow-hidden border border-slate-100 hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 flex flex-col"
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+        {/* Category Filter */}
+        <div className="mb-12">
+          <div className="flex items-center gap-2 mb-4">
+            <Tag className="h-5 w-5 text-[#7E3AF2]" />
+            <h2 className="text-lg font-bold text-slate-900">Browse by Category</h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  category === "All Posts"
+                    ? "bg-[#7E3AF2] text-white shadow-md"
+                    : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                }`}
               >
-                <Link to={`/blogs/${blog.slug || blog.id}`} className="block relative h-72 overflow-hidden bg-slate-100">
-                  <img 
-                    src={blog.image || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070"} 
-                    alt={blog.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Featured Blog (Static Highlight) */}
+        <div className="mb-16">
+          <div className="flex items-center gap-2 mb-6">
+            <TrendingUp className="h-6 w-6 text-[#F59E0B]" />
+            <h2 className="text-2xl font-bold text-slate-900">Featured Article</h2>
+          </div>
+          <Card className="overflow-hidden border-none shadow-2xl">
+            <div className="grid md:grid-cols-2 gap-0">
+              <div className="relative aspect-[16/10] md:aspect-auto">
+                <img
+                  src={staticFeaturedBlog.image}
+                  alt={staticFeaturedBlog.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="bg-[#F59E0B] text-white px-4 py-2 rounded-full text-sm font-semibold">
+                    Featured
+                  </span>
+                </div>
+              </div>
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <span className="inline-block bg-purple-100 text-[#7E3AF2] px-3 py-1 rounded-full text-sm font-semibold mb-4 w-fit">
+                  {staticFeaturedBlog.category}
+                </span>
+                <h3 className="text-3xl font-bold text-slate-900 mb-4">
+                  {staticFeaturedBlog.title}
+                </h3>
+                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                  {staticFeaturedBlog.excerpt}
+                </p>
+                <div className="flex items-center gap-6 text-sm text-slate-500 mb-6">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span>{staticFeaturedBlog.author}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>{staticFeaturedBlog.date}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>{staticFeaturedBlog.readTime}</span>
+                  </div>
+                </div>
+                {/* Updated: Using Link for Navigation */}
+                <Link to={`/blogs/${staticFeaturedBlog.id}`}>
+                  <Button className="bg-[#7E3AF2] hover:bg-[#6749D4] text-white w-fit border-none pointer-events-none">
+                    Read Full Article
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Blog Grid (Mixed Content) */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-slate-900 mb-8">Latest Articles</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayBlogs.map((post) => (
+              <Card key={post.id} className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-shadow group flex flex-col h-full">
+                {/* Wrap Image in Link */}
+                <Link to={`/blogs/${post.id}`} className="block relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-6 left-6">
-                    <span className="bg-white/90 backdrop-blur-lg px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-purple-600 shadow-xl border border-white">
-                      {blog.category}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-white/90 backdrop-blur-sm text-[#7E3AF2] px-3 py-1 rounded-full text-xs font-semibold">
+                      {post.category}
                     </span>
                   </div>
                 </Link>
 
-                <div className="p-10 flex-1 flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      <Calendar className="h-3.5 w-3.5" /> {blog.date || "Feb 13, 2026"}
-                    </div>
-                    <button className="text-slate-300 hover:text-purple-600 transition-colors">
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <Link to={`/blogs/${blog.slug || blog.id}`}>
-                    <h2 className="text-2xl font-black text-slate-900 mb-6 group-hover:text-purple-600 transition-colors leading-[1.2] tracking-tight">
-                      {blog.title}
-                    </h2>
+                <div className="p-6 flex flex-col flex-grow">
+                  {/* Wrap Title in Link */}
+                  <Link to={`/blogs/${post.id}`}>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-[#7E3AF2] transition-colors">
+                      {post.title}
+                    </h3>
                   </Link>
-                  
-                  <p className="text-slate-500 font-medium mb-10 line-clamp-3 leading-relaxed text-sm">
-                    {blog.excerpt || "Unlock your potential with our latest insights into competitive examination preparation and strategy."}
+                  <p className="text-slate-600 mb-4 line-clamp-3 leading-relaxed flex-grow">
+                    {post.excerpt}
                   </p>
-
-                  <div className="mt-auto pt-8 border-t border-slate-50 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xs">C</div>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-900 uppercase">Centum Faculty</p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Verified Author</p>
-                      </div>
+                  <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
+                    <div className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      <span>{post.author}</span>
                     </div>
-                    <Link 
-                      to={`/blogs/${blog.slug || blog.id}`}
-                      className="text-[10px] font-black text-purple-600 uppercase tracking-[0.2em] flex items-center gap-2 group-hover:translate-x-1 transition-transform"
-                    >
-                      Read More <ChevronRight className="h-3 w-3" />
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{post.readTime}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-sm text-slate-500">{post.date}</span>
+                    
+                    {/* Updated: Using Link for Read More */}
+                    <Link to={`/blogs/${post.id}`}>
+                      <Button variant="ghost" size="sm" className="text-[#7E3AF2] hover:text-[#6749D4] hover:bg-purple-50 p-0 hover:bg-transparent pointer-events-none">
+                        Read More
+                        <ArrowRight className="ml-1 h-3 w-3" />
+                      </Button>
                     </Link>
                   </div>
                 </div>
-              </motion.article>
+              </Card>
             ))}
-          </AnimatePresence>
+          </div>
         </div>
 
-        {/* 5. EMPTY STATE */}
-        {filteredBlogs.length === 0 && (
-          <div className="py-40 text-center">
-            <div className="h-24 w-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-300">
-              <Search className="h-10 w-10" />
-            </div>
-            <h3 className="text-3xl font-black text-slate-900 mb-2">No matching articles</h3>
-            <p className="text-slate-400 font-medium">Try adjusting your search or category filters.</p>
+        {/* Load More */}
+        <div className="text-center">
+          <Button 
+            variant="outline" 
+            className="border-[#7E3AF2] text-[#7E3AF2] hover:bg-[#7E3AF2] hover:text-white px-8 py-6 text-base"
+          >
+            Load More Articles
+          </Button>
+        </div>
+
+        {/* Newsletter Subscription */}
+        <div className="mt-24 bg-gradient-to-br from-[#7E3AF2] to-[#1C64F2] rounded-3xl p-8 md:p-12 text-center shadow-xl">
+          <BookOpen className="h-16 w-16 text-white mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Never Miss an Update
+          </h2>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Subscribe to our newsletter and get the latest study tips, exam strategies, and educational insights delivered to your inbox.
+          </p>
+          <div className="max-w-md mx-auto flex gap-3">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-slate-900"
+            />
+            <Button className="bg-white text-[#7E3AF2] hover:bg-slate-100 px-6 border-none">
+              Subscribe
+            </Button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default Blogs;
