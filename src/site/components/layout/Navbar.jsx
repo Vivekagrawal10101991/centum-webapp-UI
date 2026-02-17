@@ -18,6 +18,8 @@ const Navbar = () => {
         { name: "Our Story", path: "/about" }, 
         { name: "Vision & Mission", path: "/vision-mission" }, 
         { name: "Founders", path: "/founders" }, 
+        { name: "Associations", path: "/associations" },
+        { name: "AI Innovation", path: "/ai-innovation" }, 
         { name: "Contributions", path: "/contributions" }
       ]
     },
