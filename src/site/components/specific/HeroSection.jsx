@@ -9,13 +9,15 @@ const HeroSection = () => {
       sub: "Join the League of Toppers",
       desc: "Experience concept-driven learning designed by IIT alumni to help you crack JEE, NEET, and Foundation exams.",
       img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070",
-      color: "from-purple-900/90 to-slate-900/95"
+      // Updated Gradient to Indigo
+      color: "from-indigo-900/90 to-slate-900/95"
     },
     {
       title: "CRACK JEE ADVANCED",
       sub: "97% Success Rate",
       desc: "Master Physics, Chemistry, and Math with our rigorous testing and personalized mentorship program.",
       img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132",
+      // Updated Gradient to Indigo/Blue mix
       color: "from-blue-900/90 to-indigo-950/95"
     }
   ];
@@ -43,24 +45,25 @@ const HeroSection = () => {
                 <span className="text-sm font-bold uppercase tracking-widest text-amber-400">Enroll Now</span>
               </div>
 
-              {/* Subheadline: text-xl md:text-2xl font-medium */}
+              {/* Subheadline */}
               <h2 className="text-xl md:text-2xl font-medium text-emerald-400 mb-3 animate-fade-in delay-100">
                 {s.sub}
               </h2>
 
-              {/* Main Headline: text-5xl md:text-6xl font-black */}
+              {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl font-black mb-6 leading-[1.1] animate-fade-in delay-200">
                 {s.title}
               </h1>
 
-              {/* Body Text: text-lg font-normal */}
+              {/* Body Text */}
               <p className="text-lg font-normal text-slate-200 mb-10 leading-relaxed max-w-xl animate-fade-in delay-300">
                 {s.desc}
               </p>
 
-              {/* Buttons: text-base font-bold */}
+              {/* Buttons */}
               <div className="flex flex-wrap gap-4 animate-fade-in delay-400">
-                <button className="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide flex items-center gap-2 transition-all shadow-xl">
+                {/* Updated Button Color to Indigo */}
+                <button className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide flex items-center gap-2 transition-all shadow-xl">
                   View Programs <ArrowRight className="h-5 w-5" />
                 </button>
                 <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide border border-white/20 flex items-center gap-2">
@@ -78,7 +81,8 @@ const HeroSection = () => {
           <button 
             key={i} 
             onClick={() => setActive(i)} 
-            className={`h-1.5 rounded-full transition-all ${i === active ? 'w-12 bg-purple-500' : 'w-4 bg-white/30'}`} 
+            // Updated Dot Color to Indigo
+            className={`h-1.5 rounded-full transition-all ${i === active ? 'w-12 bg-indigo-500' : 'w-4 bg-white/30'}`} 
           />
         ))}
       </div>
