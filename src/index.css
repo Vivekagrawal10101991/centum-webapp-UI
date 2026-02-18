@@ -9,7 +9,8 @@
   --card: #FFFFFF;
   --card-foreground: #374151;
   
-  --primary: #7E3AF2; /* Electric Purple */
+  /* UPDATED: Primary Color to Indigo Blue */
+  --primary: #4F46E5; /* Indigo 600 */
   --primary-foreground: #FFFFFF;
   
   --secondary: #1C64F2; /* Trust Blue */
@@ -21,8 +22,9 @@
   --muted: #F9FAFB;
   --muted-foreground: #6B7280;
   
-  --accent: #EDE9FE;
-  --accent-foreground: #7E3AF2;
+  /* UPDATED: Accent Color */
+  --accent: #EEF2FF; /* Indigo 50 */
+  --accent-foreground: #4F46E5;
   
   --destructive: #EF4444;
   --border: #E5E7EB;
@@ -32,7 +34,6 @@
 
 @layer base {
   body {
-    /* Now that Tailwind knows 'background' exists in the config, this will work */
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
@@ -56,5 +57,14 @@
 
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
+  }
+  
+  .animate-slow-zoom {
+    animation: zoom 20s infinite alternate;
+  }
+  
+  @keyframes zoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
   }
 }

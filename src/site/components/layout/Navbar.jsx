@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-// Import the logo image
 import logo from "../../../assets/logo.png";
 
 const Navbar = () => {
@@ -13,7 +12,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handle scroll effect for shadow/transparency
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -63,7 +61,6 @@ const Navbar = () => {
           : "bg-white border-slate-100"
       }`}
     >
-      {/* Height: Mobile h-20 (80px), Desktop h-24 (96px) */}
       <div className="max-w-7xl mx-auto px-6 h-20 md:h-24 flex items-center justify-between">
         
         {/* LOGO SECTION */}
@@ -74,11 +71,11 @@ const Navbar = () => {
             className="h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
           <div className="flex flex-col">
-            {/* UPDATED: Changed to font-extrabold for maximum boldness */}
             <span className="text-lg md:text-xl font-extrabold text-[#27295c] leading-none tracking-tight font-display">
               CENTUM ACADEMY
             </span>
-            <span className="text-[10px] md:text-xs font-semibold text-purple-600 uppercase mt-1 tracking-widest">
+            {/* Updated text color to Indigo */}
+            <span className="text-[10px] md:text-xs font-semibold text-indigo-600 uppercase mt-1 tracking-widest">
               Education with emotion
             </span>
           </div>
@@ -97,7 +94,7 @@ const Navbar = () => {
               <Link 
                 to={link.path} 
                 className={`px-4 py-2 text-[15px] font-medium transition-colors duration-200 flex items-center gap-1 ${
-                  activeDropdown === idx ? "text-purple-600" : "text-slate-700 hover:text-purple-600"
+                  activeDropdown === idx ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"
                 }`}
                 onClick={(e) => {
                   if (link.submenu && link.path === '#') e.preventDefault();
@@ -107,7 +104,7 @@ const Navbar = () => {
                 {link.submenu && (
                   <ChevronDown 
                     className={`h-4 w-4 transition-transform duration-200 ${
-                      activeDropdown === idx ? "rotate-180 text-purple-600" : "text-slate-400"
+                      activeDropdown === idx ? "rotate-180 text-indigo-600" : "text-slate-400"
                     }`} 
                   />
                 )}
@@ -130,7 +127,7 @@ const Navbar = () => {
                           href={sub.path}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block px-4 py-2.5 text-sm font-medium text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                          className="block px-4 py-2.5 text-sm font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                         >
                           {sub.name}
                         </a>
@@ -138,7 +135,7 @@ const Navbar = () => {
                         <Link 
                           key={sIdx} 
                           to={sub.path} 
-                          className="block px-4 py-2.5 text-sm font-medium text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                          className="block px-4 py-2.5 text-sm font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                         >
                           {sub.name}
                         </Link>
@@ -154,7 +151,7 @@ const Navbar = () => {
           <div className="flex items-center gap-4 ml-6 pl-6 border-l border-slate-200 h-8">
             <Link 
               to="/contact" 
-              className="bg-slate-900 hover:bg-purple-600 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+              className="bg-slate-900 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
             >
               Enquire Now
             </Link>
@@ -199,7 +196,7 @@ const Navbar = () => {
                     )}
                     
                     {/* Mobile Submenu */}
-                    <div className="pl-4 space-y-3 border-l-2 border-purple-100 ml-1">
+                    <div className="pl-4 space-y-3 border-l-2 border-indigo-100 ml-1">
                       {link.submenu.map((sub, sIdx) => (
                         sub.external ? (
                           <a
@@ -208,7 +205,7 @@ const Navbar = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="block text-sm font-medium text-slate-500 hover:text-purple-600"
+                            className="block text-sm font-medium text-slate-500 hover:text-indigo-600"
                           >
                             {sub.name}
                           </a>
@@ -217,7 +214,7 @@ const Navbar = () => {
                             key={sIdx}
                             to={sub.path}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="block text-sm font-medium text-slate-500 hover:text-purple-600"
+                            className="block text-sm font-medium text-slate-500 hover:text-indigo-600"
                           >
                             {sub.name}
                           </Link>
@@ -229,7 +226,7 @@ const Navbar = () => {
                   <Link
                     to={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-base font-bold text-slate-900 hover:text-purple-600"
+                    className="block text-base font-bold text-slate-900 hover:text-indigo-600"
                   >
                     {link.name}
                   </Link>
