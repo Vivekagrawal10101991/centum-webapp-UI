@@ -1,157 +1,162 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Input } from '../../../components/common';
+import { Eye, EyeOff, Mail, Lock, UserPlus, AlertCircle, ArrowLeft } from 'lucide-react';
 import logo from "../../../assets/logo.png";
-import { ArrowRight, Mail, Lock, Home } from 'lucide-react'; // Added Home icon
 
 /**
  * LoginForm Component
- * UPDATED: Added "Take to Website" button in top-right corner
+ * Design: Matches the provided Figma/CMS Login style
+ * Logic: Integrates with Site's react-hook-form architecture
  */
 export const LoginForm = ({ 
   handleSubmit, 
   onSubmit, 
   register, 
   errors, 
-  isSubmitting, 
-  validators 
+  isSubmitting 
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0D9488] flex items-center justify-center p-4 md:p-6 font-sans">
       
-      {/* BACKGROUND DECORATION */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-purple-300/30 blur-[100px] animate-pulse"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-blue-300/30 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+      {/* Back to Website (Absolute Positioned for Site Navigation) */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 text-white/80 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors z-10"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Website
+      </Link>
 
-      <div className="w-full max-w-5xl z-10 flex rounded-[2rem] shadow-2xl overflow-hidden bg-white/80 backdrop-blur-xl border border-white/50 min-h-[600px]">
-        
-        {/* LEFT SIDE: Brand Section */}
-        <div className="hidden lg:flex w-5/12 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-600 relative flex-col justify-between p-12 text-white">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      <div className="w-full max-w-6xl">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden grid lg:grid-cols-2">
           
-          <div className="relative z-10">
-            <div className="bg-white/20 w-fit p-3 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg">
-              <img src={logo} alt="Centum Logo" className="h-12 w-auto" />
-            </div>
-          </div>
-
-          <div className="relative z-10 space-y-6">
-            <h1 className="text-4xl font-bold leading-tight">
-              Master Your <br/>
-              <span className="text-blue-300">Future Today.</span>
-            </h1>
-            <p className="text-blue-100/80 text-lg font-light leading-relaxed">
-              "Education is not just about learning facts, but the training of the mind to think."
-            </p>
-          </div>
-
-          <div className="relative z-10 text-xs text-blue-200/60 font-medium">
-            © Centum Academy 2026
-          </div>
-
-          <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-64 h-64 bg-white/10 rounded-full blur-2xl"></div>
-        </div>
-
-        {/* RIGHT SIDE: Login Form */}
-        <div className="w-full lg:w-7/12 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white/50 relative"> {/* Added relative for positioning */}
-          
-          {/* NEW: "Take to Website" Button */}
-          <Link 
-            to="/" 
-            className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white/50 hover:bg-white hover:text-primary rounded-full transition-all shadow-sm hover:shadow-md border border-gray-100 backdrop-blur-sm group"
-          >
-            <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Take to Website</span>
-          </Link>
-
-          <div className="max-w-md mx-auto w-full space-y-8">
+          {/* LEFT SIDE - BRANDING */}
+          <div className="bg-gradient-to-br from-[#1E3A8A] to-[#0D9488] p-8 md:p-12 flex flex-col justify-center items-center text-white relative overflow-hidden">
+            {/* Background Pattern Overlay */}
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
             
-            {/* Mobile Logo */}
-            <div className="lg:hidden text-center mb-6">
-               <img src={logo} alt="Logo" className="h-14 mx-auto drop-shadow-md" />
+            <div className="relative z-10 flex flex-col items-center">
+              
+              {/* LOGO SECTION: Solid White Circle Container to ensure visibility */}
+              <div className="bg-white w-32 h-32 rounded-full flex items-center justify-center mb-6 shadow-2xl border-4 border-white/20">
+                <img 
+                  src={logo} 
+                  alt="Centum Academy Logo" 
+                  className="w-20 h-auto object-contain"
+                />
+              </div>
+
+              <h1 className="text-3xl md:text-5xl font-bold text-center tracking-tight font-display drop-shadow-md">
+                CENTUM ACADEMY
+              </h1>
+              <p className="text-lg md:text-xl text-center mt-3 text-blue-100 font-medium tracking-wide">
+                Education with Emotion
+              </p>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE - LOGIN FORM */}
+          <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+            <div className="mb-6 md:mb-8">
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Welcome Back</h3>
+              <p className="text-slate-600 text-base">Please sign in to continue</p>
             </div>
 
-            <div className="text-center lg:text-left space-y-2">
-              <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-              <p className="text-gray-500">Please enter your details to sign in.</p>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              
               {/* Email Field */}
-              <div className="space-y-1">
-                <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 ml-1">
+                  Email Address
+                </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <input 
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#7E3AF2] transition-colors" />
+                  <input
                     type="email"
-                    placeholder="student@example.com"
-                    className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-xl outline-none transition-all duration-200 font-medium
-                      ${errors.email ? 'border-red-300 focus:border-red-500 bg-red-50/50' : 'border-gray-100 focus:border-primary/50 focus:bg-white focus:shadow-lg focus:shadow-primary/5'}
-                    `}
+                    placeholder="Enter your email"
+                    className={`w-full pl-12 pr-4 h-12 bg-slate-50 border rounded-xl outline-none transition-all duration-200 font-medium
+                      ${errors.email 
+                        ? 'border-red-300 focus:border-red-500 bg-red-50/50' 
+                        : 'border-slate-200 focus:border-[#7E3AF2] focus:bg-white focus:shadow-lg focus:shadow-[#7E3AF2]/10'
+                      }`}
                     {...register('email', {
                       required: 'Email is required',
-                      validate: (value) => validators.isValidEmail(value) || 'Please enter a valid email',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      }
                     })}
                   />
                 </div>
-                {errors.email && <span className="text-red-500 text-xs ml-1">{errors.email.message}</span>}
+                {errors.email && <span className="text-red-500 text-xs ml-1 font-medium">{errors.email.message}</span>}
               </div>
 
               {/* Password Field */}
-              <div className="space-y-1">
-                <div className="flex justify-between items-center ml-1">
-                   <label className="text-sm font-semibold text-gray-700">Password</label>
-                   <Link to="/forgot-password" class="text-xs font-semibold text-primary hover:text-primary-700 transition-colors">
-                     Forgot Password?
-                   </Link>
-                </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 ml-1">
+                  Password
+                </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">
-                    <Lock className="w-5 h-5" />
-                  </div>
-                  <input 
-                    type="password"
-                    placeholder="••••••••"
-                    className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-xl outline-none transition-all duration-200 font-medium
-                      ${errors.password ? 'border-red-300 focus:border-red-500 bg-red-50/50' : 'border-gray-100 focus:border-primary/50 focus:bg-white focus:shadow-lg focus:shadow-primary/5'}
-                    `}
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#7E3AF2] transition-colors" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    className={`w-full pl-12 pr-12 h-12 bg-slate-50 border rounded-xl outline-none transition-all duration-200 font-medium
+                      ${errors.password 
+                        ? 'border-red-300 focus:border-red-500 bg-red-50/50' 
+                        : 'border-slate-200 focus:border-[#7E3AF2] focus:bg-white focus:shadow-lg focus:shadow-[#7E3AF2]/10'
+                      }`}
                     {...register('password', {
                       required: 'Password is required',
-                      minLength: { value: 6, message: 'Min 6 characters' },
+                      minLength: { value: 6, message: 'Min 6 characters' }
                     })}
                   />
+                  <button
+                    type="button"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
-                {errors.password && <span className="text-red-500 text-xs ml-1">{errors.password.message}</span>}
+                {errors.password && <span className="text-red-500 text-xs ml-1 font-medium">{errors.password.message}</span>}
               </div>
 
               {/* Submit Button */}
-              <button
-                type="submit"
+              <button 
+                type="submit" 
                 disabled={isSubmitting}
-                className="w-full py-4 bg-gradient-to-r from-primary to-primary-700 text-white rounded-xl font-bold text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full h-12 bg-[#7E3AF2] hover:bg-[#6749D4] text-white rounded-xl font-bold text-lg shadow-lg shadow-[#7E3AF2]/20 hover:shadow-xl hover:shadow-[#7E3AF2]/30 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
-                  <span className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  <>
-                    Sign In
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </>
+                  'Sign In'
                 )}
               </button>
-            </form>
 
-            <div className="text-center pt-4">
-              <p className="text-gray-500 text-sm">
-                Don't have an account? 
-                <Link to="/signup" className="ml-2 font-bold text-primary hover:text-primary-800 transition-colors">
-                  Create Account
+              {/* Signup Link Button */}
+              <Link
+                to="/signup"
+                className="flex items-center justify-center w-full h-12 border-2 border-[#7E3AF2] text-[#7E3AF2] bg-white hover:bg-[#7E3AF2] hover:text-white rounded-xl font-bold text-lg transition-all duration-200 group"
+              >
+                <UserPlus className="h-5 w-5 mr-2" />
+                Create New Account
+              </Link>
+
+              {/* Footer Links */}
+              <div className="flex items-center justify-center gap-4 text-sm text-slate-500 mt-6">
+                <Link to="/forgot-password" class="hover:text-[#7E3AF2] font-medium transition-colors">
+                  Forgot Password?
                 </Link>
-              </p>
-            </div>
+                <span className="text-slate-300">|</span>
+                <Link to="/contact" class="hover:text-[#7E3AF2] font-medium transition-colors">
+                  Need Help?
+                </Link>
+              </div>
+            </form>
           </div>
         </div>
       </div>
