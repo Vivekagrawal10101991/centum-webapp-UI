@@ -10,6 +10,7 @@ import {
   About, 
   Contact, 
   Courses, 
+  Careers, // <--- 1. ADD THIS IMPORT
   Announcements,
   VisionMission,
   Founders,
@@ -27,7 +28,7 @@ import ClassBuzzDetail from '../public/pages/ClassBuzzDetail';
 import MindgaugeDetail from '../public/pages/MindgaugeDetail';
 import LearnWithDashDetail from '../public/pages/LearnWithDashDetail';
 import CentumAiQuDetail from '../public/pages/CentumAiQuDetail';
-import Library from '../public/pages/Library'; // Import Library Page
+import Library from '../public/pages/Library'; 
 
 // Import the new Dynamic Template
 import CourseDetail from '../public/pages/CourseDetail';
@@ -56,6 +57,9 @@ export const SiteRoutes = () => {
       <Route path="/library" element={<Layout><Library /></Layout>} />
 
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
+
+      {/* --- CAREERS ROUTE --- */}
+      <Route path="/careers" element={<Layout><Careers /></Layout>} /> {/* <--- 2. ADD THIS ROUTE */}
       
       {/* Announcements */}
       <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
