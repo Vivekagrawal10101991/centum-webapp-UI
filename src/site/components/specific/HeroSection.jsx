@@ -1,72 +1,95 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, Loader2 } from 'lucide-react';
+import cmsService from '../../services/cmsService';
 
+/**
+ * HeroSection Component
+ * Displays dynamic banners from the backend.
+ * Updated: Changed text color to Light Indigo and added a 10% dark film overlay.
+ */
 const HeroSection = () => {
   const [active, setActive] = useState(0);
-  const slides = [
-    {
-      title: "ADMISSIONS OPEN 2026-27",
-      sub: "Join the League of Toppers",
-      desc: "Experience concept-driven learning designed by IIT alumni to help you crack JEE, NEET, and Foundation exams.",
-      img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070",
-      // Updated Gradient to Indigo
-      color: "from-indigo-900/90 to-slate-900/95"
-    },
-    {
-      title: "CRACK JEE ADVANCED",
-      sub: "97% Success Rate",
-      desc: "Master Physics, Chemistry, and Math with our rigorous testing and personalized mentorship program.",
-      img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132",
-      // Updated Gradient to Indigo/Blue mix
-      color: "from-blue-900/90 to-indigo-950/95"
-    }
-  ];
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setInterval(() => setActive(p => (p + 1) % slides.length), 6000);
-    return () => clearInterval(timer);
+    const fetchBanners = async () => {
+      try {
+        const data = await cmsService.getBanners();
+        const activeBanners = data
+          .filter(b => b.active)
+          .sort((a, b) => a.displayOrder - b.displayOrder);
+        
+        setBanners(activeBanners);
+      } catch (error) {
+        console.error("Failed to load banners:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
   }, []);
+
+  useEffect(() => {
+    if (banners.length > 0) {
+      const timer = setInterval(() => {
+        setActive(prev => (prev + 1) % banners.length);
+      }, 6000);
+      return () => clearInterval(timer);
+    }
+  }, [banners]);
+
+  if (loading) {
+    return (
+      <div className="h-[85vh] bg-slate-950 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (banners.length === 0) return null;
 
   return (
     <section className="relative h-[85vh] bg-slate-950 overflow-hidden font-sans">
-      {slides.map((s, i) => (
-        <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === active ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-          {/* Background Image & Gradient */}
+      {banners.map((banner, i) => (
+        <div 
+          key={banner.id || i} 
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === active ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+        >
+          {/* Background Image Container */}
           <div className="absolute inset-0">
-            <img src={s.img} className="w-full h-full object-cover animate-slow-zoom" alt="" />
-            <div className={`absolute inset-0 bg-gradient-to-r ${s.color}`}></div>
+            <picture>
+              <source media="(max-width: 768px)" srcSet={banner.mobileImageUrl || banner.imageUrl} />
+              <img 
+                src={banner.imageUrl} 
+                className="w-full h-full object-cover" 
+                alt={banner.title} 
+              />
+            </picture>
+            
+            {/* Subtle 10% Film Overlay - Added back with low opacity as requested */}
+            <div className="absolute inset-0 bg-slate-950/10"></div>
           </div>
 
           {/* Content Container */}
           <div className="relative z-20 h-full max-w-7xl mx-auto px-6 flex items-center">
-            <div className="max-w-3xl text-white">
-              {/* Badge */}
-              <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-fade-in">
-                <span className="text-sm font-bold uppercase tracking-widest text-amber-400">Enroll Now</span>
-              </div>
-
-              {/* Subheadline */}
-              <h2 className="text-xl md:text-2xl font-medium text-emerald-400 mb-3 animate-fade-in delay-100">
-                {s.sub}
-              </h2>
-
-              {/* Main Headline */}
-              <h1 className="text-5xl md:text-6xl font-black mb-6 leading-[1.1] animate-fade-in delay-200">
-                {s.title}
+            <div className="max-w-2xl">
+              
+              {/* Main Headline - Updated to Light Indigo color */}
+              <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight text-indigo-50 drop-shadow-2xl animate-fade-in">
+                {banner.title}
               </h1>
 
-              {/* Body Text */}
-              <p className="text-lg font-normal text-slate-200 mb-10 leading-relaxed max-w-xl animate-fade-in delay-300">
-                {s.desc}
-              </p>
-
-              {/* Buttons */}
-              <div className="flex flex-wrap gap-4 animate-fade-in delay-400">
-                {/* Updated Button Color to Indigo */}
-                <button className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide flex items-center gap-2 transition-all shadow-xl">
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4 animate-fade-in delay-200">
+                <a 
+                  href={banner.redirectUrl || "/courses"}
+                  className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide text-white flex items-center gap-2 transition-all shadow-xl"
+                >
                   View Programs <ArrowRight className="h-5 w-5" />
-                </button>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide border border-white/20 flex items-center gap-2">
+                </a>
+                <button className="bg-black/20 hover:bg-black/40 backdrop-blur-md px-8 py-4 rounded-2xl text-base font-bold uppercase tracking-wide text-white border border-white/20 flex items-center gap-2">
                   <Play className="h-4 w-4 fill-current" /> Demo Class
                 </button>
               </div>
@@ -77,11 +100,10 @@ const HeroSection = () => {
 
       {/* Navigation Dots */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-        {slides.map((_, i) => (
+        {banners.map((_, i) => (
           <button 
             key={i} 
             onClick={() => setActive(i)} 
-            // Updated Dot Color to Indigo
             className={`h-1.5 rounded-full transition-all ${i === active ? 'w-12 bg-indigo-500' : 'w-4 bg-white/30'}`} 
           />
         ))}
