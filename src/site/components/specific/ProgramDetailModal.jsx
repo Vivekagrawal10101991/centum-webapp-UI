@@ -1,232 +1,192 @@
 import React from 'react';
-import { X, Clock, Users, BookOpen, Award, CheckCircle, Star, Calendar, Target, TrendingUp, Phone, Mail, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  X, CheckCircle, Clock, Users, BookOpen, 
+  Target, Award, Calendar, ShieldCheck, Sparkles 
+} from 'lucide-react';
 
-export function ProgramDetailModal({ course, onClose }) {
+export const ProgramDetailModal = ({ course, onClose }) => {
+  if (!course) return null;
+
+  // --- RESTORE ORIGINAL DATA STRUCTURE ---
+  // If backend data is missing these complex objects, we use your original dummy data
+  const highlights = course.highlights || [
+    "Dual Focus: Board Exams + JEE/KCET",
+    "Weekend doubt clearing sessions",
+    "Regular parent-teacher meetings",
+    "Comprehensive study material",
+    "Online test series access",
+    "Personal mentorship program",
+    "Career counseling sessions",
+    "Time management training"
+  ];
+
+  const curriculum = course.curriculum || [
+    {
+      phase: "Phase 1: Foundation (Months 1-8)",
+      topics: ["Complete Class 11 syllabus coverage", "Fundamental concepts", "Weekly chapter tests"]
+    },
+    {
+      phase: "Phase 2: Advanced (Months 9-16)",
+      topics: ["Class 12 syllabus with JEE integration", "Advanced problem solving", "Previous year questions"]
+    }
+  ];
+
+  const faculty = course.faculty || [
+    { name: "Dr. Rajesh Kumar", qualification: "IIT Delhi, M.Sc Physics", experience: "12+ years experience" },
+    { name: "Prof. Anita Sharma", qualification: "IIT Bombay, PhD Chemistry", experience: "10+ years experience" }
+  ];
+
   return (
     <AnimatePresence>
-      <motion.div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto font-sans"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="min-h-screen py-8 px-4 flex items-center justify-center">
-          <motion.div 
-            className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-          >
-            {/* Header with Gradient */}
-            <div className={`bg-gradient-to-br ${course.color} p-8 md:p-12 relative`}>
-              {/* Close Button */}
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors flex items-center justify-center border border-white/30"
-              >
-                <X className="h-5 w-5 text-white" />
-              </button>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+        {/* Backdrop */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        />
+        
+        {/* Modal Content */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col"
+        >
+          {/* Header Section */}
+          <div className="relative p-8 md:p-10 bg-gradient-to-br from-[#7E3AF2] to-[#1C64F2] text-white">
+            <button 
+              onClick={onClose}
+              className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all z-10"
+            >
+              <X className="h-6 w-6" />
+            </button>
 
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                {/* Icon */}
-                <div className="h-20 w-20 rounded-2xl bg-white/20 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center shadow-xl">
-                  <course.icon className="h-10 w-10 text-white" />
-                </div>
-
-                {/* Title and Badge */}
-                <div className="flex-1">
-                  <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-1.5 rounded-full border border-white/30 mb-3">
-                    {course.badge}
-                  </span>
-                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                    {course.title}
-                  </h1>
-                  <p className="text-white/90 text-lg max-w-3xl">
-                    {course.fullDescription}
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Clock className="h-6 w-6 text-white mb-2" />
-                  <p className="text-white/80 text-xs uppercase tracking-wider font-semibold">Duration</p>
-                  <p className="text-white font-bold">{course.duration}</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Users className="h-6 w-6 text-white mb-2" />
-                  <p className="text-white/80 text-xs uppercase tracking-wider font-semibold">Batch Size</p>
-                  <p className="text-white font-bold">{course.batchSize}</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Award className="h-6 w-6 text-white mb-2" />
-                  <p className="text-white/80 text-xs uppercase tracking-wider font-semibold">Success Rate</p>
-                  <p className="text-white font-bold">95%+</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Star className="h-6 w-6 text-white mb-2" />
-                  <p className="text-white/80 text-xs uppercase tracking-wider font-semibold">Rating</p>
-                  <p className="text-white font-bold">4.8/5</p>
-                </div>
-              </div>
+            <div className="relative z-0">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-widest mb-4 border border-white/30">
+                <Sparkles className="h-3.5 w-3.5" /> {course.category || "Competitive Program"}
+              </span>
+              <h2 className="text-3xl md:text-4xl font-black leading-tight mb-4">
+                {course.title}
+              </h2>
+              <p className="text-white/80 text-lg max-w-2xl font-medium leading-relaxed">
+                {course.fullDescription || course.shortDescription || "Master the concepts with our result-oriented coaching methodology."}
+              </p>
             </div>
+          </div>
 
-            {/* Content */}
-            <div className="p-8 md:p-12">
-              <div className="grid lg:grid-cols-3 gap-8">
-                {/* Main Content - Left 2/3 */}
-                <div className="lg:col-span-2 space-y-10">
-                  {/* Program Highlights */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-6">
-                      <Target className="h-6 w-6 text-[#7E3AF2]" />
-                      <h2 className="text-2xl font-bold text-slate-900">Program Highlights</h2>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {course.highlights.map((highlight, idx) => (
-                        <div key={idx} className="flex items-start gap-3 bg-purple-50 p-4 rounded-xl border border-purple-100">
-                          <CheckCircle className="h-5 w-5 text-[#7E3AF2] flex-shrink-0 mt-0.5" />
-                          <span className="text-slate-700 text-sm font-medium">{highlight}</span>
-                        </div>
-                      ))}
-                    </div>
+          {/* Scrollable Body */}
+          <div className="overflow-y-auto p-8 md:p-10">
+            <div className="grid lg:grid-cols-3 gap-10">
+              
+              {/* Left Column: Details & Faculty */}
+              <div className="lg:col-span-2 space-y-10">
+                
+                {/* Highlights Grid */}
+                <section>
+                  <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                    <div className="h-8 w-1 bg-[#7E3AF2] rounded-full" /> Key Highlights
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {highlights.map((item, i) => (
+                      <div key={i} className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-purple-200 transition-colors">
+                        <CheckCircle className="h-5 w-5 text-[#00A67E] flex-shrink-0 mt-0.5" />
+                        <span className="text-sm font-semibold text-slate-700">{item}</span>
+                      </div>
+                    ))}
                   </div>
+                </section>
 
-                  {/* Curriculum */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-6">
-                      <BookOpen className="h-6 w-6 text-[#1C64F2]" />
-                      <h2 className="text-2xl font-bold text-slate-900">Curriculum Overview</h2>
-                    </div>
-                    <div className="space-y-4">
-                      {course.curriculum.map((phase, idx) => (
-                        <div key={idx} className="bg-blue-50 rounded-xl p-6 border border-blue-100">
-                          <h3 className="text-lg font-bold text-[#1C64F2] mb-3">{phase.phase}</h3>
-                          <ul className="space-y-2">
-                            {phase.topics.map((topic, topicIdx) => (
-                              <li key={topicIdx} className="flex items-start gap-2">
-                                <div className="h-1.5 w-1.5 rounded-full bg-[#1C64F2] mt-2 flex-shrink-0"></div>
-                                <span className="text-slate-700 text-sm font-medium">{topic}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
+                {/* Curriculum Section */}
+                <section>
+                  <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                    <div className="h-8 w-1 bg-[#7E3AF2] rounded-full" /> Detailed Curriculum
+                  </h3>
+                  <div className="space-y-4">
+                    {curriculum.map((phase, i) => (
+                      <div key={i} className="p-6 rounded-2xl border border-slate-200 bg-white">
+                        <h4 className="font-bold text-[#7E3AF2] mb-3">{phase.phase}</h4>
+                        <ul className="grid md:grid-cols-2 gap-2">
+                          {phase.topics.map((topic, j) => (
+                            <li key={j} className="text-sm text-slate-600 flex items-center gap-2">
+                              <div className="h-1.5 w-1.5 bg-slate-300 rounded-full" /> {topic}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
+                </section>
+              </div>
 
-                  {/* Faculty */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-6">
-                      <Users className="h-6 w-6 text-[#F59E0B]" />
-                      <h2 className="text-2xl font-bold text-slate-900">Expert Faculty</h2>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {course.faculty.map((teacher, idx) => (
-                        <div key={idx} className="bg-amber-50 rounded-xl p-6 border border-amber-100">
-                          <h3 className="text-lg font-bold text-slate-900 mb-1">{teacher.name}</h3>
-                          <p className="text-[#F59E0B] text-sm font-bold mb-2">{teacher.qualification}</p>
-                          <p className="text-slate-600 text-sm">{teacher.experience}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Success Stories */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-6">
-                      <TrendingUp className="h-6 w-6 text-[#00A67E]" />
-                      <h2 className="text-2xl font-bold text-slate-900">Success Stories</h2>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {course.successStories.map((story, idx) => (
-                        <div key={idx} className="bg-green-50 rounded-xl p-6 border border-green-100">
-                          <div className="flex items-center gap-1 mb-3">
-                            {[1, 2, 3, 4, 5].map((_, i) => (
-                              <Star key={i} className="h-4 w-4 text-[#F59E0B] fill-[#F59E0B]" />
-                            ))}
-                          </div>
-                          <h3 className="text-lg font-bold text-slate-900 mb-1">{story.name}</h3>
-                          <p className="text-[#00A67E] text-xs font-bold mb-3 uppercase tracking-wide">{story.achievement}</p>
-                          <p className="text-slate-600 text-sm italic">"{story.review}"</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sidebar - Right 1/3 */}
-                <div className="lg:col-span-1 space-y-6">
-                  {/* Enrollment Card */}
-                  <div className="bg-gradient-to-br from-[#7E3AF2] to-[#6749D4] rounded-2xl p-6 text-white sticky top-4 shadow-xl">
-                    <h3 className="text-xl font-bold mb-6">Enroll Now</h3>
-                    
-                    {/* Fee Structure */}
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
-                      <p className="text-white/80 text-sm mb-1">Course Fee</p>
-                      <p className="text-3xl font-bold mb-2">{course.feeStructure.total}</p>
-                      <p className="text-white/80 text-xs">or {course.feeStructure.installments}</p>
-                      <div className="mt-3 pt-3 border-t border-white/20">
-                        <p className="text-sm">
-                          <span className="font-semibold text-yellow-300">Early Bird Offer:</span> {course.feeStructure.earlyBird}
-                        </p>
+              {/* Right Column: Stats & Pricing */}
+              <div className="space-y-6">
+                <div className="bg-slate-900 rounded-[24px] p-6 text-white shadow-xl">
+                  <h4 className="text-lg font-bold mb-6 border-b border-white/10 pb-4">Batch Details</h4>
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">Duration</p>
+                        <p className="font-bold">{course.duration || "2 Years"}</p>
                       </div>
                     </div>
-
-                    {/* Schedule */}
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6 border border-white/20">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Calendar className="h-5 w-5" />
-                        <p className="font-semibold">Class Schedule</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
+                        <Users className="h-5 w-5 text-purple-400" />
                       </div>
-                      <div className="space-y-2 text-sm">
-                        <p><span className="text-white/80">Days:</span> {course.schedule.days}</p>
-                        <p><span className="text-white/80">Timing:</span> {course.schedule.timing}</p>
-                        <p><span className="text-white/80">Mode:</span> {course.schedule.mode}</p>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">Batch Size</p>
+                        <p className="font-bold">{course.batchSize || "30-35 Students"}</p>
                       </div>
                     </div>
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
+                        <Target className="h-5 w-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">Eligibility</p>
+                        <p className="font-bold">{course.eligibility || "Class 11/12"}</p>
+                      </div>
+                    </div>
+                  </div>
 
-                    {/* CTA Buttons */}
-                    <button className="w-full bg-white text-[#7E3AF2] hover:bg-slate-100 font-bold py-3 px-6 rounded-xl mb-3 flex items-center justify-center gap-2 transition-colors shadow-lg">
-                      Apply Now
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                    <button className="w-full border-2 border-white text-white hover:bg-white/10 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                      <Phone className="h-4 w-4" />
-                      Book Free Demo
+                  <div className="mt-8 pt-6 border-t border-white/10">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Program Fee</p>
+                    <div className="text-3xl font-black text-white">
+                      ₹{course.price ? course.price.toLocaleString() : "1,80,000"}
+                    </div>
+                    <button className="w-full mt-6 bg-[#7E3AF2] hover:bg-white hover:text-[#7E3AF2] text-white py-4 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider text-sm">
+                      Enroll Now
                     </button>
                   </div>
+                </div>
 
-                  {/* Eligibility */}
-                  <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-                    <h3 className="font-bold text-slate-900 mb-3">Eligibility</h3>
-                    <p className="text-slate-600 text-sm font-medium">{course.eligibility}</p>
-                  </div>
-
-                  {/* Contact */}
-                  <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-                    <h3 className="font-bold text-slate-900 mb-3">Need Help?</h3>
-                    <div className="space-y-3">
-                      <a href="tel:+919108933332" className="flex items-center gap-2 text-sm text-slate-600 hover:text-[#7E3AF2] font-medium transition-colors">
-                        <Phone className="h-4 w-4" />
-                        +91 91089 33332
-                      </a>
-                      <a href="mailto:contactus@centumacademy.com" className="flex items-center gap-2 text-sm text-slate-600 hover:text-[#7E3AF2] font-medium transition-colors">
-                        <Mail className="h-4 w-4" />
-                        contactus@centumacademy.com
-                      </a>
-                    </div>
+                {/* Expert Faculty Mini Section */}
+                <div className="bg-purple-50 rounded-[24px] p-6 border border-purple-100">
+                  <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <Award className="h-5 w-5 text-[#7E3AF2]" /> Top Faculty
+                  </h4>
+                  <div className="space-y-4">
+                    {faculty.slice(0, 2).map((f, i) => (
+                      <div key={i} className="border-b border-purple-200 last:border-0 pb-3 last:pb-0">
+                        <p className="text-sm font-bold text-slate-800">{f.name}</p>
+                        <p className="text-[11px] text-slate-500 font-medium">{f.qualification}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
+
             </div>
-          </motion.div>
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
-}
+};
