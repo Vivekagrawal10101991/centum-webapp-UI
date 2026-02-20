@@ -24,7 +24,7 @@ export const useAddUserData = () => {
   const roleOptions = [
     { value: ROLES.ADMIN, label: 'Admin' },
     { value: ROLES.TECHNICAL_HEAD, label: 'Technical Head' },
-    { value: ROLES.TEACHER, label: 'Teacher' },
+    { value: ROLES.FACULTY, label: 'Faculty' }, // Updated
     { value: ROLES.STUDENT, label: 'Student' },
     { value: ROLES.PARENT, label: 'Parent' },
   ];
