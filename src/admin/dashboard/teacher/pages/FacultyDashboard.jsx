@@ -2,9 +2,9 @@ import { Users, BookOpen, ClipboardList, Calendar } from 'lucide-react';
 import { Card } from '../../../../components/common';
 
 /**
- * Teacher Dashboard
+ * Faculty Dashboard
  */
-const TeacherDashboard = () => {
+const FacultyDashboard = () => {
   const stats = [
     { title: 'My Courses', value: '6', icon: BookOpen },
     { title: 'Total Students', value: '145', icon: Users },
@@ -15,7 +15,7 @@ const TeacherDashboard = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Faculty Dashboard</h1>
         <p className="text-gray-600 mt-2">Manage your courses and students</p>
       </div>
 
@@ -35,4 +35,4 @@ const TeacherDashboard = () => {
   );
 };
 
-export default TeacherDashboard;
+export default FacultyDashboard;

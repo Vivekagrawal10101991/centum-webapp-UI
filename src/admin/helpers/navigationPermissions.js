@@ -100,7 +100,7 @@ export const NAVIGATION_PERMISSIONS = {
     requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
   },
   '/dashboard/technical/teachers': {
-    requiredPermissions: [PERMISSIONS.VIEW_EMPLOYEES],
+    requiredPermissions: [PERMISSIONS.MANAGE_FACULTY], // Updated
   },
   '/dashboard/technical/announcements': {
     requiredPermissions: [PERMISSIONS.VIEW_ANNOUNCEMENTS],
