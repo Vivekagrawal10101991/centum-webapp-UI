@@ -24,8 +24,8 @@ import { AdminDashboard, UsersPage } from '../dashboard/admin';
 // Technical Components
 import { TechnicalDashboard } from '../dashboard/technical';
 
-// Teacher Components
-import { TeacherDashboard } from '../dashboard/teacher';
+// Faculty Components
+import { TeacherDashboard as FacultyDashboard } from '../dashboard/teacher';
 
 // Student Components
 import { StudentDashboard } from '../dashboard/student';
@@ -313,21 +313,21 @@ export const AdminRoutes = () => {
         }
       />
 
-      {/* ================= TEACHER ROUTES ================= */}
+      {/* ================= FACULTY ROUTES ================= */}
       <Route
-        path="/dashboard/teacher"
+        path="/dashboard/faculty"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+          <ProtectedRoute allowedRoles={[ROLES.FACULTY]}>
             <DashboardLayout>
-              <TeacherDashboard />
+              <FacultyDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/dashboard/teacher/settings"
+        path="/dashboard/faculty/settings"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+          <ProtectedRoute allowedRoles={[ROLES.FACULTY]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>

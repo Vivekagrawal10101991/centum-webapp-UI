@@ -8,7 +8,7 @@ export const ROLES = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   TECHNICAL_HEAD: 'TECHNICAL_HEAD',
-  TEACHER: 'TEACHER',
+  FACULTY: 'FACULTY', // Updated
   STUDENT: 'STUDENT',
   PARENT: 'PARENT',
 };
@@ -18,7 +18,7 @@ export const ROLE_NAMES = {
   [ROLES.SUPER_ADMIN]: 'Super Administrator',
   [ROLES.ADMIN]: 'Administrator',
   [ROLES.TECHNICAL_HEAD]: 'Technical Head',
-  [ROLES.TEACHER]: 'Teacher',
+  [ROLES.FACULTY]: 'Faculty', // Updated
   [ROLES.STUDENT]: 'Student',
   [ROLES.PARENT]: 'Parent',
 };
@@ -28,7 +28,7 @@ export const ROLE_DASHBOARDS = {
   [ROLES.SUPER_ADMIN]: '/dashboard/super-admin',
   [ROLES.ADMIN]: '/dashboard/admin',
   [ROLES.TECHNICAL_HEAD]: '/dashboard/technical',
-  [ROLES.TEACHER]: '/dashboard/teacher',
+  [ROLES.FACULTY]: '/dashboard/faculty', // Updated path
   [ROLES.STUDENT]: '/dashboard/student',
   [ROLES.PARENT]: '/dashboard/parent',
 };
@@ -64,12 +64,12 @@ export const PERMISSIONS = {
     'view_analytics',
     'manage_announcements',
     'manage_testimonials',
-    'manage_teachers',
+    'manage_faculty', // Updated from manage_teachers
     'view_technical_reports',
   ],
 
-  // Teacher Permissions
-  [ROLES.TEACHER]: [
+  // Faculty Permissions
+  [ROLES.FACULTY]: [ // Updated
     'view_courses',
     'manage_assignments',
     'grade_students',
