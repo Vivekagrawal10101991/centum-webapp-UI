@@ -27,7 +27,7 @@ export default function PromotionsBanners() {
   const [bannerForm, setBannerForm] = useState({
     title: '',
     imageUrl: '',       // Desktop Image
-    mobileImageUrl: '', // ✅ Mobile Image
+    mobileImageUrl: '', // Mobile Image
     redirectUrl: '',
     displayOrder: 1,
     active: true,
@@ -134,7 +134,7 @@ export default function PromotionsBanners() {
     try {
       setLoading(true);
       const response = await api.get('/api/tech/announcements/all');
-      setAnnouncements(response.data);
+      setAnnouncements(Array.isArray(response?.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching announcements:", error);
       toast.error("Failed to sync announcements");
@@ -176,12 +176,12 @@ export default function PromotionsBanners() {
   const handleEditBanner = (banner) => {
     setEditingBanner(banner);
     setBannerForm({
-      title: banner.title || '',
-      imageUrl: banner.imageUrl || '',
-      mobileImageUrl: banner.mobileImageUrl || '', // ✅ Load Mobile Image
-      redirectUrl: banner.redirectUrl || '',
-      displayOrder: banner.displayOrder || 1,
-      active: banner.active
+      title: banner?.title || '',
+      imageUrl: banner?.imageUrl || '',
+      mobileImageUrl: banner?.mobileImageUrl || '', 
+      redirectUrl: banner?.redirectUrl || '',
+      displayOrder: banner?.displayOrder || 1,
+      active: banner?.active ?? true
     });
     setShowBannerForm(true);
   };
@@ -212,7 +212,7 @@ export default function PromotionsBanners() {
     }
   };
 
-  // ✅ Unified Image Selection Handler
+  // Unified Image Selection Handler
   const handleImageSelect = (url) => {
     if (imagePickerTarget === 'desktop') {
       setBannerForm({ ...bannerForm, imageUrl: url });
@@ -252,7 +252,7 @@ export default function PromotionsBanners() {
 
     } catch (error) {
       console.error("Error saving announcement:", error);
-      toast.error(error.response?.data?.message || "Failed to save announcement");
+      toast.error(error?.response?.data?.message || "Failed to save announcement");
     } finally {
       setSubmitLoading(false);
     }
@@ -262,7 +262,7 @@ export default function PromotionsBanners() {
     setEditingAnnouncement(announcement);
     setAnnouncementForm({
         ...announcement,
-        type: announcement.type || 'Exam Update'
+        type: announcement?.type || 'Exam Update'
     });
     setShowAnnouncementForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -305,7 +305,7 @@ export default function PromotionsBanners() {
 
   return (
     <div>
-      {/* ✅ UPDATED: IMAGE PICKER MODAL */}
+      {/* IMAGE PICKER MODAL */}
       <ImagePicker 
         isOpen={showImagePicker}
         onClose={() => setShowImagePicker(false)}
@@ -420,7 +420,7 @@ export default function PromotionsBanners() {
                   )}
                 </div>
 
-                {/* 4. ✅ MOBILE IMAGE */}
+                {/* 4. MOBILE IMAGE */}
                 <div className="md:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <Smartphone className="w-4 h-4 text-purple-600" /> Mobile Banner (Optional)
@@ -509,17 +509,17 @@ export default function PromotionsBanners() {
                    <p>No banners found. Create your first banner!</p>
                  </div>
               ) : (
-                banners.sort((a, b) => a.displayOrder - b.displayOrder).map((banner) => (
-                <div key={banner.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                banners.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0)).map((banner) => (
+                <div key={banner?.id || Math.random()} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                   <div className="flex items-start gap-4">
                     
                     {/* Desktop Image Thumb */}
                     <div className="relative w-32 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 group">
-                        {banner.imageUrl ? (
+                        {banner?.imageUrl ? (
                            <>
                            <img
                             src={banner.imageUrl}
-                            alt={banner.title}
+                            alt={banner.title || 'Banner'}
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute bottom-0 right-0 bg-black/50 text-white text-[10px] px-1">Desktop</div>
@@ -533,7 +533,7 @@ export default function PromotionsBanners() {
 
                     {/* Mobile Image Thumb */}
                     <div className="relative w-16 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
-                        {banner.mobileImageUrl ? (
+                        {banner?.mobileImageUrl ? (
                            <>
                            <img
                             src={banner.mobileImageUrl}
@@ -553,16 +553,16 @@ export default function PromotionsBanners() {
                       <div className="flex items-start justify-between">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-gray-800 truncate">{banner.title}</h4>
+                            <h4 className="font-semibold text-gray-800 truncate">{banner?.title || 'Untitled Banner'}</h4>
                             <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                              Order {banner.displayOrder}
+                              Order {banner?.displayOrder || 1}
                             </span>
-                            <span className={`px-2 py-0.5 text-xs rounded-full ${banner.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                {banner.active ? 'Active' : 'Inactive'}
+                            <span className={`px-2 py-0.5 text-xs rounded-full ${banner?.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                {banner?.active ? 'Active' : 'Inactive'}
                             </span>
                           </div>
                           <p className="text-gray-500 text-sm mt-1 truncate">
-                             {banner.redirectUrl ? (
+                             {banner?.redirectUrl ? (
                                 <span className="flex items-center gap-1">
                                     Link: {banner.redirectUrl} <ExternalLink size={12}/>
                                 </span>
@@ -574,11 +574,11 @@ export default function PromotionsBanners() {
                           <button
                             onClick={() => toggleBannerActive(banner)}
                             className={`p-2 rounded-lg transition-colors ${
-                              banner.active ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                              banner?.active ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                             }`}
-                            title={banner.active ? "Deactivate" : "Activate"}
+                            title={banner?.active ? "Deactivate" : "Activate"}
                           >
-                            {banner.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                            {banner?.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                           </button>
                           <button
                             onClick={() => handleEditBanner(banner)}
@@ -725,11 +725,11 @@ export default function PromotionsBanners() {
                 </div>
               ) : (
                 announcements.map((announcement) => {
-                    const styles = getTypeStyles(announcement.type);
+                    const styles = getTypeStyles(announcement?.type);
 
                     return (
                         <div 
-                            key={announcement.id} 
+                            key={announcement?.id || Math.random()} 
                             className={`rounded-2xl border p-5 transition-all duration-200 hover:shadow-md ${styles.cardBg} ${styles.cardBorder} ${styles.leftBorder}`}
                         >
                             <div className="flex items-start justify-between gap-4">
@@ -739,19 +739,19 @@ export default function PromotionsBanners() {
                                             {styles.icon}
                                         </div>
                                         <span className={`px-2.5 py-0.5 rounded-lg text-xs font-bold tracking-wide uppercase ${styles.badgeBg} ${styles.badgeText}`}>
-                                            {(announcement.type || 'Exam Update')}
+                                            {(announcement?.type || 'Exam Update')}
                                         </span>
 
-                                        {announcement.startDate && (
+                                        {announcement?.startDate && (
                                             <span className="text-xs text-gray-500 font-medium">
                                                 {new Date(announcement.startDate).toLocaleDateString()} — {new Date(announcement.endDate).toLocaleDateString()}
                                             </span>
                                         )}
                                     </div>
                                     <p className="text-gray-800 font-medium text-base ml-1 leading-relaxed">
-                                        {announcement.message}
+                                        {announcement?.message || 'No message'}
                                     </p>
-                                    {announcement.linkUrl && (
+                                    {announcement?.linkUrl && (
                                         <a href={announcement.linkUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline mt-2 ml-1 inline-block font-medium">
                                             🔗 {announcement.linkUrl}
                                         </a>
@@ -762,13 +762,13 @@ export default function PromotionsBanners() {
                                     <button
                                         onClick={() => toggleAnnouncementActive(announcement)}
                                         className={`p-2 rounded-lg transition-all ${
-                                            announcement.active 
+                                            announcement?.active 
                                             ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' 
                                             : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                                         }`}
-                                        title={announcement.active ? 'Active' : 'Hidden'}
+                                        title={announcement?.active ? 'Active' : 'Hidden'}
                                     >
-                                        {announcement.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                        {announcement?.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                     </button>
                                     <button
                                         onClick={() => handleEditAnnouncement(announcement)}
