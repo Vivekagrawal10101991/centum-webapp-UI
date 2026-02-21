@@ -21,21 +21,14 @@ import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
 import { filterNavigationByPermissions } from '../../helpers/navigationPermissions';
 
-/**
- * DashboardSidebar Component
- * UPDATED: Removed the "Portal View" badge bar and cleaned up redundant links.
- * UPDATED: Premium Soft Slate Gradient remains with high-end typography.
- */
 const DashboardSidebar = () => {
   const location = useLocation();
   const { user } = useAuth();
 
   const navigationItems = {
     [ROLES.SUPER_ADMIN]: [
-      // Primary Analytical Entry
       { name: 'Overview', path: '/dashboard/super-admin/dashboard', icon: BarChart },
       { name: 'User Management', path: '/dashboard/super-admin/user-management', icon: Users },
-      
       { name: 'LMS Center', path: '/dashboard/super-admin/lms-center', icon: GraduationCap },
       { name: 'Promotions & Banners', path: '/dashboard/super-admin/promotions-banners', icon: Megaphone },
       { name: 'Academics & Results', path: '/dashboard/super-admin/academics-results', icon: Award },
@@ -55,8 +48,11 @@ const DashboardSidebar = () => {
 
     [ROLES.TECHNICAL_HEAD]: [
       { name: 'Overview', path: '/dashboard/technical', icon: BarChart },
-      { name: 'Content', path: '/dashboard/technical/content', icon: FileText },
-      { name: 'Courses', path: '/dashboard/technical/courses', icon: BookOpen },
+      { name: 'Course Management', path: '/dashboard/technical/course-management', icon: BookOpen },
+      { name: 'Promotions & Banners', path: '/dashboard/technical/promotions-banners', icon: Megaphone },
+      { name: 'Media Center', path: '/dashboard/technical/media-center', icon: Video },
+      { name: 'Academics & Results', path: '/dashboard/technical/academics-results', icon: Award },
+      { name: 'Social Proof', path: '/dashboard/technical/social-proof', icon: Star },
       { name: 'Settings', path: '/dashboard/technical/settings', icon: Settings },
     ],
 
@@ -90,7 +86,6 @@ const DashboardSidebar = () => {
   return (
     <aside className="w-72 bg-gradient-to-b from-slate-800 to-slate-900 flex flex-col h-full shadow-2xl relative z-20 border-r border-white/5">
       
-      {/* 1. Header Spacing (Replaces the removed badge for a cleaner look) */}
       <div className="p-8 pb-4">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 shadow-inner">
@@ -103,7 +98,6 @@ const DashboardSidebar = () => {
         </div>
       </div>
 
-      {/* 2. Navigation Section */}
       <div className="flex-1 overflow-y-auto px-4 custom-scrollbar">
         <nav className="space-y-1.5 mt-4">
           {items.map((item) => {
@@ -141,7 +135,6 @@ const DashboardSidebar = () => {
         </nav>
       </div>
 
-      {/* 3. Sidebar Footer */}
       <div className="p-6 border-t border-white/5 bg-slate-900/50">
          <div className="text-center">
             <p className="text-[10px] text-slate-600 font-bold tracking-[0.3em] uppercase">Centum Academy</p>

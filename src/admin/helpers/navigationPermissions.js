@@ -87,8 +87,17 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/technical': {
     requiredRole: 'TECHNICAL_HEAD',
   },
-  '/dashboard/technical/content': {
-    requiredPermissions: [PERMISSIONS.MANAGE_CMS],
+  
+  // ---> (Content link removed here) <---
+  
+  '/dashboard/technical/promotions-banners': {
+    requiredPermissions: [PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS],
+  },
+  '/dashboard/technical/academics-results': {
+    requiredPermissions: [PERMISSIONS.VIEW_ACADEMIC, PERMISSIONS.MANAGE_ACADEMIC],
+  },
+  '/dashboard/technical/social-proof': {
+    requiredPermissions: [PERMISSIONS.VIEW_SOCIAL, PERMISSIONS.MANAGE_SOCIAL],
   },
   '/dashboard/technical/courses': {
     requiredPermissions: [PERMISSIONS.VIEW_COURSES],
@@ -100,7 +109,7 @@ export const NAVIGATION_PERMISSIONS = {
     requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
   },
   '/dashboard/technical/teachers': {
-    requiredPermissions: [PERMISSIONS.MANAGE_FACULTY], // Updated
+    requiredPermissions: [PERMISSIONS.MANAGE_FACULTY],
   },
   '/dashboard/technical/announcements': {
     requiredPermissions: [PERMISSIONS.VIEW_ANNOUNCEMENTS],

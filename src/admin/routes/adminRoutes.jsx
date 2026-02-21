@@ -274,6 +274,52 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* ---> NEW CONTENT ROUTES FOR TECHNICAL HEAD <--- */}
+      <Route
+        path="/dashboard/technical/promotions-banners"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.TECHNICAL_HEAD]} 
+            requiredPermissions={[PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS]}
+            routePath="/dashboard/technical/promotions-banners"
+          >
+            <DashboardLayout>
+              <PromotionsBanners />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/technical/academics-results"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.TECHNICAL_HEAD]} 
+            requiredPermissions={[PERMISSIONS.VIEW_ACADEMIC, PERMISSIONS.MANAGE_ACADEMIC]}
+            routePath="/dashboard/technical/academics-results"
+          >
+            <DashboardLayout>
+              <AcademicsResults />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/technical/social-proof"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.TECHNICAL_HEAD]} 
+            requiredPermissions={[PERMISSIONS.VIEW_SOCIAL, PERMISSIONS.MANAGE_SOCIAL]}
+            routePath="/dashboard/technical/social-proof"
+          >
+            <DashboardLayout>
+              <SocialProof />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      {/* ---> END NEW ROUTES <--- */}
+
       <Route
         path="/dashboard/technical/media-center"
         element={
