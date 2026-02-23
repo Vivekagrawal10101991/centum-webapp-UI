@@ -33,6 +33,9 @@ import { StudentDashboard } from '../dashboard/student';
 // Parent Components
 import { ParentDashboard } from '../dashboard/parent';
 
+// HR Components
+import HRDashboard from '../dashboard/hr/pages/HRDashboard';
+
 /**
  * Admin Routes Component
  * All admin dashboard routes with role-based protection
@@ -275,7 +278,7 @@ export const AdminRoutes = () => {
         }
       />
       
-      {/* ---> NEW CONTENT ROUTES FOR TECHNICAL HEAD <--- */}
+      {/* ---> CONTENT ROUTES FOR TECHNICAL HEAD <--- */}
       <Route
         path="/dashboard/technical/promotions-banners"
         element={
@@ -318,8 +321,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-      {/* ---> END NEW ROUTES <--- */}
-
       <Route
         path="/dashboard/technical/media-center"
         element={
@@ -352,6 +353,69 @@ export const AdminRoutes = () => {
         path="/dashboard/technical/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.TECHNICAL_HEAD]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= HR ROUTES ================= */}
+      <Route
+        path="/dashboard/hr"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <HRDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/employees"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <div className="p-8"><h2>Employee Directory (Coming Soon)</h2></div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/attendance"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <div className="p-8"><h2>Attendance Management (Coming Soon)</h2></div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/leaves"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <div className="p-8"><h2>Leave Management (Coming Soon)</h2></div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/recruitment"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <div className="p-8"><h2>Recruitment (Coming Soon)</h2></div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ADDED MISSING SETTINGS ROUTE FOR HR FIRST-LOGIN PASSWORD CHANGE */}
+      <Route
+        path="/dashboard/hr/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>
