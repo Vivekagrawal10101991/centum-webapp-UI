@@ -21,10 +21,14 @@ export const useAddUserData = () => {
     reset,
   } = useForm();
 
+  // Added Coordinator, Operations Head, and HR to the dropdown
   const roleOptions = [
     { value: ROLES.ADMIN, label: 'Admin' },
     { value: ROLES.TECHNICAL_HEAD, label: 'Technical Head' },
-    { value: ROLES.FACULTY, label: 'Faculty' }, // Updated
+    { value: ROLES.FACULTY, label: 'Faculty' }, 
+    { value: ROLES.COORDINATOR, label: 'Coordinator' },
+    { value: ROLES.OPERATIONS_HEAD, label: 'Operations Head' },
+    { value: ROLES.HR, label: 'HR' },
     { value: ROLES.STUDENT, label: 'Student' },
     { value: ROLES.PARENT, label: 'Parent' },
   ];
