@@ -16,8 +16,8 @@ import {
   MessageSquare,
   TrendingUp,
   UserCog,
-  Clock, // Added
-  Building2 // Added
+  Clock,
+  Building2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -58,7 +58,7 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/technical/settings', icon: Settings },
     ],
 
-    [ROLES.FACULTY]: [ // Changed from TEACHER to match ROLES.FACULTY
+    [ROLES.FACULTY]: [ 
       { name: 'Overview', path: '/dashboard/faculty', icon: BarChart },
       { name: 'My Courses', path: '/dashboard/faculty/courses', icon: BookOpen },
       { name: 'Students', path: '/dashboard/faculty/students', icon: Users },
@@ -80,7 +80,6 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/parent/settings', icon: Settings },
     ],
 
-    // Added HR Navigation
     [ROLES.HR]: [
       { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
@@ -92,7 +91,30 @@ const DashboardSidebar = () => {
 
   const allItems = navigationItems[user?.role] || [];
   const items = filterNavigationByPermissions(allItems, user);
-  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+
+  // FIXED ACTIVE LOGIC
+  const isActive = (path) => {
+    // 1. Exact match always wins
+    if (location.pathname === path) return true;
+    
+    // 2. Prevent base "Overview" paths from staying active on sub-routes
+    const basePaths = [
+      '/dashboard/super-admin/dashboard',
+      '/dashboard/admin',
+      '/dashboard/technical',
+      '/dashboard/faculty',
+      '/dashboard/student',
+      '/dashboard/parent',
+      '/dashboard/hr'
+    ];
+
+    if (basePaths.includes(path)) {
+      return false; 
+    }
+
+    // 3. For all other routes, allow sub-path highlighting (e.g., /courses/1 matches /courses)
+    return location.pathname.startsWith(path + '/');
+  };
 
   return (
     <aside className="w-72 bg-gradient-to-b from-slate-800 to-slate-900 flex flex-col h-full shadow-2xl relative z-20 border-r border-white/5">
