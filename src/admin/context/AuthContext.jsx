@@ -86,6 +86,9 @@ export const AuthProvider = ({ children }) => {
         if (!role) {
           throw new Error('No role received from server. Please contact your backend team to include role in the login response.');
         }
+
+        // Ensure role is uppercase to match ROLES enum exactly
+        role = role.toUpperCase();
         
         const userData = {
           role: role,
@@ -109,8 +112,11 @@ export const AuthProvider = ({ children }) => {
       
       const token = data.token || data.accessToken || data.authToken;
       
+      // Ensure role is uppercase to match ROLES enum exactly
+      const role = data.role ? data.role.toUpperCase() : null;
+      
       const userData = {
-        role: data.role,
+        role: role,
         email: data.email,
         permissions: data.permissions || [],
         name: data.name || data.email,
@@ -195,7 +201,23 @@ export const AuthProvider = ({ children }) => {
    */
   const getUserDashboard = () => {
     if (!user || !user.role) return '/dashboard';
-    return getDashboardRoute(user.role);
+    
+    // Fallback switch in case getDashboardRoute fails
+    const route = getDashboardRoute(user.role);
+    if (route && route !== '/') return route;
+
+    switch (user.role) {
+      case 'SUPER_ADMIN': return '/dashboard/super-admin';
+      case 'ADMIN': return '/dashboard/admin';
+      case 'TECHNICAL_HEAD': return '/dashboard/technical';
+      case 'FACULTY': return '/dashboard/faculty';
+      case 'STUDENT': return '/dashboard/student';
+      case 'PARENT': return '/dashboard/parent';
+      case 'HR': return '/dashboard/hr';
+      case 'COORDINATOR': return '/dashboard/coordinator';
+      case 'OPERATIONS_HEAD': return '/dashboard/operations-head';
+      default: return '/dashboard';
+    }
   };
 
   const value = {

@@ -15,7 +15,9 @@ import {
   Calendar,
   MessageSquare,
   TrendingUp,
-  UserCog
+  UserCog,
+  Clock, // Added
+  Building2 // Added
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -56,11 +58,11 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/technical/settings', icon: Settings },
     ],
 
-    [ROLES.TEACHER]: [
-      { name: 'Overview', path: '/dashboard/teacher', icon: BarChart },
-      { name: 'My Courses', path: '/dashboard/teacher/courses', icon: BookOpen },
-      { name: 'Students', path: '/dashboard/teacher/students', icon: Users },
-      { name: 'Settings', path: '/dashboard/teacher/settings', icon: Settings },
+    [ROLES.FACULTY]: [ // Changed from TEACHER to match ROLES.FACULTY
+      { name: 'Overview', path: '/dashboard/faculty', icon: BarChart },
+      { name: 'My Courses', path: '/dashboard/faculty/courses', icon: BookOpen },
+      { name: 'Students', path: '/dashboard/faculty/students', icon: Users },
+      { name: 'Settings', path: '/dashboard/faculty/settings', icon: Settings },
     ],
 
     [ROLES.STUDENT]: [
@@ -77,11 +79,20 @@ const DashboardSidebar = () => {
       { name: 'Child Progress', path: '/dashboard/parent/progress', icon: TrendingUp },
       { name: 'Settings', path: '/dashboard/parent/settings', icon: Settings },
     ],
+
+    // Added HR Navigation
+    [ROLES.HR]: [
+      { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
+      { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
+      { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
+      { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
+      { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Building2 },
+    ],
   };
 
   const allItems = navigationItems[user?.role] || [];
   const items = filterNavigationByPermissions(allItems, user);
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
     <aside className="w-72 bg-gradient-to-b from-slate-800 to-slate-900 flex flex-col h-full shadow-2xl relative z-20 border-r border-white/5">

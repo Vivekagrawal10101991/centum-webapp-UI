@@ -10,3 +10,4 @@ export { technicalRoutes } from './technicalRoutes';
 export { facultyRoutes } from './facultyRoutes'; // Updated
 export { studentRoutes } from './studentRoutes';
 export { parentRoutes } from './parentRoutes';
+export { hrRoutes } from './hrRoutes'; // Added HR routes
