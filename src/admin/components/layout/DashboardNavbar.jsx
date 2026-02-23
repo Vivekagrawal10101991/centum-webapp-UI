@@ -24,12 +24,14 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isLoadingAttendance, setIsLoadingAttendance] = useState(false);
   
+  // Timer States
+  const [checkInEpochMillis, setCheckInEpochMillis] = useState(null);
+  const [timerDisplay, setTimerDisplay] = useState("00:00:00");
+  
   const userMenuRef = useRef(null);
 
-  // Check if current user should see attendance features
   const showAttendance = user?.role !== ROLES.STUDENT && user?.role !== ROLES.PARENT;
 
-  // Handle clicking outside the user dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -43,19 +45,17 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
   // Fetch initial attendance status on mount
   useEffect(() => {
     const fetchInitialStatus = async () => {
-      // Skip fetching attendance history if user is a student or parent
       if (!showAttendance) return;
 
       try {
         const res = await attendanceService.getHistory();
         if (res.success && res.data && res.data.length > 0) {
           const latestRecord = res.data[0];
-          
-          // Get today's date in YYYY-MM-DD format
           const today = new Date().toLocaleDateString('en-CA'); 
           
           if (latestRecord.date === today && latestRecord.workdayStatus === 'In-Progress') {
             setIsCheckedIn(true);
+            setCheckInEpochMillis(latestRecord.checkInEpochMillis);
           }
         }
       } catch (error) {
@@ -68,20 +68,130 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
     }
   }, [user, showAttendance]);
 
+  // Real-Time Timer Logic
+  useEffect(() => {
+    let interval;
+    if (isCheckedIn && checkInEpochMillis) {
+      interval = setInterval(() => {
+        const now = Date.now();
+        const diffInSeconds = Math.floor((now - checkInEpochMillis) / 1000);
+        
+        if (diffInSeconds >= 0) {
+          const h = String(Math.floor(diffInSeconds / 3600)).padStart(2, '0');
+          const m = String(Math.floor((diffInSeconds % 3600) / 60)).padStart(2, '0');
+          const s = String(diffInSeconds % 60).padStart(2, '0');
+          setTimerDisplay(`${h}:${m}:${s}`);
+        }
+      }, 1000);
+    } else {
+      setTimerDisplay("00:00:00");
+    }
+    
+    return () => clearInterval(interval);
+  }, [isCheckedIn, checkInEpochMillis]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  // Helper to get string address from coordinates
+  // Foolproof function to get exact Neighborhood/Street (e.g., HSR Layout, Bengaluru)
   const fetchAddress = async (lat, lng) => {
+    // 1. Try OpenStreetMap Nominatim FIRST with ALL possible detailed keys
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      const data = await response.json();
-      return data.display_name || `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+      const osmResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18`);
+      if (osmResponse.ok) {
+        const osmData = await osmResponse.json();
+        
+        if (osmData && osmData.address) {
+          // Extract every possible level of detail
+          const { 
+            building, amenity, road, residential, neighbourhood, 
+            suburb, village, town, city_district, city, state 
+          } = osmData.address;
+          
+          const osmParts = [building, amenity, road, residential, neighbourhood, suburb, village, town, city_district, city, state].filter(Boolean);
+          const uniqueOsmParts = [...new Set(osmParts)];
+          
+          if (uniqueOsmParts.length > 0) {
+            return uniqueOsmParts.join(', ');
+          }
+        }
+        
+        // Backup if the address object is missing but display_name exists
+        if (osmData && osmData.display_name) {
+          const parts = osmData.display_name.split(',').map(p => p.trim());
+          const filtered = parts.filter(p => !/^\d+$/.test(p) && p !== 'India');
+          return filtered.slice(0, 4).join(', ');
+        }
+      }
+    } catch (osmError) {
+      console.warn("OSM Geocoding failed, trying fallback...", osmError);
+    }
+
+    // 2. Try Photon Komoot API (Highly reliable backup OSM API)
+    try {
+      const photonRes = await fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`);
+      if (photonRes.ok) {
+        const photonData = await photonRes.json();
+        if (photonData.features && photonData.features.length > 0) {
+          const { name, street, district, locality, city, state } = photonData.features[0].properties;
+          const photonParts = [name, street, district, locality, city, state].filter(Boolean);
+          const uniquePhotonParts = [...new Set(photonParts)];
+          if (uniquePhotonParts.length > 0) {
+            return uniquePhotonParts.join(', ');
+          }
+        }
+      }
+    } catch (photonError) {
+      console.warn("Photon Geocoding failed", photonError);
+    }
+
+    // 3. Fallback to BigDataCloud API
+    try {
+      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      if (response.ok) {
+        const data = await response.json();
+        const parts = [data.locality, data.city, data.principalSubdivision].filter(Boolean);
+        const uniqueParts = [...new Set(parts)]; 
+        
+        if (uniqueParts.length > 0) {
+          return uniqueParts.join(', ');
+        }
+      }
     } catch (error) {
-      console.warn("Reverse geocoding failed", error);
-      return `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+      console.warn("BigDataCloud Geocoding failed", error);
+    }
+
+    // 4. Final Fallback (If no internet or APIs blocked)
+    return `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`; 
+  };
+
+  const processAttendanceApi = async (payload) => {
+    try {
+      if (isCheckedIn) {
+        const res = await attendanceService.checkOut(payload);
+        if (res.success) {
+          toast.success("Checked out successfully!");
+          setIsCheckedIn(false);
+          setCheckInEpochMillis(null);
+        } else {
+          toast.error(res.message || "Failed to check out.");
+        }
+      } else {
+        const res = await attendanceService.checkIn(payload);
+        if (res.success) {
+          toast.success("Checked in successfully!");
+          setIsCheckedIn(true);
+          setCheckInEpochMillis(res.data.checkInEpochMillis);
+        } else {
+          toast.error(res.message || "Failed to check in.");
+        }
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message || "Attendance request failed.");
+    } finally {
+      setIsLoadingAttendance(false);
     }
   };
 
@@ -89,56 +199,19 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
     setIsLoadingAttendance(true);
 
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
-      setIsLoadingAttendance(false);
+      await processAttendanceApi({ latitude: null, longitude: null, address: "Location not supported by browser" });
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        
-        try {
-          const address = await fetchAddress(latitude, longitude);
-          
-          const payload = {
-            latitude,
-            longitude,
-            address
-          };
-
-          if (isCheckedIn) {
-            // Process Check-Out
-            const res = await attendanceService.checkOut(payload);
-            if (res.success) {
-              toast.success("Checked out successfully!");
-              setIsCheckedIn(false);
-            } else {
-              toast.error(res.message || "Failed to check out.");
-            }
-          } else {
-            // Process Check-In
-            const res = await attendanceService.checkIn(payload);
-            if (res.success) {
-              toast.success("Checked in successfully!");
-              setIsCheckedIn(true);
-            } else {
-              toast.error(res.message || "Failed to check in.");
-            }
-          }
-        } catch (error) {
-          toast.error(error?.response?.data?.message || error.message || "Attendance request failed.");
-        } finally {
-          setIsLoadingAttendance(false);
-        }
+        const address = await fetchAddress(latitude, longitude);
+        await processAttendanceApi({ latitude, longitude, address });
       },
-      (error) => {
-        let errorMsg = "Unable to retrieve your location.";
-        if (error.code === error.PERMISSION_DENIED) {
-          errorMsg = "Location access denied. Please allow location permissions in your browser.";
-        }
-        toast.error(errorMsg);
-        setIsLoadingAttendance(false);
+      async (error) => {
+        toast.error("Location denied. Proceeding with time-tracking only.");
+        await processAttendanceApi({ latitude: null, longitude: null, address: "Location access denied by user" });
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -170,6 +243,17 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
           </div>
 
           <div className="flex items-center gap-4">
+            
+            {/* --- VISIBLE DASHBOARD TIMER --- */}
+            {showAttendance && (
+              <div className={`hidden sm:flex items-center gap-3 px-4 py-2 border rounded-xl shadow-sm transition-colors ${isCheckedIn ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}`}>
+                <Clock className={`w-4 h-4 ${isCheckedIn ? 'text-emerald-500 animate-pulse' : 'text-slate-400'}`} />
+                <span className={`font-mono font-bold tracking-wider ${isCheckedIn ? 'text-emerald-700' : 'text-slate-500'}`}>
+                  {timerDisplay}
+                </span>
+              </div>
+            )}
+
             {/* Visit Site Link */}
             <Link to="/" className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-all">
               <Home className="w-4 h-4" />
@@ -204,7 +288,7 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
                       <span>My Profile</span>
                     </Link>
 
-                    {/* Conditionally Render Attendance Button */}
+                    {/* Attendance Dropdown Button */}
                     {showAttendance && (
                       <>
                         <button 
