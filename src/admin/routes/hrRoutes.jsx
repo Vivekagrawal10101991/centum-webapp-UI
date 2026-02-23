@@ -11,11 +11,13 @@ export const hrRoutes = () => {
       <Route path="/" element={<HRDashboard />} />
       <Route path="/dashboard" element={<HRDashboard />} />
       
-      {/* Add placeholders for future HR tabs */}
+      {/* THESE TABS NOW LOAD THE DASHBOARD COMPONENT */}
+      <Route path="/leaves" element={<HRDashboard />} />
+      <Route path="/recruitment" element={<HRDashboard />} />
+      
+      {/* Placeholders for future HR tabs */}
       <Route path="/employees" element={<div className="p-8"><h2>Employee Directory (Coming Soon)</h2></div>} />
       <Route path="/attendance" element={<div className="p-8"><h2>Attendance Management (Coming Soon)</h2></div>} />
-      <Route path="/leaves" element={<div className="p-8"><h2>Leave Management (Coming Soon)</h2></div>} />
-      <Route path="/recruitment" element={<div className="p-8"><h2>Recruitment (Coming Soon)</h2></div>} />
       
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/dashboard/hr" replace />} />
