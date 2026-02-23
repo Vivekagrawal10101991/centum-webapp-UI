@@ -11,6 +11,9 @@ export const ROLES = {
   FACULTY: 'FACULTY', // Updated
   STUDENT: 'STUDENT',
   PARENT: 'PARENT',
+  COORDINATOR: 'COORDINATOR',
+  OPERATIONS_HEAD: 'OPERATIONS_HEAD',
+  HR: 'HR',
 };
 
 // Role Display Names
@@ -21,6 +24,9 @@ export const ROLE_NAMES = {
   [ROLES.FACULTY]: 'Faculty', // Updated
   [ROLES.STUDENT]: 'Student',
   [ROLES.PARENT]: 'Parent',
+  [ROLES.COORDINATOR]: 'Coordinator',
+  [ROLES.OPERATIONS_HEAD]: 'Operations Head',
+  [ROLES.HR]: 'HR',
 };
 
 // Dashboard Routes for Each Role
@@ -31,6 +37,9 @@ export const ROLE_DASHBOARDS = {
   [ROLES.FACULTY]: '/dashboard/faculty', // Updated path
   [ROLES.STUDENT]: '/dashboard/student',
   [ROLES.PARENT]: '/dashboard/parent',
+  [ROLES.COORDINATOR]: '/dashboard/coordinator', // Add specific dashboard paths later if needed
+  [ROLES.OPERATIONS_HEAD]: '/dashboard/operations-head',
+  [ROLES.HR]: '/dashboard/hr',
 };
 
 // Permissions for Each Role
@@ -93,6 +102,27 @@ export const PERMISSIONS = {
     'view_courses',
     'view_grades',
     'contact_teachers',
+  ],
+
+  // Coordinator Permissions
+  [ROLES.COORDINATOR]: [
+    'view_dashboard',
+    'manage_schedules',
+    'view_reports',
+  ],
+
+  // Operations Head Permissions
+  [ROLES.OPERATIONS_HEAD]: [
+    'view_dashboard',
+    'manage_operations',
+    'view_analytics',
+  ],
+
+  // HR Permissions
+  [ROLES.HR]: [
+    'view_dashboard',
+    'manage_employees',
+    'view_reports',
   ],
 };
 
