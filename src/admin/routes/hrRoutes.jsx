@@ -11,13 +11,16 @@ export const hrRoutes = () => {
       <Route path="/" element={<HRDashboard />} />
       <Route path="/dashboard" element={<HRDashboard />} />
       
-      {/* THESE TABS NOW LOAD THE DASHBOARD COMPONENT */}
+      {/* CRITICAL FIX: 
+        We must route these to HRDashboard so the internal tabs can show the UI! 
+        Remove any old "Coming Soon" placeholders for /recruitment and /leaves.
+      */}
       <Route path="/leaves" element={<HRDashboard />} />
       <Route path="/recruitment" element={<HRDashboard />} />
       
-      {/* Placeholders for future HR tabs */}
-      <Route path="/employees" element={<div className="p-8"><h2>Employee Directory (Coming Soon)</h2></div>} />
-      <Route path="/attendance" element={<div className="p-8"><h2>Attendance Management (Coming Soon)</h2></div>} />
+      {/* Placeholders for other future HR tabs */}
+      <Route path="/employees" element={<div className="p-8"><h2 className="text-xl font-bold">Employees (Coming Soon)</h2></div>} />
+      <Route path="/attendance" element={<div className="p-8"><h2 className="text-xl font-bold">Attendance (Coming Soon)</h2></div>} />
       
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/dashboard/hr" replace />} />

@@ -37,5 +37,32 @@ export const attendanceService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  // --- LEAVE MANAGEMENT ---
+
+  /**
+   * Apply for a new Leave
+   * @param {Object} data - { leaveType, startDate, endDate, reason }
+   */
+  applyLeave: async (data) => {
+    try {
+      const response = await api.post('/api/attendance/leave', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch User's Leave History
+   */
+  getLeaveHistory: async () => {
+    try {
+      const response = await api.get('/api/attendance/leave/my-history');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };

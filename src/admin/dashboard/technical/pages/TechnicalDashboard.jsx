@@ -3,6 +3,8 @@ import { Card } from '../../../../components/common';
 import { FeatureCard } from '../../super-admin/components';
 import { useAuth } from '../../../context/AuthContext';
 import { canAccessRoute } from '../../../helpers/navigationPermissions';
+// FIXED: Corrected import path (3 levels up, not 4)
+import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 /**
  * Technical Head Dashboard
@@ -84,20 +86,28 @@ const TechnicalDashboard = () => {
         </div>
       )}
 
-      {/* Quick Stats Section */}
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-4">Quick Stats</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={index} className="p-6" hover>
-                <Icon className="w-8 h-8 text-primary mb-3" />
-                <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                <p className="text-sm text-gray-600">{stat.title}</p>
-              </Card>
-            );
-          })}
+      {/* Quick Stats Section & Leave Widget */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-4">Quick Stats</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <Card key={index} className="p-6" hover>
+                  <Icon className="w-8 h-8 text-primary mb-3" />
+                  <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
+                  <p className="text-sm text-gray-600">{stat.title}</p>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Added Leave Widget Here */}
+        <div className="lg:col-span-1">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-4">Personal</h2>
+          <LeaveApplicationWidget />
         </div>
       </div>
     </div>
