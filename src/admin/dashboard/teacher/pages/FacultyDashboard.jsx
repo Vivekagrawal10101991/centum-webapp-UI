@@ -1,5 +1,7 @@
 import { Users, BookOpen, ClipboardList, Calendar } from 'lucide-react';
 import { Card } from '../../../../components/common';
+// FIXED: Corrected import path (3 levels up, not 4)
+import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 /**
  * Faculty Dashboard
@@ -19,7 +21,7 @@ const FacultyDashboard = () => {
         <p className="text-gray-600 mt-2">Manage your courses and students</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
@@ -31,6 +33,17 @@ const FacultyDashboard = () => {
           );
         })}
       </div>
+
+      {/* Added Leave Widget Here */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+           {/* You can add other faculty widgets here later (like upcoming classes) */}
+        </div>
+        <div>
+           <LeaveApplicationWidget />
+        </div>
+      </div>
+      
     </div>
   );
 };
