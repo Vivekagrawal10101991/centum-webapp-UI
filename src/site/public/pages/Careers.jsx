@@ -1,38 +1,79 @@
 import React, { useState, useEffect } from "react";
 import { 
-  Briefcase, MapPin, Clock, DollarSign, GraduationCap, Users, 
-  Award, TrendingUp, Heart, Zap, Shield, Smile, ArrowRight 
+  Briefcase, MapPin, Clock, Users, 
+  Award, TrendingUp, Heart, Zap, Shield, Smile, ArrowRight, Calendar, X 
 } from "lucide-react";
+import api from "../../../services/api";
 
 const Careers = () => {
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fallback data
-  const dummyJobs = [
-    {
-      id: '1', title: 'Senior Physics Faculty', department: 'Academics', 
-      location: 'Bangalore', type: 'Full Time', experience: '5+ Years', 
-      salary: 'Competitive', description: 'Lead the Physics department for JEE Advanced batches.', status: 'active'
-    },
-    {
-      id: '2', title: 'Academic Counselor', department: 'Sales', 
-      location: 'Bangalore', type: 'Full Time', experience: '1-3 Years', 
-      salary: 'Best in Industry', description: 'Guide students and parents through the admission process.', status: 'active'
-    }
-  ];
+  // Modal State
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [formData, setFormData] = useState({
+    applicantName: "",
+    email: "",
+    phone: "",
+    resumeUrl: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
-    // Simulate API load
-    const timer = setTimeout(() => {
-      setJobPostings(dummyJobs);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        // Using the public endpoint to fetch active jobs
+        const response = await api.get('/api/public/jobs');
+        
+        // Handle standard nested response or direct array response
+        const activeJobs = response.data?.success ? response.data.data : (response.data || []);
+        
+        setJobPostings(activeJobs);
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
   }, []);
 
-  const handleApply = (job) => {
-    alert(`Application started for ${job.title}. (Integration pending)`);
+  const handleApplyClick = (job) => {
+    setSelectedJob(job);
+    setFormData({ applicantName: "", email: "", phone: "", resumeUrl: "" });
+    setSubmitMessage({ type: "", text: "" });
+  };
+
+  const handleCloseModal = () => {
+    setSelectedJob(null);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitApplication = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage({ type: "", text: "" });
+
+    try {
+      await api.post(`/api/public/jobs/${selectedJob.id}/apply`, formData);
+      setSubmitMessage({ type: "success", text: "Application submitted successfully! Our HR team will review it." });
+      
+      // Close modal after 3 seconds on success
+      setTimeout(() => {
+        handleCloseModal();
+      }, 3000);
+    } catch (error) {
+      setSubmitMessage({ type: "error", text: error || "Failed to submit application. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const scrollToOpenings = () => {
@@ -40,7 +81,7 @@ const Careers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans animate-fade-in">
+    <div className="min-h-screen bg-white font-sans animate-fade-in relative">
       
       {/* --- HERO SECTION --- */}
       <section className="relative py-32 px-6 bg-slate-900 text-white overflow-hidden">
@@ -86,9 +127,9 @@ const Careers = () => {
             {[
               { icon: TrendingUp, title: "Career Growth", text: "Continuous learning opportunities and clear career progression paths.", color: "#10B981" },
               { icon: Smile, title: "Work-Life Balance", text: "Flexible schedules and supportive work environment.", color: "#F59E0B" },
-              { icon: DollarSign, title: "Competitive Pay", text: "Industry-leading salary packages and performance bonuses.", color: "#3B82F6" },
+              { icon: Award, title: "Competitive Pay", text: "Industry-leading salary packages and performance bonuses.", color: "#3B82F6" },
               { icon: Users, title: "Collaborative Culture", text: "Work with passionate educators and innovative thinkers.", color: "#8B5CF6" },
-              { icon: GraduationCap, title: "Development", text: "Regular training sessions and skill enhancement programs.", color: "#EC4899" },
+              { icon: Briefcase, title: "Development", text: "Regular training sessions and skill enhancement programs.", color: "#EC4899" },
               { icon: Heart, title: "Impact & Purpose", text: "Shape the future by transforming young minds.", color: "#EF4444" }
             ].map((item, i) => (
               <div 
@@ -182,12 +223,14 @@ const Careers = () => {
 
           <div className="space-y-4">
             {loading ? (
-              <div className="text-center py-10">Loading positions...</div>
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#10B981]"></div>
+              </div>
             ) : jobPostings.length === 0 ? (
                <div className="bg-white p-12 rounded-2xl text-center border border-slate-200">
                  <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                  <h3 className="text-xl font-bold text-slate-900">No Current Openings</h3>
-                 <p className="text-slate-500 mt-2">Please check back later or email us your resume.</p>
+                 <p className="text-slate-500 mt-2">We are fully staffed at the moment. Please check back later!</p>
                </div>
             ) : (
               jobPostings.map((job) => (
@@ -198,20 +241,30 @@ const Careers = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-2xl font-bold text-slate-900">{job.title}</h3>
-                      <span className="bg-[#10B981]/10 text-[#10B981] text-xs font-bold px-3 py-1 rounded-full uppercase">
-                        {job.department}
-                      </span>
+                      {job.department && (
+                        <span className="bg-[#10B981]/10 text-[#10B981] text-xs font-bold px-3 py-1 rounded-full uppercase">
+                          {job.department}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-500 mb-3">
-                      <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {job.location}</span>
-                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {job.type}</span>
-                      <span className="flex items-center gap-1"><GraduationCap className="w-4 h-4" /> {job.experience}</span>
-                      <span className="flex items-center gap-1"><DollarSign className="w-4 h-4" /> {job.salary}</span>
+                      {job.location && (
+                        <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {job.location}</span>
+                      )}
+                      {job.employmentType && (
+                        <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {job.employmentType}</span>
+                      )}
+                      {job.postedDate && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" /> 
+                          Posted {new Date(job.postedDate).toLocaleDateString()}
+                        </span>
+                      )}
                     </div>
                     <p className="text-slate-600 line-clamp-2">{job.description}</p>
                   </div>
                   <button 
-                    onClick={() => handleApply(job)}
+                    onClick={() => handleApplyClick(job)}
                     className="bg-[#10B981] hover:bg-[#059669] text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-[#10B981]/20 whitespace-nowrap h-auto"
                   >
                     Apply Now
@@ -222,6 +275,99 @@ const Careers = () => {
           </div>
         </div>
       </section>
+
+      {/* --- APPLICATION MODAL --- */}
+      {selectedJob && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl relative transform transition-all">
+            <button 
+              onClick={handleCloseModal} 
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="mb-6 pr-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Apply for {selectedJob.title}</h3>
+              <p className="text-slate-500 text-sm">Fill out the form below to submit your application for the {selectedJob.department} department.</p>
+            </div>
+            
+            {submitMessage.text && (
+              <div className={`p-4 rounded-xl mb-6 text-sm font-medium ${submitMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                {submitMessage.text}
+              </div>
+            )}
+
+            {!submitMessage.text || submitMessage.type === 'error' ? (
+              <form onSubmit={handleSubmitApplication} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name</label>
+                  <input 
+                    required 
+                    type="text" 
+                    name="applicantName" 
+                    value={formData.applicantName} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#10B981]/50 focus:border-[#10B981] outline-none transition-all" 
+                    placeholder="Enter your full name" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address</label>
+                  <input 
+                    required 
+                    type="email" 
+                    name="email" 
+                    value={formData.email} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#10B981]/50 focus:border-[#10B981] outline-none transition-all" 
+                    placeholder="Enter your email" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
+                  <input 
+                    required 
+                    type="tel" 
+                    name="phone" 
+                    value={formData.phone} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#10B981]/50 focus:border-[#10B981] outline-none transition-all" 
+                    placeholder="Enter your phone number" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Resume Link</label>
+                  <input 
+                    required 
+                    type="url" 
+                    name="resumeUrl" 
+                    value={formData.resumeUrl} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#10B981]/50 focus:border-[#10B981] outline-none transition-all" 
+                    placeholder="Google Drive, Dropbox, or Portfolio Link" 
+                  />
+                  <p className="text-xs text-slate-500 mt-2">Please ensure the link access is set to "Anyone with the link can view".</p>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-bold py-3.5 rounded-xl mt-4 transition-all shadow-md shadow-[#10B981]/20 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> 
+                      Submitting...
+                    </span>
+                  ) : 'Submit Application'}
+                </button>
+              </form>
+            ) : null}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

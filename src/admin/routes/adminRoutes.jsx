@@ -391,12 +391,17 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* CRITICAL FIX: 
+        These routes were previously pointing to "Coming Soon" divs.
+        They must point to HRDashboard for the UI tabs to render.
+      */}
       <Route
         path="/dashboard/hr/leaves"
         element={
           <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
-              <div className="p-8"><h2>Leave Management (Coming Soon)</h2></div>
+              <HRDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -406,11 +411,12 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
-              <div className="p-8"><h2>Recruitment (Coming Soon)</h2></div>
+              <HRDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         }
       />
+      
       {/* ADDED MISSING SETTINGS ROUTE FOR HR FIRST-LOGIN PASSWORD CHANGE */}
       <Route
         path="/dashboard/hr/settings"
