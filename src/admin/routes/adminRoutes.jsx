@@ -581,6 +581,34 @@ export const AdminRoutes = () => {
         }
       />
       <Route path="/dashboard/parent/*" element={<Navigate to="/dashboard/parent" replace />} />
+      
+      {/* ================= COORDINATOR ROUTES ================= */}
+      <Route
+        path="/dashboard/coordinator"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
+            <DashboardLayout>
+              <div className="w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 animate-in fade-in zoom-in duration-300">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
+                  <Inbox className="w-10 h-10 text-slate-300" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Coordinator Dashboard</h2>
+                <p className="text-slate-500 text-center max-w-md">Welcome to the coordinator panel. Features are coming soon.</p>
+              </div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/coordinator/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
     </>
   );
 };
