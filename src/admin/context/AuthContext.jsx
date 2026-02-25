@@ -215,7 +215,7 @@ export const AuthProvider = ({ children }) => {
       case 'PARENT': return '/dashboard/parent';
       case 'HR': return '/dashboard/hr';
       case 'COORDINATOR': return '/dashboard/coordinator';
-      case 'OPERATIONS_HEAD': return '/dashboard/operations-head';
+      case 'OPERATIONS_MANAGER': return '/dashboard/operations'; // FIXED THIS LINE
       default: return '/dashboard';
     }
   };
