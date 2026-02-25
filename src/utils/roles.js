@@ -12,7 +12,7 @@ export const ROLES = {
   STUDENT: 'STUDENT',
   PARENT: 'PARENT',
   COORDINATOR: 'COORDINATOR',
-  OPERATIONS_HEAD: 'OPERATIONS_HEAD',
+  OPERATIONS_MANAGER: 'OPERATIONS_MANAGER',
   HR: 'HR',
 };
 
@@ -25,7 +25,7 @@ export const ROLE_NAMES = {
   [ROLES.STUDENT]: 'Student',
   [ROLES.PARENT]: 'Parent',
   [ROLES.COORDINATOR]: 'Coordinator',
-  [ROLES.OPERATIONS_HEAD]: 'Operations Head',
+  [ROLES.OPERATIONS_MANAGER]: 'Operations Manager',
   [ROLES.HR]: 'HR',
 };
 
@@ -37,8 +37,8 @@ export const ROLE_DASHBOARDS = {
   [ROLES.FACULTY]: '/dashboard/faculty', // Updated path
   [ROLES.STUDENT]: '/dashboard/student',
   [ROLES.PARENT]: '/dashboard/parent',
-  [ROLES.COORDINATOR]: '/dashboard/coordinator', // Add specific dashboard paths later if needed
-  [ROLES.OPERATIONS_HEAD]: '/dashboard/operations-head',
+  [ROLES.COORDINATOR]: '/dashboard/coordinator',
+  [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', // FIXED THIS PATH
   [ROLES.HR]: '/dashboard/hr',
 };
 
@@ -73,12 +73,12 @@ export const PERMISSIONS = {
     'view_analytics',
     'manage_announcements',
     'manage_testimonials',
-    'manage_faculty', // Updated from manage_teachers
+    'manage_faculty', 
     'view_technical_reports',
   ],
 
   // Faculty Permissions
-  [ROLES.FACULTY]: [ // Updated
+  [ROLES.FACULTY]: [ 
     'view_courses',
     'manage_assignments',
     'grade_students',
@@ -112,7 +112,7 @@ export const PERMISSIONS = {
   ],
 
   // Operations Head Permissions
-  [ROLES.OPERATIONS_HEAD]: [
+  [ROLES.OPERATIONS_MANAGER]: [
     'view_dashboard',
     'manage_operations',
     'view_analytics',
