@@ -1,23 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  Users, 
-  BookOpen, 
-  Settings, 
-  FileText,
-  BarChart,
-  Megaphone,
-  Star,
-  GraduationCap,
-  Award,
-  Video,
-  MessageCircle,
-  ClipboardList,
-  Calendar,
-  MessageSquare,
-  TrendingUp,
-  UserCog,
-  Clock,
-  Building2
+  Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
+  GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
+  TrendingUp, UserCog, Clock, Building2, Briefcase
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -85,7 +70,14 @@ const DashboardSidebar = () => {
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
-      { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Building2 },
+      { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
+    ],
+
+    // ---> UPDATED OPERATIONS MANAGER <---
+    [ROLES.OPERATIONS_MANAGER]: [
+      { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
+      { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
+      { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
     ],
   };
 
@@ -94,10 +86,8 @@ const DashboardSidebar = () => {
 
   // FIXED ACTIVE LOGIC
   const isActive = (path) => {
-    // 1. Exact match always wins
     if (location.pathname === path) return true;
     
-    // 2. Prevent base "Overview" paths from staying active on sub-routes
     const basePaths = [
       '/dashboard/super-admin/dashboard',
       '/dashboard/admin',
@@ -105,14 +95,14 @@ const DashboardSidebar = () => {
       '/dashboard/faculty',
       '/dashboard/student',
       '/dashboard/parent',
-      '/dashboard/hr'
+      '/dashboard/hr',
+      '/dashboard/operations' // Operations base path
     ];
 
     if (basePaths.includes(path)) {
       return false; 
     }
 
-    // 3. For all other routes, allow sub-path highlighting (e.g., /courses/1 matches /courses)
     return location.pathname.startsWith(path + '/');
   };
 

@@ -1,4 +1,5 @@
 import { Route, Navigate } from 'react-router-dom';
+import { Inbox } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/common/ProtectedRoute';
 import PermissionProtectedRoute from '../../components/common/PermissionProtectedRoute';
@@ -35,6 +36,9 @@ import { ParentDashboard } from '../dashboard/parent';
 
 // HR Components
 import HRDashboard from '../dashboard/hr/pages/HRDashboard';
+
+// Operations Components
+import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 
 /**
  * Admin Routes Component
@@ -360,6 +364,61 @@ export const AdminRoutes = () => {
         }
       />
 
+      {/* ================= OPERATIONS ROUTES ================= */}
+      <Route
+        path="/dashboard/operations"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <OperationsDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* MISSING SETTINGS ROUTE FOR OPERATIONS FIRST-LOGIN PASSWORD CHANGE */}
+      <Route
+        path="/dashboard/operations/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/operations/logistics"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <div className="w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 animate-in fade-in zoom-in duration-300">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
+                  <Inbox className="w-10 h-10 text-slate-300" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">No Data</h2>
+                <p className="text-slate-500 text-center max-w-md">Logistics module is currently empty.</p>
+              </div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/operations/schedule"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <div className="w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 animate-in fade-in zoom-in duration-300">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
+                  <Inbox className="w-10 h-10 text-slate-300" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">No Schedules</h2>
+                <p className="text-slate-500 text-center max-w-md">There are no active schedules to display.</p>
+              </div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       {/* ================= HR ROUTES ================= */}
       <Route
         path="/dashboard/hr"
@@ -391,11 +450,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* CRITICAL FIX: 
-        These routes were previously pointing to "Coming Soon" divs.
-        They must point to HRDashboard for the UI tabs to render.
-      */}
       <Route
         path="/dashboard/hr/leaves"
         element={
@@ -416,8 +470,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* ADDED MISSING SETTINGS ROUTE FOR HR FIRST-LOGIN PASSWORD CHANGE */}
       <Route
         path="/dashboard/hr/settings"
         element={
