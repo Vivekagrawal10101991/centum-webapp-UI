@@ -40,6 +40,9 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 // Operations Components
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 
+// Common Components
+import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
+
 /**
  * Admin Routes Component
  * All admin dashboard routes with role-based protection
@@ -375,7 +378,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* MISSING SETTINGS ROUTE FOR OPERATIONS FIRST-LOGIN PASSWORD CHANGE */}
       <Route
         path="/dashboard/operations/settings"
         element={
@@ -588,12 +590,23 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
             <DashboardLayout>
-              <div className="w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 animate-in fade-in zoom-in duration-300">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
-                  <Inbox className="w-10 h-10 text-slate-300" />
+              {/* Added a responsive grid to hold both the dashboard placeholder and the Leave Widget */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6 animate-fade-in">
+                
+                {/* Main Dashboard Column */}
+                <div className="lg:col-span-2 w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
+                    <Inbox className="w-10 h-10 text-slate-300" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Coordinator Dashboard</h2>
+                  <p className="text-slate-500 text-center max-w-md">Welcome to the coordinator panel. Features are coming soon.</p>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Coordinator Dashboard</h2>
-                <p className="text-slate-500 text-center max-w-md">Welcome to the coordinator panel. Features are coming soon.</p>
+                
+                {/* Right Sidebar Column - Leave Widget added here! */}
+                <div className="space-y-6">
+                  <LeaveApplicationWidget />
+                </div>
+
               </div>
             </DashboardLayout>
           </ProtectedRoute>
