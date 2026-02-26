@@ -40,6 +40,9 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 // Operations Components
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 
+// NEW: Reporting Manager Component
+import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
+
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
 
@@ -590,10 +593,7 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
             <DashboardLayout>
-              {/* Added a responsive grid to hold both the dashboard placeholder and the Leave Widget */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6 animate-fade-in">
-                
-                {/* Main Dashboard Column */}
                 <div className="lg:col-span-2 w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
                   <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
                     <Inbox className="w-10 h-10 text-slate-300" />
@@ -601,12 +601,9 @@ export const AdminRoutes = () => {
                   <h2 className="text-2xl font-bold text-slate-900 mb-2">Coordinator Dashboard</h2>
                   <p className="text-slate-500 text-center max-w-md">Welcome to the coordinator panel. Features are coming soon.</p>
                 </div>
-                
-                {/* Right Sidebar Column - Leave Widget added here! */}
                 <div className="space-y-6">
                   <LeaveApplicationWidget />
                 </div>
-
               </div>
             </DashboardLayout>
           </ProtectedRoute>
@@ -616,6 +613,28 @@ export const AdminRoutes = () => {
         path="/dashboard/coordinator/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= REPORTING MANAGER ROUTES ================= */}
+      <Route
+        path="/dashboard/reporting-manager"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
+            <DashboardLayout>
+              <ReportingManagerDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/reporting-manager/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>

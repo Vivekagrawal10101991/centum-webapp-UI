@@ -14,6 +14,7 @@ export const ROLES = {
   COORDINATOR: 'COORDINATOR',
   OPERATIONS_MANAGER: 'OPERATIONS_MANAGER',
   HR: 'HR',
+  REPORTING_MANAGER: 'REPORTING_MANAGER', // Added Reporting Manager
 };
 
 // Role Display Names
@@ -27,6 +28,7 @@ export const ROLE_NAMES = {
   [ROLES.COORDINATOR]: 'Coordinator',
   [ROLES.OPERATIONS_MANAGER]: 'Operations Manager',
   [ROLES.HR]: 'HR',
+  [ROLES.REPORTING_MANAGER]: 'Reporting Manager', // Added Reporting Manager
 };
 
 // Dashboard Routes for Each Role
@@ -40,6 +42,7 @@ export const ROLE_DASHBOARDS = {
   [ROLES.COORDINATOR]: '/dashboard/coordinator',
   [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', // FIXED THIS PATH
   [ROLES.HR]: '/dashboard/hr',
+  [ROLES.REPORTING_MANAGER]: '/dashboard/reporting-manager', // Added Reporting Manager Route
 };
 
 // Permissions for Each Role
@@ -111,7 +114,7 @@ export const PERMISSIONS = {
     'view_reports',
   ],
 
-  // Operations Head Permissions
+  // Operations Manager Permissions
   [ROLES.OPERATIONS_MANAGER]: [
     'view_dashboard',
     'manage_operations',
@@ -123,6 +126,14 @@ export const PERMISSIONS = {
     'view_dashboard',
     'manage_employees',
     'view_reports',
+  ],
+
+  // Reporting Manager Permissions
+  [ROLES.REPORTING_MANAGER]: [
+    'view_dashboard',
+    'view_reports',
+    'manage_team',
+    'view_analytics',
   ],
 };
 
