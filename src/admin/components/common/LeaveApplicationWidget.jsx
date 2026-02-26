@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
-// FIXED: Adjusted the relative path to exactly 3 levels up
 import { Card, Button, Input, Select, Textarea } from '../../../components/common';
 import { attendanceService } from '../../services/attendanceService';
 
 const LeaveApplicationWidget = () => {
-  const [activeTab, setActiveTab] = useState('apply'); // 'apply' or 'history'
+  const [activeTab, setActiveTab] = useState('apply'); 
   
+  // Balance State
+  const [balances, setBalances] = useState({
+    remainingCasualLeaves: 12,
+    pendingCasualLeaves: 0,
+    remainingSickLeaves: 6,
+    pendingSickLeaves: 0,
+    totalCasualLeaves: 12,
+    totalSickLeaves: 6
+  });
+  const [loadingBalances, setLoadingBalances] = useState(true);
+
   // Apply Leave State
   const [formData, setFormData] = useState({
     leaveType: 'CASUAL_LEAVE',
@@ -17,15 +27,30 @@ const LeaveApplicationWidget = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // History State
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    fetchBalances();
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'history') {
       fetchHistory();
     }
   }, [activeTab]);
+
+  const fetchBalances = async () => {
+    try {
+      setLoadingBalances(true);
+      const data = await attendanceService.getLeaveBalances();
+      setBalances(data);
+    } catch (error) {
+      console.error("Failed to fetch leave balances", error);
+    } finally {
+      setLoadingBalances(false);
+    }
+  };
 
   const fetchHistory = async () => {
     try {
@@ -41,20 +66,48 @@ const LeaveApplicationWidget = () => {
     }
   };
 
+  const calculateDays = (start, end) => {
+    if (!start || !end) return 0;
+    const sDate = new Date(start);
+    const eDate = new Date(end);
+    if (eDate < sDate) return -1;
+    return Math.ceil(Math.abs(eDate - sDate) / (1000 * 60 * 60 * 24)) + 1;
+  };
+
   const handleApplyLeave = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setMessage({ type: '', text: '' });
+
+    const requestedDays = calculateDays(formData.startDate, formData.endDate);
+    if (requestedDays <= 0) {
+      setMessage({ type: 'error', text: 'End date must be after or equal to start date.' });
+      return;
+    }
+
+    // Strict Client-Side Balance Validation considering pending leaves
+    const availableCasual = balances.remainingCasualLeaves - (balances.pendingCasualLeaves || 0);
+    const availableSick = balances.remainingSickLeaves - (balances.pendingSickLeaves || 0);
+
+    if (formData.leaveType === 'CASUAL_LEAVE' && requestedDays > availableCasual) {
+      setMessage({ type: 'error', text: `Cannot apply! You have ${balances.remainingCasualLeaves} left, but ${balances.pendingCasualLeaves || 0} are currently pending.` });
+      return;
+    }
+    if (formData.leaveType === 'SICK_LEAVE' && requestedDays > availableSick) {
+      setMessage({ type: 'error', text: `Cannot apply! You have ${balances.remainingSickLeaves} left, but ${balances.pendingSickLeaves || 0} are currently pending.` });
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       await attendanceService.applyLeave(formData);
       setMessage({ type: 'success', text: 'Leave application submitted successfully!' });
       setFormData({ leaveType: 'CASUAL_LEAVE', startDate: '', endDate: '', reason: '' });
       
-      // Auto-switch to history tab after 2 seconds
+      fetchBalances();
       setTimeout(() => setActiveTab('history'), 2000);
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to submit leave. Please try again.' });
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to submit leave.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +121,6 @@ const LeaveApplicationWidget = () => {
           Leave Management
         </h2>
         
-        {/* Widget Tabs */}
         <div className="flex bg-gray-100 p-1 rounded-lg">
           <button 
             onClick={() => setActiveTab('apply')}
@@ -85,11 +137,39 @@ const LeaveApplicationWidget = () => {
         </div>
       </div>
 
-      {/* APPLY TAB */}
+      {activeTab === 'apply' && !loadingBalances && (
+        <div className="grid grid-cols-2 gap-4 mb-6 animate-in fade-in">
+          <div className="bg-orange-50 rounded-lg p-3 border border-orange-100 flex flex-col items-center justify-center relative">
+            <p className="text-[10px] tracking-wider text-orange-600 font-bold mb-1 uppercase">Casual Leaves</p>
+            <div className="flex items-baseline space-x-1">
+              <span className="text-3xl font-black text-orange-700 leading-none">{balances.remainingCasualLeaves}</span>
+              <span className="text-xs text-orange-600 font-medium">/ {balances.totalCasualLeaves}</span>
+            </div>
+            {balances.pendingCasualLeaves > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm border border-yellow-500">
+                {balances.pendingCasualLeaves} Pending
+              </span>
+            )}
+          </div>
+          <div className="bg-blue-50 rounded-lg p-3 border border-blue-100 flex flex-col items-center justify-center relative">
+            <p className="text-[10px] tracking-wider text-blue-600 font-bold mb-1 uppercase">Sick Leaves</p>
+            <div className="flex items-baseline space-x-1">
+              <span className="text-3xl font-black text-blue-700 leading-none">{balances.remainingSickLeaves}</span>
+              <span className="text-xs text-blue-600 font-medium">/ {balances.totalSickLeaves}</span>
+            </div>
+            {balances.pendingSickLeaves > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm border border-yellow-500">
+                {balances.pendingSickLeaves} Pending
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'apply' && (
         <form onSubmit={handleApplyLeave} className="space-y-4 animate-in fade-in">
           {message.text && (
-            <div className={`p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <div className={`p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
               {message.text}
             </div>
           )}
@@ -99,8 +179,8 @@ const LeaveApplicationWidget = () => {
             value={formData.leaveType}
             onChange={(e) => setFormData({...formData, leaveType: e.target.value})}
             options={[
-              { value: 'SICK_LEAVE', label: 'Sick Leave' },
               { value: 'CASUAL_LEAVE', label: 'Casual Leave' },
+              { value: 'SICK_LEAVE', label: 'Sick Leave' },
               { value: 'EARNED_LEAVE', label: 'Earned Leave' },
               { value: 'MATERNITY_LEAVE', label: 'Maternity Leave' },
               { value: 'PATERNITY_LEAVE', label: 'Paternity Leave' },
@@ -113,6 +193,7 @@ const LeaveApplicationWidget = () => {
               label="Start Date" 
               type="date" 
               required
+              min={new Date().toISOString().split('T')[0]}
               value={formData.startDate}
               onChange={(e) => setFormData({...formData, startDate: e.target.value})}
             />
@@ -120,6 +201,7 @@ const LeaveApplicationWidget = () => {
               label="End Date" 
               type="date" 
               required
+              min={formData.startDate || new Date().toISOString().split('T')[0]}
               value={formData.endDate}
               onChange={(e) => setFormData({...formData, endDate: e.target.value})}
             />
@@ -135,12 +217,11 @@ const LeaveApplicationWidget = () => {
           />
           
           <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
+            {isSubmitting ? 'Submitting Application...' : 'Submit Leave Request'}
           </Button>
         </form>
       )}
 
-      {/* HISTORY TAB */}
       {activeTab === 'history' && (
         <div className="animate-in fade-in space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
           {loadingHistory ? (

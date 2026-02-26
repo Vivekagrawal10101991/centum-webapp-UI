@@ -64,5 +64,17 @@ export const attendanceService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  /**
+   * Fetch User's Leave Balances (Casual/Sick)
+   */
+  getLeaveBalances: async () => {
+    try {
+      const response = await api.get('/api/attendance/leave/balances');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
