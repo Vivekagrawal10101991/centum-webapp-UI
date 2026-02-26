@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Card, Button, Modal, Input, Select, Textarea } from '../../../../components/common';
 import { hrService } from '../../../services/hrService';
+import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 /**
  * HR Dashboard Page
@@ -44,15 +45,15 @@ const HRDashboard = () => {
   // Navigation Tabs
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Users },
-    { id: 'leaves', label: 'Leave Approvals', icon: Calendar },
+    { id: 'leaves', label: 'Company Leaves (View)', icon: Calendar },
     { id: 'recruitment', label: 'Recruitment', icon: Briefcase },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">HR Dashboard</h1>
-        <p className="text-gray-600 mt-2">Manage personnel, attendance, and recruitment.</p>
+        <p className="text-gray-600 mt-2">Manage personnel records, apply for leave, and handle recruitment.</p>
       </div>
 
       {/* Tabs Navigation */}
@@ -94,7 +95,7 @@ const OverviewTab = ({ changeTab }) => {
     { title: 'Total Employees', value: '142', change: '+5 this month', icon: Users, color: 'blue' },
     { title: 'Present Today', value: '135', change: '95% attendance', icon: UserCheck, color: 'green' },
     { title: 'Open Positions', value: '8', change: 'Active hiring', icon: Building2, color: 'purple' },
-    { title: 'Leave Requests', value: '12', change: '5 pending approval', icon: Calendar, color: 'orange' },
+    { title: 'Leave Requests', value: '12', change: 'Company wide', icon: Calendar, color: 'orange' },
   ];
 
   return (
@@ -119,33 +120,40 @@ const OverviewTab = ({ changeTab }) => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <button 
-              onClick={() => changeTab('leaves')}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
-            >
-              <FileText className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
-              <p className="font-medium text-gray-900">Leave Approvals</p>
-            </button>
-            <button 
-              onClick={() => changeTab('recruitment')}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
-            >
-              <Building2 className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
-              <p className="font-medium text-gray-900">Manage Recruitment</p>
-            </button>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="p-6 h-full border border-gray-100 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <button 
+                onClick={() => changeTab('leaves')}
+                className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
+              >
+                <FileText className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
+                <p className="font-medium text-gray-900">View All Company Leaves</p>
+              </button>
+              <button 
+                onClick={() => changeTab('recruitment')}
+                className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
+              >
+                <Building2 className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
+                <p className="font-medium text-gray-900">Manage Recruitment</p>
+              </button>
+            </div>
+          </Card>
+        </div>
+        
+        {/* The New Leave Widget added securely to HR Dashboard */}
+        <div className="space-y-6">
+          <LeaveApplicationWidget />
+        </div>
       </div>
     </div>
   );
 };
 
 // ==========================================
-// 2. LEAVE MANAGEMENT TAB
+// 2. LEAVE MANAGEMENT TAB (Read Only for HR)
 // ==========================================
 const LeaveManagementTab = () => {
   const [leaves, setLeaves] = useState([]);
@@ -169,22 +177,13 @@ const LeaveManagementTab = () => {
     fetchLeaves();
   }, []);
 
-  const handleStatusUpdate = async (id, status) => {
-    try {
-      const remarks = window.prompt(`Add remarks for ${status} (Optional):`);
-      if (remarks === null) return;
-      
-      const res = await hrService.updateLeaveStatus(id, status, remarks);
-      if (res.data) fetchLeaves();
-    } catch (error) {
-      alert("Failed to update status");
-    }
-  };
-
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Leave Requests</h2>
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">All Company Leaves</h2>
+          <p className="text-sm text-gray-500 mt-1">Leaves are approved by Super Admins & Reporting Managers</p>
+        </div>
         <Button variant="secondary" onClick={fetchLeaves}>Refresh</Button>
       </div>
 
@@ -226,17 +225,8 @@ const LeaveManagementTab = () => {
                       {leave.status}
                     </span>
                   </td>
-                  <td className="p-3 text-right space-x-3">
-                    {leave.status === 'PENDING' && (
-                      <>
-                        <button onClick={() => handleStatusUpdate(leave.id, 'APPROVED')} className="text-green-600 hover:text-green-800 transition-colors" title="Approve">
-                          <CheckCircle className="w-6 h-6 inline" />
-                        </button>
-                        <button onClick={() => handleStatusUpdate(leave.id, 'REJECTED')} className="text-red-600 hover:text-red-800 transition-colors" title="Reject">
-                          <XCircle className="w-6 h-6 inline" />
-                        </button>
-                      </>
-                    )}
+                  <td className="p-3 text-right">
+                    <span className="text-xs text-gray-400 font-medium">View Only</span>
                   </td>
                 </tr>
               ))}
@@ -266,7 +256,7 @@ const RecruitmentTab = () => {
   
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, OPEN, CLOSED
+  const [statusFilter, setStatusFilter] = useState('ALL'); 
 
   const [formData, setFormData] = useState({
     title: '', department: '', employmentType: 'Full-time', location: '', description: ''
@@ -328,7 +318,6 @@ const RecruitmentTab = () => {
     }
   };
 
-  // --- APPLICATIONS LOGIC ---
   const handleViewApplications = async (job) => {
     setSelectedJob(job);
     setIsAppsModalOpen(true);
@@ -354,8 +343,6 @@ const RecruitmentTab = () => {
   const handleUpdateAppStatus = async (appId, newStatus) => {
     try {
       await hrService.updateApplicationStatus(appId, newStatus);
-      
-      // Update local state to avoid refetching everything
       setApplications(prevApps => 
         prevApps.map(app => app.id === appId ? { ...app, status: newStatus } : app)
       );
@@ -365,7 +352,6 @@ const RecruitmentTab = () => {
     }
   };
 
-  // Derived filtered jobs
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           job.department?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -434,7 +420,6 @@ const RecruitmentTab = () => {
               ${job.open ? 'border-t-4 border-t-green-500' : 'border-t-4 border-t-gray-400 opacity-80'}`}
             >
               <div className="p-6 flex-1">
-                {/* Card Header */}
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-md mb-3">
@@ -453,7 +438,6 @@ const RecruitmentTab = () => {
                   </span>
                 </div>
 
-                {/* Card Body - Details */}
                 <div className="space-y-2.5 mt-5">
                   <div className="flex items-center text-sm text-gray-600 font-medium">
                     <MapPin className="w-4 h-4 mr-3 text-gray-400" />
@@ -470,7 +454,6 @@ const RecruitmentTab = () => {
                 </div>
               </div>
 
-              {/* Card Footer */}
               <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center mt-auto">
                 <button 
                   onClick={() => handleViewApplications(job)}
@@ -516,7 +499,6 @@ const RecruitmentTab = () => {
                 <div key={app.id} className="border border-gray-200 rounded-xl p-5 hover:border-primary/30 hover:shadow-md transition-all bg-white">
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     
-                    {/* Applicant Info */}
                     <div>
                       <h4 className="font-bold text-lg text-gray-900">{app.applicantName}</h4>
                       <div className="mt-2 space-y-1.5 text-sm text-gray-600">
@@ -535,7 +517,6 @@ const RecruitmentTab = () => {
                       </div>
                     </div>
 
-                    {/* Actions & Status */}
                     <div className="flex flex-col items-start md:items-end space-y-3">
                       <a 
                         href={app.resumeUrl} 
@@ -575,7 +556,6 @@ const RecruitmentTab = () => {
         </div>
       </Modal>
 
-      {/* Create Job Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Post a New Job">
         <form onSubmit={handleCreateJob} className="space-y-5">
           <Input 
