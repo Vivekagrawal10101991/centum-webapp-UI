@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity // <-- Added Activity icon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -73,11 +73,19 @@ const DashboardSidebar = () => {
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
     ],
 
-    // ---> UPDATED OPERATIONS MANAGER <---
     [ROLES.OPERATIONS_MANAGER]: [
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
+    ],
+
+    // ---> NEW REPORTING MANAGER MENU <---
+    [ROLES.REPORTING_MANAGER]: [
+      { name: 'Overview', path: '/dashboard/reporting-manager', icon: BarChart },
+      { name: 'Team Performance', path: '/dashboard/reporting-manager/team', icon: Users },
+      { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
+      { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
+      { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
     ],
   };
 
@@ -96,7 +104,8 @@ const DashboardSidebar = () => {
       '/dashboard/student',
       '/dashboard/parent',
       '/dashboard/hr',
-      '/dashboard/operations' // Operations base path
+      '/dashboard/operations',
+      '/dashboard/reporting-manager' // <-- Added reporting manager base path
     ];
 
     if (basePaths.includes(path)) {
