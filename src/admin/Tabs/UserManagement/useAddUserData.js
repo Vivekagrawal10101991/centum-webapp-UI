@@ -21,13 +21,14 @@ export const useAddUserData = () => {
     reset,
   } = useForm();
 
-  // Updated role dropdown options to include Operations Manager
+  // Updated role dropdown options to include Reporting Manager
   const roleOptions = [
     { value: ROLES.ADMIN, label: 'Admin' },
     { value: ROLES.TECHNICAL_HEAD, label: 'Technical Head' },
     { value: ROLES.FACULTY, label: 'Faculty' }, 
     { value: ROLES.COORDINATOR, label: 'Coordinator' },
-    { value: ROLES.OPERATIONS_MANAGER, label: 'Operations Manager' }, // <--- Fixed Role
+    { value: ROLES.OPERATIONS_MANAGER, label: 'Operations Manager' },
+    { value: ROLES.REPORTING_MANAGER, label: 'Reporting Manager' }, // <--- ADDED REPORTING MANAGER
     { value: ROLES.HR, label: 'HR' },
     { value: ROLES.STUDENT, label: 'Student' },
     { value: ROLES.PARENT, label: 'Parent' },
