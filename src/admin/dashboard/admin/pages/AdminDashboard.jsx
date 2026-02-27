@@ -1,5 +1,6 @@
 import { Users, BookOpen, TrendingUp, DollarSign } from 'lucide-react';
 import { Card } from '../../../../components/common';
+import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 /**
  * Admin Dashboard Page
@@ -46,7 +47,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div>
+    <div className="pb-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="text-gray-600 mt-2">Welcome back! Here's what's happening.</p>
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Recent Activities */}
         <Card className="p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activities</h2>
@@ -114,6 +115,11 @@ const AdminDashboard = () => {
             </button>
           </div>
         </Card>
+      </div>
+
+      {/* Leave Application Widget Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <LeaveApplicationWidget />
       </div>
     </div>
   );

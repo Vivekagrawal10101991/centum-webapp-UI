@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle // <-- Added CheckCircle
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -23,7 +23,7 @@ const DashboardSidebar = () => {
       { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
       { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
       { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle },
-      { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle }, // <-- Added Here
+      { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
 
@@ -31,6 +31,7 @@ const DashboardSidebar = () => {
       { name: 'Overview', path: '/dashboard/admin', icon: BarChart },
       { name: 'Users', path: '/dashboard/admin/users', icon: Users },
       { name: 'Courses', path: '/dashboard/admin/courses', icon: BookOpen },
+      { name: 'Leave Directory', path: '/dashboard/admin/leave-approvals', icon: CheckCircle }, // <-- Added Here
       { name: 'Settings', path: '/dashboard/admin/settings', icon: Settings },
     ],
 
@@ -71,6 +72,7 @@ const DashboardSidebar = () => {
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
+      { name: 'Leave Directory', path: '/dashboard/hr/leave-approvals', icon: CheckCircle }, // <-- Added Here
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
     ],
 
@@ -78,13 +80,13 @@ const DashboardSidebar = () => {
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
+      { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle }, // <-- Added Here
     ],
 
-    // ---> NEW REPORTING MANAGER MENU <---
     [ROLES.REPORTING_MANAGER]: [
       { name: 'Overview', path: '/dashboard/reporting-manager', icon: BarChart },
       { name: 'Team Performance', path: '/dashboard/reporting-manager/team', icon: Users },
-      { name: 'Leave Approvals', path: '/dashboard/reporting-manager/leave-approvals', icon: CheckCircle }, // <-- Added Here
+      { name: 'Leave Approvals', path: '/dashboard/reporting-manager/leave-approvals', icon: CheckCircle },
       { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
       { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
       { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
@@ -94,7 +96,6 @@ const DashboardSidebar = () => {
   const allItems = navigationItems[user?.role] || [];
   const items = filterNavigationByPermissions(allItems, user);
 
-  // FIXED ACTIVE LOGIC
   const isActive = (path) => {
     if (location.pathname === path) return true;
     
@@ -107,7 +108,7 @@ const DashboardSidebar = () => {
       '/dashboard/parent',
       '/dashboard/hr',
       '/dashboard/operations',
-      '/dashboard/reporting-manager' // <-- Added reporting manager base path
+      '/dashboard/reporting-manager'
     ];
 
     if (basePaths.includes(path)) {
