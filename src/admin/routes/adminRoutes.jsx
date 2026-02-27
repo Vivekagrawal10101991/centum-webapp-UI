@@ -18,7 +18,7 @@ import MediaCenter from '../Tabs/MediaCenter';
 import LeadsEnquiries from '../Tabs/LeadsEnquiries';
 import Settings from '../Tabs/Settings';
 import LmsManagement from '../Tabs/LmsManagement';
-import LeaveApprovals from '../Tabs/LeaveApprovals'; // <-- NEW IMPORT ADDED HERE
+import LeaveApprovals from '../Tabs/LeaveApprovals'; 
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -264,6 +264,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* ---> NEW: ADMIN LEAVE DIRECTORY ROUTE <--- */}
+      <Route 
+        path="/dashboard/admin/leave-approvals" 
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <DashboardLayout>
+              <LeaveApprovals />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } 
+      />
+
       <Route
         path="/dashboard/admin/media-center"
         element={
@@ -394,6 +407,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* ---> NEW: OPERATIONS LEAVE DIRECTORY ROUTE <--- */}
+      <Route 
+        path="/dashboard/operations/leave-approvals" 
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <LeaveApprovals />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } 
+      />
+
       <Route
         path="/dashboard/operations/settings"
         element={
@@ -478,6 +504,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* ---> NEW: HR LEAVE DIRECTORY ROUTE <--- */}
+      <Route 
+        path="/dashboard/hr/leave-approvals" 
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <LeaveApprovals />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } 
+      />
+
       <Route
         path="/dashboard/hr/recruitment"
         element={
