@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, CheckCircle, XCircle, Users } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Card, Button, Input, Select, Textarea } from '../../../components/common';
 import { attendanceService } from '../../services/attendanceService';
 // Fixed the import path here from ../../../ to ../../
@@ -8,9 +8,6 @@ import { useAuth } from '../../context/AuthContext';
 const LeaveApplicationWidget = () => {
   const { user } = useAuth();
   
-  // Only Super Admins and Reporting Managers have the authority to approve leaves
-  const canApprove = user?.role === 'SUPER_ADMIN' || user?.role === 'REPORTING_MANAGER';
-
   const [activeTab, setActiveTab] = useState('apply'); 
   
   // Balance State
@@ -36,12 +33,9 @@ const LeaveApplicationWidget = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // History & Approvals State
+  // History State
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-
-  const [approvals, setApprovals] = useState([]);
-  const [loadingApprovals, setLoadingApprovals] = useState(false);
 
   useEffect(() => {
     fetchBalances();
@@ -52,7 +46,6 @@ const LeaveApplicationWidget = () => {
 
   useEffect(() => {
     if (activeTab === 'history') fetchHistory();
-    if (activeTab === 'approvals') fetchApprovals();
   }, [activeTab]);
 
   const fetchBalances = async () => {
@@ -89,20 +82,6 @@ const LeaveApplicationWidget = () => {
       console.error("Failed to fetch leave history", error);
     } finally {
       setLoadingHistory(false);
-    }
-  };
-
-  const fetchApprovals = async () => {
-    try {
-      setLoadingApprovals(true);
-      const res = await attendanceService.getPendingApprovals();
-      if (res.success || Array.isArray(res.data)) {
-        setApprovals(res.data || res);
-      }
-    } catch (error) {
-      console.error("Failed to fetch approvals", error);
-    } finally {
-      setLoadingApprovals(false);
     }
   };
 
@@ -166,18 +145,6 @@ const LeaveApplicationWidget = () => {
     }
   };
 
-  const handleStatusUpdate = async (id, status) => {
-    try {
-      const remarks = window.prompt(`Add remarks for ${status} (Optional):`);
-      if (remarks === null) return;
-      
-      await attendanceService.updateLeaveStatus(id, status, remarks);
-      fetchApprovals(); // Refresh list immediately after update
-    } catch (error) {
-      alert("Failed to update status");
-    }
-  };
-
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -199,14 +166,6 @@ const LeaveApplicationWidget = () => {
           >
             My History
           </button>
-          {canApprove && (
-            <button 
-              onClick={() => setActiveTab('approvals')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all flex items-center ${activeTab === 'approvals' ? 'bg-white shadow text-primary' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              Approvals
-            </button>
-          )}
         </div>
       </div>
 
@@ -346,53 +305,6 @@ const LeaveApplicationWidget = () => {
                     </p>
                   )}
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-
-      {activeTab === 'approvals' && (
-        <div className="animate-in fade-in space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-          {loadingApprovals ? (
-             <div className="flex justify-center py-8">
-               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-             </div>
-          ) : approvals.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Users className="w-10 h-10 mx-auto text-gray-300 mb-2" />
-              <p>No pending approvals in your queue.</p>
-            </div>
-          ) : (
-            approvals.map((leave, idx) => (
-              <div key={idx} className="border border-gray-200 bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">{leave.user?.name || 'Employee'}</h4>
-                    <p className="text-xs font-semibold text-primary mt-0.5">{leave.leaveType.replace('_', ' ')}</p>
-                  </div>
-                  <span className={`px-2.5 py-1 text-[10px] rounded-full font-bold tracking-wide ${
-                    leave.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 
-                    leave.status === 'REJECTED' ? 'bg-red-100 text-red-700' : 
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {leave.status}
-                  </span>
-                </div>
-                
-                <p className="text-xs text-gray-500 mb-2">
-                  <Calendar className="w-3 h-3 inline mr-1" /> {leave.startDate} to {leave.endDate}
-                </p>
-                <div className="bg-gray-50 p-2 rounded-lg text-xs text-gray-700 mb-3 border border-gray-100">
-                  {leave.reason}
-                </div>
-
-                {leave.status === 'PENDING' && (
-                  <div className="flex space-x-2 border-t pt-3 mt-2 border-gray-100">
-                    <Button variant="danger" size="sm" className="flex-1 bg-red-50 text-red-600 hover:bg-red-100" onClick={() => handleStatusUpdate(leave.id, 'REJECTED')}>Reject</Button>
-                    <Button size="sm" className="flex-1 bg-green-500 hover:bg-green-600 border-none" onClick={() => handleStatusUpdate(leave.id, 'APPROVED')}>Approve</Button>
-                  </div>
-                )}
               </div>
             ))
           )}
