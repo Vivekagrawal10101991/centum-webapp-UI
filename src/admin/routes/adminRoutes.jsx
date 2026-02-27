@@ -44,6 +44,9 @@ import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboa
 // Reporting Manager Component
 import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
 
+// Admission Manager Component
+import AdmissionManagerDashboard from '../dashboard/admission-manager/pages/AdmissionManagerDashboard';
+
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
 
@@ -265,7 +268,6 @@ export const AdminRoutes = () => {
         }
       />
       
-      {/* ---> NEW: ADMIN LEAVE DIRECTORY ROUTE <--- */}
       <Route 
         path="/dashboard/admin/leave-approvals" 
         element={
@@ -314,7 +316,6 @@ export const AdminRoutes = () => {
         }
       />
       
-      {/* ---> CONTENT ROUTES FOR TECHNICAL HEAD <--- */}
       <Route
         path="/dashboard/technical/promotions-banners"
         element={
@@ -408,7 +409,6 @@ export const AdminRoutes = () => {
         }
       />
       
-      {/* ---> NEW: OPERATIONS LEAVE DIRECTORY ROUTE <--- */}
       <Route 
         path="/dashboard/operations/leave-approvals" 
         element={
@@ -505,7 +505,6 @@ export const AdminRoutes = () => {
         }
       />
 
-      {/* ---> NEW: HR LEAVE DIRECTORY ROUTE <--- */}
       <Route 
         path="/dashboard/hr/leave-approvals" 
         element={
@@ -683,8 +682,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* ---> NEW: LEAVE APPROVALS ROUTE FOR REPORTING MANAGER <--- */}
       <Route
         path="/dashboard/reporting-manager/leave-approvals"
         element={
@@ -695,11 +692,42 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/dashboard/reporting-manager/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= ADMISSION MANAGER ROUTES ================= */}
+      <Route
+        path="/dashboard/admission-manager"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
+            <DashboardLayout>
+              <AdmissionManagerDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admission-manager/leads"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
+            <DashboardLayout>
+              <LeadsEnquiries />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admission-manager/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>
