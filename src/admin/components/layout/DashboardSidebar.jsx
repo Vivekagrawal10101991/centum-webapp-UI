@@ -31,7 +31,7 @@ const DashboardSidebar = () => {
       { name: 'Overview', path: '/dashboard/admin', icon: BarChart },
       { name: 'Users', path: '/dashboard/admin/users', icon: Users },
       { name: 'Courses', path: '/dashboard/admin/courses', icon: BookOpen },
-      { name: 'Leave Directory', path: '/dashboard/admin/leave-approvals', icon: CheckCircle }, // <-- Added Here
+      { name: 'Leave Directory', path: '/dashboard/admin/leave-approvals', icon: CheckCircle }, 
       { name: 'Settings', path: '/dashboard/admin/settings', icon: Settings },
     ],
 
@@ -72,7 +72,7 @@ const DashboardSidebar = () => {
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
-      { name: 'Leave Directory', path: '/dashboard/hr/leave-approvals', icon: CheckCircle }, // <-- Added Here
+      { name: 'Leave Directory', path: '/dashboard/hr/leave-approvals', icon: CheckCircle }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
     ],
 
@@ -80,7 +80,7 @@ const DashboardSidebar = () => {
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
-      { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle }, // <-- Added Here
+      { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle }, 
     ],
 
     [ROLES.REPORTING_MANAGER]: [
@@ -90,6 +90,12 @@ const DashboardSidebar = () => {
       { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
       { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
       { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
+    ],
+
+    [ROLES.ADMISSION_MANAGER]: [
+      { name: 'Overview', path: '/dashboard/admission-manager', icon: BarChart },
+      { name: 'Leads & Enquiries', path: '/dashboard/admission-manager/leads', icon: MessageCircle },
+      { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
   };
 
@@ -108,7 +114,8 @@ const DashboardSidebar = () => {
       '/dashboard/parent',
       '/dashboard/hr',
       '/dashboard/operations',
-      '/dashboard/reporting-manager'
+      '/dashboard/reporting-manager',
+      '/dashboard/admission-manager'
     ];
 
     if (basePaths.includes(path)) {

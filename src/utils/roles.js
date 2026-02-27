@@ -8,13 +8,14 @@ export const ROLES = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   TECHNICAL_HEAD: 'TECHNICAL_HEAD',
-  FACULTY: 'FACULTY', // Updated
+  FACULTY: 'FACULTY', 
   STUDENT: 'STUDENT',
   PARENT: 'PARENT',
   COORDINATOR: 'COORDINATOR',
   OPERATIONS_MANAGER: 'OPERATIONS_MANAGER',
   HR: 'HR',
-  REPORTING_MANAGER: 'REPORTING_MANAGER', // Added Reporting Manager
+  REPORTING_MANAGER: 'REPORTING_MANAGER',
+  ADMISSION_MANAGER: 'ADMISSION_MANAGER', // <-- Added Admission Manager
 };
 
 // Role Display Names
@@ -22,13 +23,14 @@ export const ROLE_NAMES = {
   [ROLES.SUPER_ADMIN]: 'Super Administrator',
   [ROLES.ADMIN]: 'Administrator',
   [ROLES.TECHNICAL_HEAD]: 'Technical Head',
-  [ROLES.FACULTY]: 'Faculty', // Updated
+  [ROLES.FACULTY]: 'Faculty', 
   [ROLES.STUDENT]: 'Student',
   [ROLES.PARENT]: 'Parent',
   [ROLES.COORDINATOR]: 'Coordinator',
   [ROLES.OPERATIONS_MANAGER]: 'Operations Manager',
   [ROLES.HR]: 'HR',
-  [ROLES.REPORTING_MANAGER]: 'Reporting Manager', // Added Reporting Manager
+  [ROLES.REPORTING_MANAGER]: 'Reporting Manager', 
+  [ROLES.ADMISSION_MANAGER]: 'Admission Manager', // <-- Added Admission Manager
 };
 
 // Dashboard Routes for Each Role
@@ -36,13 +38,14 @@ export const ROLE_DASHBOARDS = {
   [ROLES.SUPER_ADMIN]: '/dashboard/super-admin',
   [ROLES.ADMIN]: '/dashboard/admin',
   [ROLES.TECHNICAL_HEAD]: '/dashboard/technical',
-  [ROLES.FACULTY]: '/dashboard/faculty', // Updated path
+  [ROLES.FACULTY]: '/dashboard/faculty', 
   [ROLES.STUDENT]: '/dashboard/student',
   [ROLES.PARENT]: '/dashboard/parent',
   [ROLES.COORDINATOR]: '/dashboard/coordinator',
-  [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', // FIXED THIS PATH
+  [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', 
   [ROLES.HR]: '/dashboard/hr',
-  [ROLES.REPORTING_MANAGER]: '/dashboard/reporting-manager', // Added Reporting Manager Route
+  [ROLES.REPORTING_MANAGER]: '/dashboard/reporting-manager', 
+  [ROLES.ADMISSION_MANAGER]: '/dashboard/admission-manager', // <-- Added Admission Manager Route
 };
 
 // Permissions for Each Role
@@ -133,6 +136,14 @@ export const PERMISSIONS = {
     'view_dashboard',
     'view_reports',
     'manage_team',
+    'view_analytics',
+  ],
+
+  // Admission Manager Permissions
+  [ROLES.ADMISSION_MANAGER]: [
+    'view_dashboard',
+    'manage_leads',
+    'manage_admissions',
     'view_analytics',
   ],
 };
