@@ -4,6 +4,7 @@ import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
 import { SuperAdminDashboard } from '../dashboard/super-admin';
 import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
+import LeaveApprovals from '../Tabs/LeaveApprovals'; // <-- ADDED IMPORT
 
 /**
  * Super Admin Dashboard Routes
@@ -47,6 +48,17 @@ export const superAdminRoutes = (
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
           <DashboardLayout>
             <DeleteUser />
+          </DashboardLayout>
+        </ProtectedRoute>
+      }
+    />
+    {/* ADDED LEAVE APPROVALS ROUTE */}
+    <Route
+      path="/dashboard/super-admin/leave-approvals"
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <DashboardLayout>
+            <LeaveApprovals />
           </DashboardLayout>
         </ProtectedRoute>
       }

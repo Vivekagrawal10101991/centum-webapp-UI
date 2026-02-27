@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity // <-- Added Activity icon
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle // <-- Added CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -23,6 +23,7 @@ const DashboardSidebar = () => {
       { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
       { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
       { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle },
+      { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle }, // <-- Added Here
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
 
@@ -83,6 +84,7 @@ const DashboardSidebar = () => {
     [ROLES.REPORTING_MANAGER]: [
       { name: 'Overview', path: '/dashboard/reporting-manager', icon: BarChart },
       { name: 'Team Performance', path: '/dashboard/reporting-manager/team', icon: Users },
+      { name: 'Leave Approvals', path: '/dashboard/reporting-manager/leave-approvals', icon: CheckCircle }, // <-- Added Here
       { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
       { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
       { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
