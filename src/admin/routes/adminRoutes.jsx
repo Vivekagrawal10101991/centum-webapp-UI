@@ -18,6 +18,7 @@ import MediaCenter from '../Tabs/MediaCenter';
 import LeadsEnquiries from '../Tabs/LeadsEnquiries';
 import Settings from '../Tabs/Settings';
 import LmsManagement from '../Tabs/LmsManagement';
+import LeaveApprovals from '../Tabs/LeaveApprovals'; // <-- NEW IMPORT ADDED HERE
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -40,7 +41,7 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 // Operations Components
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 
-// NEW: Reporting Manager Component
+// Reporting Manager Component
 import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
 
 // Common Components
@@ -116,6 +117,18 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
               <DeleteUser />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Leave Approvals for Super Admin */}
+      <Route
+        path="/dashboard/super-admin/leave-approvals"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <LeaveApprovals />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -631,6 +644,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* ---> NEW: LEAVE APPROVALS ROUTE FOR REPORTING MANAGER <--- */}
+      <Route
+        path="/dashboard/reporting-manager/leave-approvals"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
+            <DashboardLayout>
+              <LeaveApprovals />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/dashboard/reporting-manager/settings"
         element={
