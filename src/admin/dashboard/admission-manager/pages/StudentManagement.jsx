@@ -33,10 +33,10 @@ const StudentManagement = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Replace with your actual endpoints to get students and batches
+        // Updated API URLs to include /api
         const [studentsRes, batchesRes] = await Promise.all([
-          api.get('/users?role=STUDENT'), // Assuming this returns list of users with STUDENT role
-          api.get('/batches') // Assuming this returns list of batches created by Super Admin
+          api.get('/api/batches/students'), 
+          api.get('/api/batches') 
         ]);
         
         // Handling dynamic response structures safely
@@ -46,14 +46,14 @@ const StudentManagement = () => {
         console.error('Failed to fetch data', error);
         // Fallback mock data for UI testing if endpoints fail
         setStudents([
-          { id: 1, name: 'Rahul Sharma', email: 'rahul.s@example.com', phone: '+91 9876543210' },
-          { id: 2, name: 'Priya Patel', email: 'priya.p@example.com', phone: '+91 8765432109' },
-          { id: 3, name: 'Amit Kumar', email: 'amit.k@example.com', phone: '+91 7654321098' }
+          { id: 'mock-1', name: 'Rahul Sharma', email: 'rahul.s@example.com', phone: '+91 9876543210' },
+          { id: 'mock-2', name: 'Priya Patel', email: 'priya.p@example.com', phone: '+91 8765432109' },
+          { id: 'mock-3', name: 'Amit Kumar', email: 'amit.k@example.com', phone: '+91 7654321098' }
         ]);
         setBatches([
-          { id: 101, name: 'JEE Target 2026 - Batch A' },
-          { id: 102, name: 'NEET Dropper - Batch B' },
-          { id: 103, name: 'Foundation Class 10 - Batch C' }
+          { id: 'mock-101', name: 'JEE Target 2026 - Batch A' },
+          { id: 'mock-102', name: 'NEET Dropper - Batch B' },
+          { id: 'mock-103', name: 'Foundation Class 10 - Batch C' }
         ]);
       } finally {
         setLoading(false);
@@ -84,8 +84,8 @@ const StudentManagement = () => {
 
     setSubmitting(true);
     try {
-      // Replace with your actual assignment endpoint
-      await api.post('/batches/assign', {
+      // Updated API URL to include /api
+      await api.post('/api/batches/assign', {
         studentId: selectedStudent.id,
         batchId: selectedBatch
       });
@@ -98,7 +98,7 @@ const StudentManagement = () => {
       setSelectedBatch('');
     } catch (error) {
       console.error('Assignment failed', error);
-      setNotification({ show: true, message: 'Failed to allocate student. Please try again.', type: 'error' });
+      setNotification({ show: true, message: error.response?.data?.message || 'Failed to allocate student. Please try again.', type: 'error' });
     } finally {
       setSubmitting(false);
       setTimeout(() => setNotification({ show: false, message: '', type: '' }), 4000);
@@ -132,7 +132,6 @@ const StudentManagement = () => {
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="p-6 border-b border-slate-200 bg-slate-50/50">
-          {/* ---> CHANGED HEADING HERE <--- */}
           <h2 className="text-lg font-semibold text-slate-800">Batch Allocation Details</h2>
         </div>
 
