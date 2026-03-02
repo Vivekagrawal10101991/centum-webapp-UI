@@ -1,12 +1,13 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../admin/context/AuthContext';
-import { canAccessRoute } from '../../admin/helpers/navigationPermissions';
-import { ROLE_PERMISSIONS } from '../../admin/helpers/permissions';
+// Corrected import paths below (removed the extra 'admin/')
+import { useAuth } from '../../context/AuthContext';
+import { canAccessRoute } from '../../helpers/navigationPermissions';
+import { ROLE_PERMISSIONS } from '../../helpers/permissions';
 
 /**
  * PermissionProtectedRoute Component
  * Restricts access based on authentication, user roles, and permissions
- * * @param {React.ReactNode} children - Protected content
+ * @param {React.ReactNode} children - Protected content
  * @param {Array<string>} allowedRoles - Array of roles that can access this route
  * @param {Array<string>} requiredPermissions - Array of permissions (user needs at least one)
  * @param {string} routePath - Route path to check against navigation permissions

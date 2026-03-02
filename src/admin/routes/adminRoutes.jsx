@@ -46,6 +46,7 @@ import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/Repo
 
 // Admission Manager Component
 import AdmissionManagerDashboard from '../dashboard/admission-manager/pages/AdmissionManagerDashboard';
+import StudentManagement from '../dashboard/admission-manager/pages/StudentManagement'; // <-- ADDED IMPORT
 
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
@@ -720,6 +721,17 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
             <DashboardLayout>
               <LeadsEnquiries />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ADDED: STUDENT MANAGEMENT ROUTE */}
+      <Route
+        path="/dashboard/admission-manager/student-management"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
+            <DashboardLayout>
+              <StudentManagement />
             </DashboardLayout>
           </ProtectedRoute>
         }
