@@ -88,8 +88,6 @@ export const NAVIGATION_PERMISSIONS = {
     requiredRole: 'TECHNICAL_HEAD',
   },
   
-  // ---> (Content link removed here) <---
-  
   '/dashboard/technical/promotions-banners': {
     requiredPermissions: [PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS],
   },
@@ -122,6 +120,20 @@ export const NAVIGATION_PERMISSIONS = {
   },
   '/dashboard/technical/settings': {
     requiredPermissions: [],
+  },
+
+  // Admission Manager Routes
+  '/dashboard/admission-manager': {
+    requiredRole: 'ADMISSION_MANAGER',
+  },
+  '/dashboard/admission-manager/leads': {
+    requiredRole: 'ADMISSION_MANAGER', // Can be mapped to specific permissions later
+  },
+  '/dashboard/admission-manager/student-management': {
+    requiredRole: 'ADMISSION_MANAGER',
+  },
+  '/dashboard/admission-manager/settings': {
+    requiredRole: 'ADMISSION_MANAGER',
   },
 };
 

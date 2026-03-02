@@ -95,6 +95,7 @@ const DashboardSidebar = () => {
     [ROLES.ADMISSION_MANAGER]: [
       { name: 'Overview', path: '/dashboard/admission-manager', icon: BarChart },
       { name: 'Leads & Enquiries', path: '/dashboard/admission-manager/leads', icon: MessageCircle },
+      { name: 'Student Management', path: '/dashboard/admission-manager/student-management', icon: Users },
       { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
   };
