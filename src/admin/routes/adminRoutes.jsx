@@ -19,6 +19,7 @@ import LeadsEnquiries from '../Tabs/LeadsEnquiries';
 import Settings from '../Tabs/Settings';
 import LmsManagement from '../Tabs/LmsManagement';
 import LeaveApprovals from '../Tabs/LeaveApprovals'; 
+import BatchManagement from '../Tabs/BatchManagement'; // <-- ADDED: Batch Management Import
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -44,9 +45,9 @@ import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboa
 // Reporting Manager Component
 import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
 
-// Admission Manager Component
+// Admission Manager Components
 import AdmissionManagerDashboard from '../dashboard/admission-manager/pages/AdmissionManagerDashboard';
-import StudentManagement from '../dashboard/admission-manager/pages/StudentManagement'; // <-- ADDED IMPORT
+import StudentManagement from '../dashboard/admission-manager/pages/StudentManagement'; // <-- ADDED: Student Management Import
 
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
@@ -89,6 +90,18 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
               <UserManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* NEW: Batch Management Hub */}
+      <Route
+        path="/dashboard/super-admin/batch-management"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <BatchManagement />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -725,7 +738,8 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ADDED: STUDENT MANAGEMENT ROUTE */}
+      
+      {/* NEW: Student Management Route */}
       <Route
         path="/dashboard/admission-manager/student-management"
         element={
@@ -736,6 +750,7 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/dashboard/admission-manager/settings"
         element={

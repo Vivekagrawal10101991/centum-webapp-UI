@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers // <-- Added Layers icon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -16,6 +16,7 @@ const DashboardSidebar = () => {
     [ROLES.SUPER_ADMIN]: [
       { name: 'Overview', path: '/dashboard/super-admin/dashboard', icon: BarChart },
       { name: 'User Management', path: '/dashboard/super-admin/user-management', icon: Users },
+      { name: 'Batch Management', path: '/dashboard/super-admin/batch-management', icon: Layers }, // <-- ADDED BATCH MANAGEMENT
       { name: 'LMS Center', path: '/dashboard/super-admin/lms-center', icon: GraduationCap },
       { name: 'Promotions & Banners', path: '/dashboard/super-admin/promotions-banners', icon: Megaphone },
       { name: 'Academics & Results', path: '/dashboard/super-admin/academics-results', icon: Award },
