@@ -21,7 +21,7 @@ export const useAddUserData = () => {
     reset,
   } = useForm();
 
-  // Updated role dropdown options to include Admission Manager
+  // Updated role dropdown options to include Admission Manager & Graphic Designer
   const roleOptions = [
     { value: ROLES.ADMIN, label: 'Admin' },
     { value: ROLES.TECHNICAL_HEAD, label: 'Technical Head' },
@@ -29,10 +29,11 @@ export const useAddUserData = () => {
     { value: ROLES.COORDINATOR, label: 'Coordinator' },
     { value: ROLES.OPERATIONS_MANAGER, label: 'Operations Manager' },
     { value: ROLES.REPORTING_MANAGER, label: 'Reporting Manager' },
-    { value: ROLES.ADMISSION_MANAGER, label: 'Admission Manager' }, // <--- ADDED ADMISSION MANAGER
+    { value: ROLES.ADMISSION_MANAGER, label: 'Admission Manager' },
     { value: ROLES.HR, label: 'HR' },
     { value: ROLES.STUDENT, label: 'Student' },
     { value: ROLES.PARENT, label: 'Parent' },
+    { value: ROLES.GRAPHIC_DESIGNER, label: 'Graphic Designer' }, // <--- ADDED GRAPHIC DESIGNER
   ];
 
   const onSubmit = async (data) => {
