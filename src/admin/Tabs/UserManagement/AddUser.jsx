@@ -2,12 +2,15 @@ import { UserPlus, ArrowLeft } from 'lucide-react';
 import { Card, Button } from '../../../components/common';
 import { useAddUserData } from './useAddUserData';
 import { AddUserForm } from './AddUserForm';
+import { useAuth } from '../../context/AuthContext'; // <-- ADDED IMPORT
 
 /**
  * Add User Page Container
  * Form to create new users
  */
 export const AddUserPage = () => {
+  const { user } = useAuth(); // <-- Get current user
+
   const {
     isSubmitting,
     register,
@@ -19,6 +22,12 @@ export const AddUserPage = () => {
     navigate,
     validators,
   } = useAddUserData();
+
+  // <-- DYNAMIC BACK NAVIGATION
+  const handleBack = () => {
+    const basePath = user?.role === 'HR' ? '/dashboard/hr' : '/dashboard/super-admin';
+    navigate(`${basePath}/user-management`);
+  };
 
   return (
     <div>
@@ -33,7 +42,7 @@ export const AddUserPage = () => {
         </div>
         <Button
           variant="outline"
-          onClick={() => navigate('/dashboard/super-admin')}
+          onClick={handleBack} // <-- APPLIED DYNAMIC BACK BUTTON
           className="flex items-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4" />

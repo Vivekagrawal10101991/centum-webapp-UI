@@ -11,26 +11,29 @@ import { canAccessRoute } from '../../../helpers/navigationPermissions';
 const UserManagement = () => {
   const { user } = useAuth();
 
+  // Dynamically set the base path based on the user's role
+  const basePath = user?.role === 'HR' ? '/dashboard/hr' : '/dashboard/super-admin';
+
   const userManagementFeatures = [
     {
       title: 'Add User',
       description: 'Create new users with different roles',
       icon: UserPlus,
-      path: '/dashboard/super-admin/add-user',
+      path: `${basePath}/add-user`, // <-- Dynamic Path
       color: 'green',
     },
     {
       title: 'Get Users',
       description: 'View and search users by role',
       icon: Search,
-      path: '/dashboard/super-admin/get-users',
+      path: `${basePath}/get-users`, // <-- Dynamic Path
       color: 'blue',
     },
     {
       title: 'Delete User',
       description: 'Remove users from the system',
       icon: UserX,
-      path: '/dashboard/super-admin/delete-user',
+      path: `${basePath}/delete-user`, // <-- Dynamic Path
       color: 'red',
     },
   ];
