@@ -423,7 +423,8 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
+      
+      {/* Batch Details for Operations Manager */}
       <Route
         path="/dashboard/operations/batch-details"
         element={
@@ -500,6 +501,49 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* NEW: HR User Management Hub */}
+      <Route
+        path="/dashboard/hr/user-management"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <UserManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/add-user"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <AddUser />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/get-users"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <GetUser />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hr/delete-user"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <DeleteUser />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/dashboard/hr/employees"
         element={
@@ -751,6 +795,7 @@ export const AdminRoutes = () => {
         }
       />
       
+      {/* Student Management Route */}
       <Route
         path="/dashboard/admission-manager/student-management"
         element={

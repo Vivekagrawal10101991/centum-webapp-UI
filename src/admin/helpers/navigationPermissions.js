@@ -122,18 +122,21 @@ export const NAVIGATION_PERMISSIONS = {
     requiredPermissions: [],
   },
 
-  // Admission Manager Routes
-  '/dashboard/admission-manager': {
-    requiredRole: 'ADMISSION_MANAGER',
+  // HR Routes
+  '/dashboard/hr': {
+    requiredRole: 'HR',
   },
-  '/dashboard/admission-manager/leads': {
-    requiredRole: 'ADMISSION_MANAGER', // Can be mapped to specific permissions later
+  '/dashboard/hr/user-management': {
+    requiredRole: 'HR',
   },
-  '/dashboard/admission-manager/student-management': {
-    requiredRole: 'ADMISSION_MANAGER',
+  '/dashboard/hr/add-user': {
+    requiredRole: 'HR',
   },
-  '/dashboard/admission-manager/settings': {
-    requiredRole: 'ADMISSION_MANAGER',
+  '/dashboard/hr/get-users': {
+    requiredRole: 'HR',
+  },
+  '/dashboard/hr/delete-user': {
+    requiredRole: 'HR',
   },
 };
 

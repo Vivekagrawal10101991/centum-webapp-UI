@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -70,6 +70,7 @@ const DashboardSidebar = () => {
 
     [ROLES.HR]: [
       { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
+      { name: 'User Management', path: '/dashboard/hr/user-management', icon: Users }, // <-- ADDED
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
