@@ -4,12 +4,14 @@ import toast from 'react-hot-toast';
 import { UserX, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Card, Input, Button } from '../../../components/common';
 import { superAdminService } from '../../services/superAdminService';
+import { useAuth } from '../../context/AuthContext'; // <-- ADDED IMPORT
 
 /**
  * Delete User Page Container
  * Remove users from system
  */
 export const DeleteUserPage = () => {
+  const { user } = useAuth(); // <-- Get current user
   const [customUserId, setCustomUserId] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -54,6 +56,12 @@ export const DeleteUserPage = () => {
     setShowConfirm(false);
   };
 
+  // <-- DYNAMIC BACK NAVIGATION
+  const handleBack = () => {
+    const basePath = user?.role === 'HR' ? '/dashboard/hr' : '/dashboard/super-admin';
+    navigate(`${basePath}/user-management`);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -67,7 +75,7 @@ export const DeleteUserPage = () => {
         </div>
         <Button
           variant="outline"
-          onClick={() => navigate('/dashboard/super-admin')}
+          onClick={handleBack} // <-- APPLIED DYNAMIC BACK BUTTON
           className="flex items-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -171,4 +179,3 @@ export const DeleteUserPage = () => {
     </div>
   );
 };
-

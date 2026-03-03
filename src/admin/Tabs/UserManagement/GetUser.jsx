@@ -5,12 +5,14 @@ import { Search, ArrowLeft, User, Mail, Calendar, Shield } from 'lucide-react';
 import { Card, Button, Select } from '../../../components/common';
 import { superAdminService } from '../../services/superAdminService';
 import { ROLES, ROLE_NAMES } from '../../../utils/roles';
+import { useAuth } from '../../context/AuthContext'; // <-- ADDED IMPORT
 
 /**
  * Get Users Page Container
  * View users by role
  */
 export const GetUsersPage = () => {
+  const { user } = useAuth(); // <-- Get current user
   const [selectedRole, setSelectedRole] = useState('');
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +62,12 @@ export const GetUsersPage = () => {
     }
   };
 
+  // <-- DYNAMIC BACK NAVIGATION
+  const handleBack = () => {
+    const basePath = user?.role === 'HR' ? '/dashboard/hr' : '/dashboard/super-admin';
+    navigate(`${basePath}/user-management`);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -73,7 +81,7 @@ export const GetUsersPage = () => {
         </div>
         <Button
           variant="outline"
-          onClick={() => navigate('/dashboard/super-admin')}
+          onClick={handleBack} // <-- APPLIED DYNAMIC BACK BUTTON
           className="flex items-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -176,4 +184,3 @@ export const GetUsersPage = () => {
     </div>
   );
 };
-
