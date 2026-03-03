@@ -138,6 +138,20 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/hr/delete-user': {
     requiredRole: 'HR',
   },
+
+  // Graphic Designer Routes
+  '/dashboard/graphic-designer': {
+    requiredRole: 'GRAPHIC_DESIGNER',
+  },
+  '/dashboard/graphic-designer/promotions-banners': {
+    requiredPermissions: [PERMISSIONS.MANAGE_BANNERS],
+  },
+  '/dashboard/graphic-designer/media-center': {
+    requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
+  },
+  '/dashboard/graphic-designer/settings': {
+    requiredPermissions: [PERMISSIONS.VIEW_SETTINGS],
+  }
 };
 
 /**

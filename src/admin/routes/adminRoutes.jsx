@@ -50,6 +50,9 @@ import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/Repo
 import AdmissionManagerDashboard from '../dashboard/admission-manager/pages/AdmissionManagerDashboard';
 import StudentManagement from '../dashboard/admission-manager/pages/StudentManagement';
 
+// Graphic Designer Components
+import GraphicDesignerDashboard from '../dashboard/graphic-designer/pages/GraphicDesignerDashboard';
+
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
 
@@ -811,6 +814,56 @@ export const AdminRoutes = () => {
         path="/dashboard/admission-manager/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= GRAPHIC DESIGNER ROUTES ================= */}
+      <Route
+        path="/dashboard/graphic-designer"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.GRAPHIC_DESIGNER]}>
+            <DashboardLayout>
+              <GraphicDesignerDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/graphic-designer/promotions-banners"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.GRAPHIC_DESIGNER]} 
+            requiredPermissions={[PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS]}
+            routePath="/dashboard/graphic-designer/promotions-banners"
+          >
+            <DashboardLayout>
+              <PromotionsBanners />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/graphic-designer/media-center"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.GRAPHIC_DESIGNER]} 
+            requiredPermissions={[PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS]}
+            routePath="/dashboard/graphic-designer/media-center"
+          >
+            <DashboardLayout>
+              <MediaCenter />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/graphic-designer/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.GRAPHIC_DESIGNER]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>
