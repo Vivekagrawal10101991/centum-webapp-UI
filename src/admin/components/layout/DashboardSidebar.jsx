@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers 
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers, Image as ImageIcon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -70,7 +70,7 @@ const DashboardSidebar = () => {
 
     [ROLES.HR]: [
       { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
-      { name: 'User Management', path: '/dashboard/hr/user-management', icon: Users }, // <-- ADDED
+      { name: 'User Management', path: '/dashboard/hr/user-management', icon: Users },
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
@@ -101,6 +101,14 @@ const DashboardSidebar = () => {
       { name: 'Student Management', path: '/dashboard/admission-manager/student-management', icon: Users },
       { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
+
+    // Added Graphic Designer Navigation
+    [ROLES.GRAPHIC_DESIGNER]: [
+      { name: 'Overview', path: '/dashboard/graphic-designer', icon: BarChart },
+      { name: 'Promotions & Banners', path: '/dashboard/graphic-designer/promotions-banners', icon: ImageIcon },
+      { name: 'Media Center', path: '/dashboard/graphic-designer/media-center', icon: Video },
+      { name: 'Settings', path: '/dashboard/graphic-designer/settings', icon: Settings },
+    ],
   };
 
   const allItems = navigationItems[user?.role] || [];
@@ -119,7 +127,8 @@ const DashboardSidebar = () => {
       '/dashboard/hr',
       '/dashboard/operations',
       '/dashboard/reporting-manager',
-      '/dashboard/admission-manager'
+      '/dashboard/admission-manager',
+      '/dashboard/graphic-designer'
     ];
 
     if (basePaths.includes(path)) {

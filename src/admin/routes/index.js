@@ -11,4 +11,4 @@ export { facultyRoutes } from './facultyRoutes';
 export { studentRoutes } from './studentRoutes';
 export { parentRoutes } from './parentRoutes';
 export { hrRoutes } from './hrRoutes'; 
-export { admissionManagerRoutes } from './admissionManagerRoutes'; // <-- Added Admission Manager export
+export { admissionManagerRoutes } from './admissionManagerRoutes';
