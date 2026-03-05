@@ -1,14 +1,18 @@
 import React from 'react';
-import { Building2, Calendar, ClipboardCheck, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Building2, Calendar, ClipboardCheck, AlertTriangle, Layers } from 'lucide-react';
 import { Card } from '../../../../components/common';
 import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 const OperationsDashboard = () => {
+  const navigate = useNavigate();
+  
   const stats = [
-    { title: 'Active Facilities', value: '4', icon: Building2, color: 'blue' },
-    { title: 'Scheduled Events', value: '12', icon: Calendar, color: 'green' },
-    { title: 'Pending Maintenance', value: '3', icon: AlertTriangle, color: 'orange' },
-    { title: 'Completed Tasks', value: '45', icon: ClipboardCheck, color: 'purple' },
+    // Added a quick link directly to the new Batch Management module
+    { title: 'Manage Batches', value: 'Active', icon: Layers, color: 'indigo', path: '/dashboard/operations/batches' },
+    { title: 'Active Facilities', value: '4', icon: Building2, color: 'blue', path: '/dashboard/operations/logistics' },
+    { title: 'Scheduled Events', value: '12', icon: Calendar, color: 'green', path: '/dashboard/operations/schedule' },
+    { title: 'Pending Maintenance', value: '3', icon: AlertTriangle, color: 'orange', path: null },
   ];
 
   return (
@@ -23,7 +27,12 @@ const OperationsDashboard = () => {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="p-6" hover>
+            <Card 
+              key={index} 
+              className={`p-6 ${stat.path ? 'cursor-pointer' : ''}`} 
+              hover={!!stat.path}
+              onClick={() => stat.path && navigate(stat.path)}
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.title}</p>

@@ -3,10 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Users, Clock, FileText, Calendar, Building2, UserCheck, 
   Briefcase, Plus, CheckCircle, XCircle, ChevronRight,
-  Search, MapPin, Inbox, Mail, Phone, ExternalLink
+  Search, MapPin, Inbox, Mail, Phone, ExternalLink, Download
 } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable'; // <-- UPDATED IMPORT
 import { Card, Button, Modal, Input, Select, Textarea } from '../../../../components/common';
 import { hrService } from '../../../services/hrService';
+import api from '../../../../services/api';
 import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
 /**
@@ -17,22 +20,20 @@ const HRDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 1. Helper to determine which tab should be active based on URL
+  // Helper to determine active tab
   const getTabFromURL = () => {
     if (location.pathname.includes('/recruitment')) return 'recruitment';
     if (location.pathname.includes('/leaves')) return 'leaves';
+    if (location.pathname.includes('/attendance')) return 'attendance';
     return 'overview';
   };
 
-  // 2. Initialize state immediately based on URL
   const [activeTab, setActiveTab] = useState(getTabFromURL());
 
-  // 3. Listen to URL changes
   useEffect(() => {
     setActiveTab(getTabFromURL());
   }, [location.pathname]);
 
-  // 4. Handle internal tab clicks smoothly
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
     if (tabId === 'overview') {
@@ -45,7 +46,8 @@ const HRDashboard = () => {
   // Navigation Tabs
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Users },
-    { id: 'leaves', label: 'Company Leaves (View)', icon: Calendar },
+    { id: 'attendance', label: 'Attendance', icon: Clock },
+    { id: 'leaves', label: 'Company Leaves', icon: Calendar },
     { id: 'recruitment', label: 'Recruitment', icon: Briefcase },
   ];
 
@@ -53,7 +55,7 @@ const HRDashboard = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">HR Dashboard</h1>
-        <p className="text-gray-600 mt-2">Manage personnel records, apply for leave, and handle recruitment.</p>
+        <p className="text-gray-600 mt-2">Manage personnel records, apply for leave, track attendance, and handle recruitment.</p>
       </div>
 
       {/* Tabs Navigation */}
@@ -77,9 +79,10 @@ const HRDashboard = () => {
         })}
       </div>
 
-      {/* Render Active Tab safely */}
+      {/* Render Active Tab */}
       <div className="mt-6">
         {activeTab === 'overview' && <OverviewTab changeTab={handleTabChange} />}
+        {activeTab === 'attendance' && <AttendanceTab />}
         {activeTab === 'leaves' && <LeaveManagementTab />}
         {activeTab === 'recruitment' && <RecruitmentTab />}
       </div>
@@ -126,24 +129,23 @@ const OverviewTab = ({ changeTab }) => {
             <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-4">
               <button 
+                onClick={() => changeTab('attendance')}
+                className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
+              >
+                <Clock className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
+                <p className="font-medium text-gray-900">View Attendance</p>
+              </button>
+              <button 
                 onClick={() => changeTab('leaves')}
                 className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
               >
                 <FileText className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
-                <p className="font-medium text-gray-900">View All Company Leaves</p>
-              </button>
-              <button 
-                onClick={() => changeTab('recruitment')}
-                className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-primary-50 transition-all text-left group"
-              >
-                <Building2 className="w-6 h-6 text-primary mb-2 transform group-hover:scale-110 transition-transform" />
-                <p className="font-medium text-gray-900">Manage Recruitment</p>
+                <p className="font-medium text-gray-900">View Leaves</p>
               </button>
             </div>
           </Card>
         </div>
         
-        {/* The New Leave Widget added securely to HR Dashboard */}
         <div className="space-y-6">
           <LeaveApplicationWidget />
         </div>
@@ -153,7 +155,166 @@ const OverviewTab = ({ changeTab }) => {
 };
 
 // ==========================================
-// 2. LEAVE MANAGEMENT TAB (Read Only for HR)
+// 2. ATTENDANCE TAB
+// ==========================================
+const AttendanceTab = () => {
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  // Default search to today's date in YYYY-MM-DD format
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [searchDate, setSearchDate] = useState(todayStr);
+
+  const fetchAttendance = async (dateStr) => {
+    try {
+      setLoading(true);
+      const res = await api.get(`/api/attendance/all${dateStr ? `?date=${dateStr}` : ''}`);
+      if (res.data?.success) {
+        setRecords(res.data.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch attendance:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendance(searchDate);
+  }, [searchDate]);
+
+  // <-- UPDATED PDF GENERATION FUNCTION -->
+  const downloadPDF = () => {
+    try {
+      const doc = new jsPDF();
+      
+      // Add Header
+      doc.setFontSize(18);
+      doc.text(`Employee Attendance Report`, 14, 15);
+      doc.setFontSize(12);
+      doc.setTextColor(100);
+      doc.text(`Date: ${searchDate}`, 14, 22);
+
+      // Setup Table Data
+      const tableColumn = ["S.No", "Employee Name", "Check-in", "Address", "Check-out", "Duration", "Status"];
+      const tableRows = [];
+
+      records.forEach((record, index) => {
+        const rowData = [
+          index + 1,
+          record.userName || 'N/A',
+          record.checkInTime || '--',
+          record.address ? record.address.substring(0, 30) + '...' : 'N/A', // Trimmed to fit PDF nicely
+          record.checkOutTime || '--',
+          record.totalDuration || '--',
+          record.workdayStatus || '--'
+        ];
+        tableRows.push(rowData);
+      });
+
+      // Generate Table using the explicit autoTable function
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 30,
+        styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
+        headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        columnStyles: {
+          3: { cellWidth: 50 } // Give address column more width
+        }
+      });
+
+      // Save File
+      doc.save(`Attendance_Report_${searchDate}.pdf`);
+    } catch (error) {
+      console.error("PDF Generation failed:", error);
+      alert("There was an issue generating the PDF. Check console for details.");
+    }
+  };
+
+  return (
+    <Card className="p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">Attendance Log</h2>
+          <p className="text-sm text-gray-500 mt-1">View employee check-in and check-out records.</p>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          {/* Day-wise Search */}
+          <div className="relative">
+            <input 
+              type="date" 
+              className="pl-3 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 outline-none shadow-sm font-medium text-gray-700"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
+            />
+          </div>
+          
+          {/* Download PDF Button */}
+          <Button 
+            onClick={downloadPDF} 
+            disabled={records.length === 0}
+            className="flex items-center shadow-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 disabled:opacity-50"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : records.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+           <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+           <p className="text-gray-500 font-medium">No attendance records found for {searchDate}.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-100 text-gray-700 text-sm border-b">
+                <th className="p-4 font-bold w-16">S.No</th>
+                <th className="p-4 font-bold">Employee Name</th>
+                <th className="p-4 font-bold">Check-in Time</th>
+                <th className="p-4 font-bold w-1/4">Address</th>
+                <th className="p-4 font-bold">Check-out Time</th>
+                <th className="p-4 font-bold">Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.map((record, index) => (
+                <tr key={record.id} className="border-b hover:bg-gray-50 transition-colors">
+                  <td className="p-4 text-sm font-medium text-gray-500">{index + 1}</td>
+                  <td className="p-4 font-bold text-gray-900">{record.userName}</td>
+                  <td className="p-4 text-sm text-emerald-600 font-semibold">{record.checkInTime}</td>
+                  <td className="p-4 text-xs text-gray-500 leading-snug break-words">
+                    {record.address || 'Location unavailable'}
+                  </td>
+                  <td className="p-4 text-sm text-rose-600 font-semibold">{record.checkOutTime}</td>
+                  <td className="p-4">
+                    <span className={`px-3 py-1 text-xs rounded-md font-bold ${
+                      record.workdayStatus === 'Completed' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
+                    }`}>
+                      {record.totalDuration !== '--' ? record.totalDuration : 'In Progress'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
+  );
+};
+
+// ==========================================
+// 3. LEAVE MANAGEMENT TAB
 // ==========================================
 const LeaveManagementTab = () => {
   const [leaves, setLeaves] = useState([]);
@@ -239,7 +400,7 @@ const LeaveManagementTab = () => {
 };
 
 // ==========================================
-// 3. RECRUITMENT TAB 
+// 4. RECRUITMENT TAB 
 // ==========================================
 const RecruitmentTab = () => {
   const [jobs, setJobs] = useState([]);
