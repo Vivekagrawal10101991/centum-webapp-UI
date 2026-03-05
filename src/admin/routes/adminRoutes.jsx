@@ -505,7 +505,7 @@ export const AdminRoutes = () => {
         }
       />
 
-      {/* NEW: HR User Management Hub */}
+      {/* HR User Management Hub */}
       <Route
         path="/dashboard/hr/user-management"
         element={
@@ -562,7 +562,7 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
-              <div className="p-8"><h2>Attendance Management (Coming Soon)</h2></div>
+              <HRDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         }
