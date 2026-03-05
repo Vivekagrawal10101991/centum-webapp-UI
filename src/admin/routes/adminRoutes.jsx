@@ -438,6 +438,18 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* ===== NEW: FULL BATCH MANAGEMENT FOR OPERATIONS MANAGER ===== */}
+      <Route
+        path="/dashboard/operations/batches"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <BatchManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       
       <Route 
         path="/dashboard/operations/leave-approvals" 
