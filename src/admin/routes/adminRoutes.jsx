@@ -20,6 +20,8 @@ import Settings from '../Tabs/Settings';
 import LmsManagement from '../Tabs/LmsManagement';
 import LeaveApprovals from '../Tabs/LeaveApprovals'; 
 import BatchManagement from '../Tabs/BatchManagement';
+// UPDATED IMPORT: renamed to avoid collision with Operations' BatchDetails.jsx
+import SharedBatchDetails from '../Tabs/BatchDetails';
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -106,6 +108,18 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
               <BatchManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* NEW: Batch Details View */}
+      <Route
+        path="/dashboard/super-admin/batch-management/:batchId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <SharedBatchDetails />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -446,6 +460,18 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
             <DashboardLayout>
               <BatchManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* NEW: Batch Details View FOR OPERATIONS MANAGER */}
+      <Route
+        path="/dashboard/operations/batches/:batchId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <SharedBatchDetails />
             </DashboardLayout>
           </ProtectedRoute>
         }
