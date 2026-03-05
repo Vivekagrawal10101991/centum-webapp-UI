@@ -51,6 +51,11 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/super-admin/settings': {
     requiredPermissions: [PERMISSIONS.VIEW_SETTINGS, PERMISSIONS.MANAGE_SETTINGS, PERMISSIONS.SYSTEM_ADMIN],
   },
+  
+  // Super Admin - Batch Management
+  '/dashboard/super-admin/batch-management': {
+    requiredPermissions: [PERMISSIONS.MANAGE_BATCHES, PERMISSIONS.SYSTEM_ADMIN],
+  },
 
   // Admin Routes
   '/dashboard/admin': {
@@ -151,6 +156,14 @@ export const NAVIGATION_PERMISSIONS = {
   },
   '/dashboard/graphic-designer/settings': {
     requiredPermissions: [PERMISSIONS.VIEW_SETTINGS],
+  },
+
+  // Operations Manager Routes
+  '/dashboard/operations': {
+    requiredRole: 'OPERATIONS_MANAGER',
+  },
+  '/dashboard/operations/batches': {
+    requiredPermissions: [PERMISSIONS.MANAGE_BATCHES],
   }
 };
 

@@ -24,17 +24,23 @@ const BatchManagement = () => {
     setLoading(true);
     try {
       const batchesRes = await api.get('/api/batches');
-      setBatches(batchesRes.data?.data || batchesRes.data || []);
+      // CRITICAL FIX: Ensure we always get an array to prevent .map() crashes
+      const bData = batchesRes.data?.data || batchesRes.data;
+      setBatches(Array.isArray(bData) ? bData : []);
 
       try {
         const coursesRes = await api.get('/api/course-cms');
-        setCourses(coursesRes.data?.data || coursesRes.data || []);
+        // CRITICAL FIX: Ensure we always get an array
+        const cData = coursesRes.data?.data || coursesRes.data;
+        setCourses(Array.isArray(cData) ? cData : []);
       } catch (courseErr) {
         console.warn('Could not fetch courses, using fallback data.', courseErr);
+        setCourses([]); // Fallback to empty array
       }
     } catch (error) {
       console.error('Failed to fetch data', error);
-      showNotification('Failed to load existing batches.', 'error');
+      setBatches([]); // Fallback to empty array on failure
+      showNotification('Failed to load existing batches. Check permissions or network.', 'error');
     } finally {
       setLoading(false);
     }
@@ -73,9 +79,9 @@ const BatchManagement = () => {
 
   // Helper function to dynamically calculate professional status based on dates
   const getBatchStatus = (batch) => {
-    // Fallback if backend hasn't been refreshed to send dates yet
-    if (!batch.startDate || !batch.endDate) {
-      return batch.active 
+    // CRITICAL FIX: Add safe chaining for missing data
+    if (!batch?.startDate || !batch?.endDate) {
+      return batch?.active 
         ? { label: 'Ongoing', color: 'bg-green-100 text-green-700' }
         : { label: 'Inactive', color: 'bg-red-100 text-red-700' };
     }
@@ -155,7 +161,7 @@ const BatchManagement = () => {
                   >
                     <option value="">-- Select Course --</option>
                     {courses.map((course) => (
-                      <option key={course.id} value={course.id}>{course.title}</option>
+                      <option key={course.id || Math.random()} value={course.id}>{course.title}</option>
                     ))}
                   </select>
                 </div>
@@ -224,15 +230,17 @@ const BatchManagement = () => {
                     {batches.map((batch) => {
                       const status = getBatchStatus(batch);
                       return (
-                        <tr key={batch.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                          <td className="px-6 py-4 font-medium text-slate-800">{batch.name}</td>
+                        <tr key={batch?.id || Math.random()} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                          <td className="px-6 py-4 font-medium text-slate-800">{batch?.name || 'Unnamed Batch'}</td>
                           <td className="px-6 py-4">
-                            {/* Updated Dynamic Status Tag */}
                             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${status.color}`}>
                               {status.label}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-slate-500 font-mono">{batch.id.substring(0, 8)}...</td>
+                          {/* CRITICAL FIX: Safe ID handling to prevent substring crashes */}
+                          <td className="px-6 py-4 text-sm text-slate-500 font-mono">
+                            {batch?.id ? String(batch.id).substring(0, 8) : 'N/A'}...
+                          </td>
                         </tr>
                       );
                     })}
@@ -241,8 +249,8 @@ const BatchManagement = () => {
               ) : (
                 <div className="p-8 text-center text-slate-500">
                   <Layers className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                  <p className="font-medium text-slate-700">No batches created yet</p>
-                  <p className="text-sm mt-1">Use the form to create the first academic batch.</p>
+                  <p className="font-medium text-slate-700">No batches to display</p>
+                  <p className="text-sm mt-1">If you expect to see batches here, please check API permissions.</p>
                 </div>
               )}
             </div>

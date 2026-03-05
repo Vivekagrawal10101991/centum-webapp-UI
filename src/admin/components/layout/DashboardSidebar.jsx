@@ -80,7 +80,8 @@ const DashboardSidebar = () => {
 
     [ROLES.OPERATIONS_MANAGER]: [
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
-      { name: 'Batch Details', path: '/dashboard/operations/batch-details', icon: Layers },
+      // Updated here to point to the new full batch management route
+      { name: 'Batch Management', path: '/dashboard/operations/batches', icon: Layers },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
       { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle }, 
@@ -102,7 +103,6 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
 
-    // Added Graphic Designer Navigation
     [ROLES.GRAPHIC_DESIGNER]: [
       { name: 'Overview', path: '/dashboard/graphic-designer', icon: BarChart },
       { name: 'Promotions & Banners', path: '/dashboard/graphic-designer/promotions-banners', icon: ImageIcon },
