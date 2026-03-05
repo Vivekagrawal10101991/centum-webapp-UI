@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Layers, Plus, Loader2, CheckCircle, AlertCircle, X, ChevronDown, ChevronUp } from 'lucide-react';
 import api from '../../services/api';
 
 const BatchManagement = () => {
+  const navigate = useNavigate();
+  const location = useLocation(); // <-- ADDED: useLocation hook
   const [batches, setBatches] = useState([]);
   const [masterGrades, setMasterGrades] = useState([]);
   
@@ -427,8 +430,15 @@ const BatchManagement = () => {
                   </thead>
                   <tbody>
                     {batches.map((batch) => (
-                      <tr key={batch.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-slate-800">{batch.name}</td>
+                      <tr 
+                        key={batch.id} 
+                        // UPDATED: Dynamic route mapping relative to current URL path
+                        onClick={() => navigate(`${location.pathname}/${batch.id}`)}
+                        className="border-b border-slate-100 hover:bg-blue-50/50 cursor-pointer transition-colors group"
+                      >
+                        <td className="px-6 py-4 font-medium text-slate-800 group-hover:text-blue-600 transition-colors">
+                          {batch.name}
+                        </td>
                         <td className="px-6 py-4 text-sm text-slate-600 font-medium">{batch.academicYear || 'N/A'}</td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${batch.active ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
