@@ -5,6 +5,7 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
+import BatchManagement from '../Tabs/BatchManagement'; // <-- IMPORTED HERE
 
 /**
  * Reusable Empty State Component
@@ -30,6 +31,18 @@ export const operationRoutes = (
         <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
           <DashboardLayout>
             <OperationsDashboard />
+          </DashboardLayout>
+        </ProtectedRoute>
+      }
+    />
+    
+    {/* <-- NEW ROUTE ADDED HERE --> */}
+    <Route
+      path="/dashboard/operations/batches"
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+          <DashboardLayout>
+            <BatchManagement />
           </DashboardLayout>
         </ProtectedRoute>
       }
