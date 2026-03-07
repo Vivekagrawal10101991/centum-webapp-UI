@@ -74,7 +74,6 @@ const Navbar = () => {
             <span className="text-lg md:text-xl font-extrabold text-[#27295c] leading-none tracking-tight font-display">
               CENTUM ACADEMY
             </span>
-            {/* Updated text color to Indigo */}
             <span className="text-[10px] md:text-xs font-semibold text-indigo-600 uppercase mt-1 tracking-widest">
               Education with emotion
             </span>
@@ -151,7 +150,7 @@ const Navbar = () => {
           <div className="flex items-center gap-4 ml-6 pl-6 border-l border-slate-200 h-8">
             <Link 
               to="/contact" 
-              className="bg-slate-900 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
             >
               Enquire Now
             </Link>
@@ -238,7 +237,7 @@ const Navbar = () => {
               <Link 
                 to="/contact"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block w-full text-center py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-transform"
+                className="block w-full text-center py-3.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-yellow-600/20 active:scale-95 transition-transform"
               >
                 Enquire Now
               </Link>

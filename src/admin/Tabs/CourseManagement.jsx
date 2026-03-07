@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { 
-  Plus, Edit2, Trash2, Image as ImageIcon, Loader2, 
+  Plus, Edit2, Trash2, Loader2, 
   Search, BookOpen, IndianRupee, Tag, Layout, FileText, X 
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { cmsService } from '../services/cmsService';
-import ImagePicker from '../components/ImagePicker';
 
 // ✅ IMPORT REACT QUILL (Rich Text Editor)
 import ReactQuill from 'react-quill-new';
@@ -18,7 +17,6 @@ export default function CourseManagement() {
   
   // Modals & Forms
   const [showCourseForm, setShowCourseForm] = useState(false);
-  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
 
   // --- EDITOR CONFIGURATION ---
@@ -50,7 +48,6 @@ export default function CourseManagement() {
     tag: '',
     shortDescription: '',
     slug: '',
-    imageUrl: '',
     details: {
       about: '', // This will now store HTML from the editor
       curriculum: [
@@ -67,6 +64,16 @@ export default function CourseManagement() {
   };
 
   const [courseForm, setCourseForm] = useState(initialFormState);
+
+  // Diverse gradients for the course cards
+  const cardGradients = [
+    "from-blue-600 to-indigo-700",
+    "from-emerald-500 to-teal-700",
+    "from-purple-500 to-fuchsia-700",
+    "from-orange-500 to-red-600",
+    "from-pink-500 to-rose-700",
+    "from-cyan-500 to-blue-700"
+  ];
 
   useEffect(() => {
     fetchCourses();
@@ -310,91 +317,58 @@ export default function CourseManagement() {
 
             <hr className="border-gray-100" />
 
-            {/* Section 2: Media & Pricing */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <section>
-                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4" /> Media
-                </h4>
+            {/* Section 2: Pricing */}
+            <section>
+              <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <IndianRupee className="w-4 h-4" /> Pricing Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Course Banner Image</label>
-                  <div className="flex gap-2">
+                  <label className="text-sm font-medium text-gray-700">Original Price (₹)</label>
+                  <div className="relative">
                     <input
-                      type="text"
-                      readOnly
-                      value={courseForm.imageUrl}
-                      className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
-                      placeholder="No image selected"
+                      type="number"
+                      value={courseForm.details.price.original}
+                      onChange={(e) => setCourseForm({ 
+                        ...courseForm, 
+                        details: { ...courseForm.details, price: { ...courseForm.details.price, original: parseInt(e.target.value) || 0 } } 
+                      })}
+                      className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setIsImagePickerOpen(true)}
-                      className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-lg hover:bg-gray-50 text-blue-600 font-medium border border-blue-200 hover:border-blue-300 transition-all shadow-sm"
-                    >
-                      <ImageIcon className="w-4 h-4" /> Choose
-                    </button>
-                  </div>
-                  {courseForm.imageUrl && (
-                    <div className="mt-3 relative w-full h-40 rounded-lg overflow-hidden border border-gray-200 group">
-                      <img src={courseForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              <section>
-                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <IndianRupee className="w-4 h-4" /> Pricing
-                </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Original Price (₹)</label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        value={courseForm.details.price.original}
-                        onChange={(e) => setCourseForm({ 
-                          ...courseForm, 
-                          details: { ...courseForm.details, price: { ...courseForm.details.price, original: parseInt(e.target.value) || 0 } } 
-                        })}
-                        className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
-                      />
-                      <span className="absolute left-3 top-2.5 text-gray-400">₹</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Discounted Price (₹)</label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        value={courseForm.details.price.discounted}
-                        onChange={(e) => setCourseForm({ 
-                          ...courseForm, 
-                          details: { ...courseForm.details, price: { ...courseForm.details.price, discounted: parseInt(e.target.value) || 0 } } 
-                        })}
-                        className="w-full pl-8 pr-4 py-2.5 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none text-green-700 font-semibold"
-                      />
-                      <span className="absolute left-3 top-2.5 text-green-600">₹</span>
-                    </div>
+                    <span className="absolute left-3 top-2.5 text-gray-400">₹</span>
                   </div>
                 </div>
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-blue-700 font-medium">Calculated Discount:</span>
-                    <span className="text-blue-800 font-bold">
-                      {courseForm.details.price.original > 0 
-                        ? Math.round(((courseForm.details.price.original - courseForm.details.price.discounted) / courseForm.details.price.original) * 100)
-                        : 0}% OFF
-                    </span>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Discounted Price (₹)</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={courseForm.details.price.discounted}
+                      onChange={(e) => setCourseForm({ 
+                        ...courseForm, 
+                        details: { ...courseForm.details, price: { ...courseForm.details.price, discounted: parseInt(e.target.value) || 0 } } 
+                      })}
+                      className="w-full pl-8 pr-4 py-2.5 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none text-green-700 font-semibold"
+                    />
+                    <span className="absolute left-3 top-2.5 text-green-600">₹</span>
                   </div>
                 </div>
-              </section>
-            </div>
+              </div>
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100 max-w-md">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-blue-700 font-medium">Calculated Discount:</span>
+                  <span className="text-blue-800 font-bold">
+                    {courseForm.details.price.original > 0 
+                      ? Math.round(((courseForm.details.price.original - courseForm.details.price.discounted) / courseForm.details.price.original) * 100)
+                      : 0}% OFF
+                  </span>
+                </div>
+              </div>
+            </section>
 
             <hr className="border-gray-100" />
 
-            {/* Section 3: About Course (UPDATED WITH RICH TEXT EDITOR) */}
+            {/* Section 3: About Course */}
             <section>
               <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <FileText className="w-4 h-4" /> About Course (Detailed Overview)
@@ -410,7 +384,7 @@ export default function CourseManagement() {
                     })}
                     modules={quillModules}
                     formats={quillFormats}
-                    className="h-64 mb-12" // Extra margin for toolbar space
+                    className="h-64 mb-12"
                     placeholder="Enter the full course description, methodology, prerequisites, etc..."
                   />
                 </div>
@@ -427,6 +401,7 @@ export default function CourseManagement() {
                   <BookOpen className="w-4 h-4" /> Curriculum Details
                 </h4>
                 <button
+                  type="button"
                   onClick={addCurriculumItem}
                   className="text-xs flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-100 font-medium transition-colors border border-blue-200"
                 >
@@ -442,7 +417,6 @@ export default function CourseManagement() {
                 ) : (
                   courseForm.details.curriculum.map((item, index) => (
                     <div key={index} className="flex flex-col md:flex-row gap-4 items-start bg-white p-4 rounded-lg border border-gray-200 shadow-sm group">
-                      {/* Left: Subject Name */}
                       <div className="w-full md:w-1/3 space-y-1">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Subject Name</label>
                         <input
@@ -453,8 +427,6 @@ export default function CourseManagement() {
                           placeholder="e.g. Physics"
                         />
                       </div>
-
-                      {/* Right: Topics */}
                       <div className="flex-1 w-full space-y-1">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Topics (Comma Separated)</label>
                         <input
@@ -466,9 +438,8 @@ export default function CourseManagement() {
                         />
                         <p className="text-[10px] text-gray-400 hidden group-focus-within:block">Separate multiple topics with commas.</p>
                       </div>
-
-                      {/* Delete Button */}
                       <button
+                        type="button"
                         onClick={() => removeCurriculumItem(index)}
                         className="md:mt-6 p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                         title="Remove Subject"
@@ -485,12 +456,14 @@ export default function CourseManagement() {
           {/* Footer Actions */}
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-3">
             <button 
+              type="button"
               onClick={() => setShowCourseForm(false)} 
               className="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 transition-colors"
             >
               Cancel
             </button>
             <button 
+              type="button"
               onClick={handleSaveCourse} 
               disabled={loading}
               className="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
@@ -528,81 +501,73 @@ export default function CourseManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course) => (
-                <div key={course.id} className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-                  {/* Card Image */}
-                  <div className="relative h-48 overflow-hidden bg-gray-100">
-                    <img 
-                      src={course.imageUrl || 'https://via.placeholder.com/400x250?text=No+Image'} 
-                      alt={course.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute top-3 left-3 flex gap-2">
-                      <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-blue-700 text-xs font-bold rounded-md shadow-sm uppercase tracking-wide">
-                        {course.tag || 'General'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="mb-4">
-                      <h4 className="font-bold text-lg text-gray-900 leading-tight mb-2 line-clamp-2" title={course.title}>
+              {filteredCourses.map((course, index) => {
+                const gradientClass = cardGradients[index % cardGradients.length];
+                return (
+                  <div key={course.id} className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                    
+                    {/* Card Banner (Dynamic Gradients) */}
+                    <div className={`relative h-28 overflow-hidden bg-gradient-to-br ${gradientClass} flex items-center justify-center p-4`}>
+                      <BookOpen className="w-8 h-8 text-white/30 absolute -right-2 -bottom-2" />
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <span className="px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold rounded-md uppercase tracking-wide border border-white/30">
+                          {course.tag || 'General'}
+                        </span>
+                      </div>
+                      <h4 className="text-white font-bold text-center z-10 line-clamp-2 px-2 shadow-sm drop-shadow-md">
                         {course.title}
                       </h4>
-                      <p className="text-sm text-gray-500 line-clamp-2 h-10">
-                        {course.shortDescription || 'No description provided.'}
-                      </p>
                     </div>
 
-                    <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-xs text-gray-400 font-medium uppercase">Price</span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-lg font-bold text-gray-900">
-                            ₹{course.details?.price?.discounted?.toLocaleString()}
-                          </span>
-                          {course.details?.price?.original > course.details?.price?.discounted && (
-                            <span className="text-xs text-gray-400 line-through">
-                              ₹{course.details?.price?.original?.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
+                    {/* Card Content */}
+                    <div className="p-5 flex-1 flex flex-col bg-white">
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                          {course.shortDescription || 'No description provided.'}
+                        </p>
                       </div>
-                      
-                      {/* Actions */}
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => openEdit(course)}
-                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Edit Course"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(course.id)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete Course"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+
+                      <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Price</span>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-lg font-black text-gray-900">
+                              ₹{course.details?.price?.discounted?.toLocaleString() || '0'}
+                            </span>
+                            {course.details?.price?.original > course.details?.price?.discounted && (
+                              <span className="text-xs text-gray-400 line-through font-medium">
+                                ₹{course.details?.price?.original?.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => openEdit(course)}
+                            className="p-2.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100"
+                            title="Edit Course"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(course.id)}
+                            className="p-2.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
+                            title="Delete Course"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       )}
-
-      {/* Image Picker Modal */}
-      <ImagePicker 
-        isOpen={isImagePickerOpen}
-        onClose={() => setIsImagePickerOpen(false)}
-        onSelect={(url) => setCourseForm({ ...courseForm, imageUrl: url })}
-        title="Select Course Banner"
-      />
     </div>
   );
 }

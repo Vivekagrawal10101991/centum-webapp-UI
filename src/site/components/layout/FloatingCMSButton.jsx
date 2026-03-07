@@ -18,8 +18,8 @@ const FloatingCMSButton = () => {
   return (
     <button
       onClick={handleClick}
-      // Updated hover:bg-indigo-600 and hover:border-indigo-500
-      className="fixed bottom-6 right-6 z-50 group flex items-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 border border-slate-700 hover:border-indigo-500"
+      // Updated to dark yellow theme (yellow-600)
+      className="fixed bottom-6 right-6 z-50 group flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-yellow-600/30 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 border border-yellow-700 hover:border-yellow-600"
       aria-label="CMS Login"
     >
       <div className="relative">
