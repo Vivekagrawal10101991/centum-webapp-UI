@@ -97,7 +97,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">Call Us</h3>
-                  <a href="tel:+919108933332" className="text-slate-600 hover:text-[#7E3AF2] font-medium block mt-1">+91 91089 33332</a>
+                  <a href="tel:+916366411473" className="text-slate-600 hover:text-[#7E3AF2] font-medium block mt-1">+91 6366411473</a>
                   <p className="text-sm text-slate-400 mt-1">Mon-Sat, 9:00 AM - 7:00 PM</p>
                 </div>
               </div>
@@ -281,7 +281,7 @@ const Contact = () => {
           </div>
           <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[500px]">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.750939884846!2d77.6382063750756!3d12.923722787387346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae148d4808a047%3A0x673966504620060c!2sCentum%20Academy!5e0!3m2!1sen!2sin!4v1708428234823!5m2!1sen!2sin" 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3888.750212457891!2d77.6402!3d12.9128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae148d5d4d38e3%3A0x904a081a95e09f5!2sCentum%20Academy!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
               width="100%" 
               height="100%" 
               style={{border:0}} 
