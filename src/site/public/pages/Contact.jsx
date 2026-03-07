@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send, User, BookOpen, MessageSquare, Loader2 } from "lucide-react";
 import enquiryService from "../../services/enquiryService";
 
+/**
+ * Contact Component
+ * Updated: Fixed Google Maps embed with verified location coordinates to resolve the 'pb' parameter error.
+ */
 const Contact = () => {
   const [formData, setFormData] = useState({
     studentName: "",
@@ -17,7 +21,6 @@ const Contact = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear status when user starts typing again
     if (status.message) setStatus({ type: "", message: "" });
   };
 
@@ -32,7 +35,6 @@ const Contact = () => {
         type: "success", 
         message: "Thank you! Your enquiry has been submitted successfully. We will contact you shortly." 
       });
-      // Reset form on success
       setFormData({
         studentName: "",
         email: "",
@@ -142,7 +144,6 @@ const Contact = () => {
 
           {/* RIGHT COLUMN: Enquiry Form */}
           <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-8 md:p-10 relative overflow-hidden">
-             {/* Decorative blob */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#7E3AF2]/10 to-transparent rounded-bl-full pointer-events-none"></div>
 
             <div className="mb-8">
@@ -272,7 +273,7 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* --- MAP SECTION --- */}
+      {/* --- FIXED MAP SECTION --- */}
       <section className="bg-white py-16 px-4 md:px-6 border-t border-slate-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10">
@@ -281,10 +282,10 @@ const Contact = () => {
           </div>
           <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[500px]">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3888.750212457891!2d77.6402!3d12.9128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae148d5d4d38e3%3A0x904a081a95e09f5!2sCentum%20Academy!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.7502127271!2d77.6364028!3d12.9102604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae149174246877%3A0x6a0a09e07299a9a3!2sCentum%20Academy!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin" 
               width="100%" 
               height="100%" 
-              style={{border:0}} 
+              style={{ border: 0 }} 
               allowFullScreen={true} 
               loading="lazy" 
               referrerPolicy="no-referrer-when-downgrade"
