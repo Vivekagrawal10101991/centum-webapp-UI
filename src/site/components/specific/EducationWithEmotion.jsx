@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import { Sparkles, Users, GraduationCap, Laptop, Trophy, ArrowRight } from 'lucide-react';
 
 const EducationWithEmotion = () => {
-  // Enhanced data structure: Added permanent base colors (cardBg, cardBorder)
-  // and changed iconBg to white so the icons pop against the tinted cards.
+  const navigate = useNavigate(); // Initialize navigation
+
   const features = [
     {
       icon: Users,
@@ -56,40 +57,24 @@ const EducationWithEmotion = () => {
     }
   ];
 
-  // Animations for the Left Text Column
   const textContainerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
   const textItemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
-  // Animations for the Right Cards Column
   const cardsContainerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.3 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } }
   };
 
   const cardItemVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
   return (
@@ -97,7 +82,6 @@ const EducationWithEmotion = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
-          {/* Left Column: Text & CTA */}
           <motion.div
             variants={textContainerVariants}
             initial="hidden"
@@ -119,7 +103,14 @@ const EducationWithEmotion = () => {
             </motion.p>
 
             <motion.div variants={textItemVariants} className="flex flex-wrap gap-4">
-              <button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-purple-600/20 transition-all flex items-center gap-2 hover:-translate-y-1">
+              {/* UPDATED: Added onClick to navigate to /about and scroll to top */}
+              <button 
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                  navigate('/about');
+                }}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-purple-600/20 transition-all flex items-center gap-2 hover:-translate-y-1"
+              >
                 Learn More <ArrowRight className="h-4 w-4" />
               </button>
               <button className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider shadow-sm transition-all hover:-translate-y-1">
@@ -128,7 +119,6 @@ const EducationWithEmotion = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Features Grid */}
           <motion.div
             variants={cardsContainerVariants}
             initial="hidden"
@@ -141,7 +131,6 @@ const EducationWithEmotion = () => {
                 key={i}
                 variants={cardItemVariants}
                 whileHover={{ y: -8, scale: 1.02 }}
-                // UPDATED: Base state now uses f.cardBg and f.cardBorder instead of bg-white
                 className={`group p-8 rounded-[2rem] border shadow-xl hover:shadow-2xl hover:shadow-slate-300/60 ${f.cardBg} ${f.cardBorder} ${f.hoverCardBg} ${f.hoverBorder} transition-all duration-300`}
               >
                 <div className={`h-14 w-14 rounded-2xl ${f.iconBg} ${f.iconColor} flex items-center justify-center mb-6`}>

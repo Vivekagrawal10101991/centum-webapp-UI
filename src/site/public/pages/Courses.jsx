@@ -12,11 +12,17 @@ import {
   Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // Added for navigation
 import { cmsService } from '../../services/cmsService';
 import { ProgramDetailModal } from "../../components/specific/ProgramDetailModal";
 import CourseCard from "../../components/specific/CourseCard";
 
+/**
+ * Courses Component
+ * Updated: "Get Free Counseling" button now redirects to the top of the contact page.
+ */
 const Courses = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -149,8 +155,19 @@ const Courses = () => {
               Our expert counselors will help you choose the perfect program based on your goals and career aspirations.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <button className="bg-white text-[#7E3AF2] font-bold px-8 py-3.5 rounded-xl shadow-xl">Get Free Counseling</button>
-              <button className="border-2 border-white text-white font-bold px-8 py-3.5 rounded-xl">Download Brochure</button>
+              {/* UPDATED: On click redirects to top of contact page */}
+              <button 
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                  navigate('/contact');
+                }}
+                className="bg-white text-[#7E3AF2] font-bold px-8 py-3.5 rounded-xl shadow-xl hover:bg-slate-50 transition-colors"
+              >
+                Get Free Counseling
+              </button>
+              <button className="border-2 border-white text-white font-bold px-8 py-3.5 rounded-xl hover:bg-white/10 transition-colors">
+                Download Brochure
+              </button>
             </div>
           </motion.div>
         </div>

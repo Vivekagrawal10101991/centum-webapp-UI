@@ -1,9 +1,18 @@
 import React from 'react';
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Linkedin, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from "../../../assets/logo.png";
 
 const Footer = () => {
+  // Social media links configuration
+  const socialLinks = [
+    { Icon: Linkedin, href: "https://www.linkedin.com/company/centum-academy/" },
+    { Icon: Facebook, href: "https://www.facebook.com/centumacademy" },
+    { Icon: Instagram, href: "https://www.instagram.com/centumacademy/" },
+    { Icon: Youtube, href: "https://www.youtube.com/@centumacademy" },
+    { Icon: Twitter, href: "https://x.com/centumacademy?mx=2" }
+  ];
+
   return (
     // Background set to #0b0a2e as requested
     <footer className="bg-[#0b0a2e] text-white border-t border-slate-800">
@@ -12,10 +21,7 @@ const Footer = () => {
           {/* Brand Info */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              {/* FIX: Wrapped logo in a white container 
-                 This ensures the dark logo is visible on the dark background 
-                 while preserving its original colors.
-              */}
+              {/* Wrapped logo in a white container for visibility */}
               <div className="bg-white p-1.5 rounded-lg shadow-sm">
                 <img 
                   src={logo} 
@@ -25,7 +31,6 @@ const Footer = () => {
               </div>
               
               <div className="flex flex-col">
-                {/* FIX: Changed text to White so it's visible on the dark background */}
                 <span className="text-xl font-extrabold text-white leading-none tracking-tight font-display">
                   CENTUM ACADEMY
                 </span>
@@ -38,9 +43,15 @@ const Footer = () => {
               Empowering students through concept-driven learning. Founded by IIT alumni, we focus on quality mentorship and building a future-ready ecosystem.
             </p>
             <div className="flex gap-4">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="h-10 w-10 bg-slate-800 rounded-xl flex items-center justify-center text-white hover:bg-indigo-600 transition-all hover:-translate-y-1">
-                  <Icon className="h-4 w-4" />
+              {socialLinks.map((social, i) => (
+                <a 
+                  key={i} 
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="h-10 w-10 bg-slate-800 rounded-xl flex items-center justify-center text-white hover:bg-indigo-600 transition-all hover:-translate-y-1"
+                >
+                  <social.Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>

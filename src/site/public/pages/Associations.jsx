@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Award, 
   Building2, 
@@ -16,9 +17,17 @@ import Button from '../../../components/common/Button';
 
 /**
  * Associations Component
- * Fully updated with Hero, Trust Badges, Memberships, Philosophy, and CTA.
+ * Updated: Navigation calls now include window.scrollTo(0, 0) to ensure redirect to top of page.
  */
 const Associations = () => {
+  const navigate = useNavigate();
+
+  // Helper function to handle navigation and scroll to top
+  const handleNavigation = (path) => {
+    window.scrollTo(0, 0); // Scroll to the top of the window
+    navigate(path); // Navigate to the specified path
+  };
+
   const associations = [
     {
       name: "National Board for Education",
@@ -327,6 +336,7 @@ const Associations = () => {
               variant="primary"
               size="lg"
               className="px-10 py-4 bg-purple-600 hover:bg-purple-700 shadow-xl shadow-purple-600/20 uppercase tracking-wider text-sm font-bold"
+              onClick={() => handleNavigation('/courses')}
             >
               Explore Programs
             </Button>
@@ -334,6 +344,7 @@ const Associations = () => {
               variant="outline"
               size="lg"
               className="px-10 py-4 border-blue-600 text-blue-600 hover:bg-blue-50 uppercase tracking-wider text-sm font-bold"
+              onClick={() => handleNavigation('/contact')}
             >
               Contact Us
             </Button>
