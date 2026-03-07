@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { Award, Clock, Users, Target, ShieldCheck, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Added 'showHeading' prop, defaulting to true so Home page stays same
 const StatsSection = ({ showHeading = true }) => {
@@ -158,9 +159,13 @@ const StatsSection = ({ showHeading = true }) => {
               <p className="text-white/70 text-sm">Join the league of toppers today with expert mentorship.</p>
             </div>
           </div>
-          <button className="px-8 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold rounded-full transition-all shadow-lg shadow-indigo-500/30 whitespace-nowrap">
+          <Link 
+            to="/courses"
+            onClick={() => window.scrollTo(0, 0)}
+            className="px-8 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold rounded-full transition-all shadow-lg shadow-indigo-500/30 whitespace-nowrap inline-flex items-center justify-center"
+          >
             Apply Now
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -4,8 +4,7 @@ import React from 'react';
 import { 
   HeroSection, 
   StatsSection, 
-  TestimonialsSection,
-  MentorsSection 
+  TestimonialsSection
 } from '../../components/specific';
 
 // Direct imports for specific sections
@@ -40,10 +39,7 @@ const Home = () => {
       {/* 7. STATS SECTION */}
       <StatsSection />
 
-      {/* 8. EXPERT FACULTY */}
-      <MentorsSection />
-
-      {/* 9. FINAL CALL TO ACTION */}
+      {/* 8. FINAL CALL TO ACTION */}
       <CallToAction />
 
     </div>
