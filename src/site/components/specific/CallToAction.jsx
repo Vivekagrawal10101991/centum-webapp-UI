@@ -1,7 +1,12 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { ArrowRight, Phone, Mail, Download } from "lucide-react";
+import { Link } from 'react-router-dom'; // Added for navigation
 
+/**
+ * CallToAction Component
+ * Updated: New contact number and functional redirect to contact form.
+ */
 export const CallToAction = () => {
   return (
     <section className="py-12 md:py-16 bg-white font-sans">
@@ -66,10 +71,14 @@ export const CallToAction = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.5 }}
             >
-              <button className="w-full sm:w-auto bg-white text-indigo-950 px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs shadow-xl shadow-indigo-900/20 hover:bg-indigo-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group">
+              {/* UPDATED: Changed from button to Link for redirection to contact form */}
+              <Link 
+                to="/contact"
+                className="w-full sm:w-auto bg-white text-indigo-950 px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs shadow-xl shadow-indigo-900/20 hover:bg-indigo-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group"
+              >
                 Enquire Today 
                 <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
               
               <button className="w-full sm:w-auto bg-white/5 backdrop-blur-md border border-white/10 text-white px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
                 <Download className="h-3.5 w-3.5" />
@@ -84,15 +93,16 @@ export const CallToAction = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
             >
-              <div className="flex items-center gap-3 group cursor-pointer">
+              {/* UPDATED: Updated Phone Number and added tel: link */}
+              <a href="tel:+916366411473" className="flex items-center gap-3 group cursor-pointer">
                  <div className="h-8 w-8 bg-indigo-500/20 rounded-full flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
                     <Phone className="h-4 w-4 text-indigo-300" />
                  </div>
                  <div className="text-left">
                     <p className="text-[10px] text-indigo-300 uppercase font-bold tracking-wider">Call Us</p>
-                    <p className="text-xs text-white font-bold tracking-wide">+91 91089 3332</p>
+                    <p className="text-xs text-white font-bold tracking-wide">+91 6366411473</p>
                  </div>
-              </div>
+              </a>
 
               <div className="hidden md:block w-px h-8 bg-white/10"></div>
 
