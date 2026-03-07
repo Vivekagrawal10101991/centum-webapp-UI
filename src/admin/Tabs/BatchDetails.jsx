@@ -152,7 +152,7 @@ const BatchDetails = () => {
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{batchData.name}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">{batchData.name}</h1>
                 <span className={`px-3 py-1 text-xs font-bold rounded-lg border ${batchData.active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                   {batchData.active ? 'ACTIVE' : 'INACTIVE'}
                 </span>
@@ -179,17 +179,20 @@ const BatchDetails = () => {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-100/80 flex flex-col justify-center transition-colors hover:border-slate-200">
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <Calendar className="w-4 h-4" />
-                  <p className="text-xs font-bold uppercase tracking-wider">Academic Yr</p>
+                  {/* UPDATED: Added whitespace-nowrap to keep it on one line */}
+                  <p className="text-xs font-bold uppercase tracking-wider whitespace-nowrap">Academic Yr</p>
                 </div>
-                <p className="text-lg font-extrabold text-slate-800">{batchData.academicYear || 'N/A'}</p>
+                {/* UPDATED: Changed from font-extrabold to font-bold */}
+                <p className="text-lg font-bold text-slate-800">{batchData.academicYear || 'N/A'}</p>
               </div>
               
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-100/80 flex flex-col justify-center transition-colors hover:border-slate-200">
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <GraduationCap className="w-4 h-4" />
-                  <p className="text-xs font-bold uppercase tracking-wider">Students</p>
+                  <p className="text-xs font-bold uppercase tracking-wider whitespace-nowrap">Students</p>
                 </div>
-                <p className="text-lg font-extrabold text-slate-800">{batchData.students?.length || 0}</p>
+                {/* UPDATED: Changed from font-extrabold to font-bold */}
+                <p className="text-lg font-bold text-slate-800">{batchData.students?.length || 0}</p>
               </div>
             </div>
           </div>
@@ -246,7 +249,8 @@ const BatchDetails = () => {
                   <Users className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-800">Enrolled Students</h3>
+                  {/* UPDATED: Changed font-extrabold to font-bold */}
+                  <h3 className="text-lg font-bold text-slate-800">Enrolled Students</h3>
                   <p className="text-sm text-slate-500 font-medium mt-0.5">Currently managing {batchData.students?.length || 0} active students</p>
                 </div>
               </div>
