@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Layers, Plus, Loader2, CheckCircle, AlertCircle, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Layers, Plus, Loader2, CheckCircle, AlertCircle, X, ChevronDown, ChevronUp, Edit, Trash2 } from 'lucide-react';
 import api from '../../services/api';
 
 const BatchManagement = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // <-- ADDED: useLocation hook
+  const location = useLocation();
   const [batches, setBatches] = useState([]);
   const [masterGrades, setMasterGrades] = useState([]);
   
@@ -13,14 +13,17 @@ const BatchManagement = () => {
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
+  // Editing State
+  const [editBatchId, setEditBatchId] = useState(null);
+
   // UI States for the complex dropdown
   const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
-  const [expandedGrades, setExpandedGrades] = useState({}); // Track which grades are open in the accordion
+  const [expandedGrades, setExpandedGrades] = useState({});
   const dropdownRef = useRef(null);
 
   // States for On-the-fly creation
   const [newGradeName, setNewGradeName] = useState('');
-  const [newSubjectNames, setNewSubjectNames] = useState({}); // Map of gradeId -> new subject input string
+  const [newSubjectNames, setNewSubjectNames] = useState({});
   const [isAddingMaster, setIsAddingMaster] = useState(false);
 
   const initialFormState = {
@@ -30,7 +33,7 @@ const BatchManagement = () => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
-  const [selectedSubjectDetails, setSelectedSubjectDetails] = useState([]); // To display the pills on the left
+  const [selectedSubjectDetails, setSelectedSubjectDetails] = useState([]);
 
   // Academic Year Options
   const academicYears = ["2023-2024", "2024-2025", "2025-2026", "2026-2027"];
@@ -38,7 +41,6 @@ const BatchManagement = () => {
   useEffect(() => {
     fetchData();
 
-    // Click outside listener for custom dropdown
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsSubjectDropdownOpen(false);
@@ -51,13 +53,9 @@ const BatchManagement = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch Active Batches
       const batchesRes = await api.get('/api/batches');
       setBatches(batchesRes.data?.data || batchesRes.data || []);
-
-      // Fetch Master Grades & Subjects
       await fetchMasterData();
-
     } catch (error) {
       showNotification('Failed to load initial data.', 'error');
     } finally {
@@ -84,32 +82,19 @@ const BatchManagement = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // --- Subject Selection Logic ---
   const toggleSubjectSelection = (subject, gradeName) => {
     const isSelected = formData.subjectIds.includes(subject.id);
-    
     if (isSelected) {
-      // Remove
-      setFormData(prev => ({
-        ...prev,
-        subjectIds: prev.subjectIds.filter(id => id !== subject.id)
-      }));
+      setFormData(prev => ({ ...prev, subjectIds: prev.subjectIds.filter(id => id !== subject.id) }));
       setSelectedSubjectDetails(prev => prev.filter(s => s.id !== subject.id));
     } else {
-      // Add
-      setFormData(prev => ({
-        ...prev,
-        subjectIds: [...prev.subjectIds, subject.id]
-      }));
+      setFormData(prev => ({ ...prev, subjectIds: [...prev.subjectIds, subject.id] }));
       setSelectedSubjectDetails(prev => [...prev, { ...subject, gradeName }]);
     }
   };
 
   const removeSubjectPill = (subjectId) => {
-    setFormData(prev => ({
-      ...prev,
-      subjectIds: prev.subjectIds.filter(id => id !== subjectId)
-    }));
+    setFormData(prev => ({ ...prev, subjectIds: prev.subjectIds.filter(id => id !== subjectId) }));
     setSelectedSubjectDetails(prev => prev.filter(s => s.id !== subjectId));
   };
 
@@ -117,14 +102,13 @@ const BatchManagement = () => {
     setExpandedGrades(prev => ({ ...prev, [gradeId]: !prev[gradeId] }));
   };
 
-  // --- On-the-fly Creation Logic ---
   const handleAddNewGrade = async () => {
     if (!newGradeName.trim()) return;
     setIsAddingMaster(true);
     try {
       await api.post('/api/lms-master/grades', { name: newGradeName.trim() });
       setNewGradeName('');
-      await fetchMasterData(); // Refresh list
+      await fetchMasterData();
       showNotification('Grade added successfully', 'success');
     } catch (err) {
       showNotification(err.response?.data?.message || 'Failed to add Grade', 'error');
@@ -141,7 +125,7 @@ const BatchManagement = () => {
     try {
       await api.post('/api/lms-master/subjects', { name: subjectName.trim(), gradeId });
       setNewSubjectNames(prev => ({ ...prev, [gradeId]: '' }));
-      await fetchMasterData(); // Refresh list
+      await fetchMasterData();
       showNotification('Subject added successfully', 'success');
     } catch (err) {
       showNotification(err.response?.data?.message || 'Failed to add Subject', 'error');
@@ -150,7 +134,6 @@ const BatchManagement = () => {
     }
   };
 
-  // --- Form Submission ---
   const handleSubmit = async (actionType) => {
     if (!formData.batchName || !formData.academicYear) {
       showNotification('Batch Name and Academic Year are required.', 'error');
@@ -159,22 +142,25 @@ const BatchManagement = () => {
 
     setSubmitting(true);
     try {
-      await api.post('/api/batches/create', formData);
-      showNotification('Batch created successfully!', 'success');
+      if (editBatchId) {
+        await api.put(`/api/batches/${editBatchId}`, formData);
+        showNotification('Batch updated successfully!', 'success');
+      } else {
+        await api.post('/api/batches/create', formData);
+        showNotification('Batch created successfully!', 'success');
+      }
       
-      fetchData(); // Refresh active batches list
+      fetchData(); 
 
       if (actionType === 'SAVE_AND_ADD_ANOTHER') {
-        // Clear specific fields, keep academic year
         setFormData({ ...initialFormState, academicYear: formData.academicYear });
         setSelectedSubjectDetails([]);
+        setEditBatchId(null);
       } else if (actionType === 'SAVE') {
-        // Just clear form
-        setFormData(initialFormState);
-        setSelectedSubjectDetails([]);
+        handleCancel();
       }
     } catch (error) {
-      showNotification(error.response?.data?.message || 'Failed to create batch.', 'error');
+      showNotification(error.response?.data?.message || 'Failed to save batch.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -184,6 +170,55 @@ const BatchManagement = () => {
     setFormData(initialFormState);
     setSelectedSubjectDetails([]);
     setIsSubjectDropdownOpen(false);
+    setEditBatchId(null);
+  };
+
+  // --- UPDATED EDIT FUNCTION ---
+  const handleEdit = async (batch) => {
+    try {
+      // Show loading notification or just let it fetch quickly
+      const response = await api.get(`/api/batches/${batch.id}`);
+      const batchDetails = response.data?.data;
+      
+      const fetchedSubjects = batchDetails.subjects || [];
+
+      // Populate form data
+      setFormData({
+        batchName: batchDetails.name,
+        academicYear: batchDetails.academicYear || '2024-2025',
+        subjectIds: fetchedSubjects.map(sub => sub.id)
+      });
+
+      // Populate the UI pills
+      // The backend BatchDetailResponse.SubjectDTO returns { id, name, gradeName }
+      setSelectedSubjectDetails(fetchedSubjects);
+
+      setEditBatchId(batch.id);
+      setIsSubjectDropdownOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+      showNotification(`Editing ${batch.name}. Make changes and click Save.`, 'info');
+
+    } catch (error) {
+      showNotification('Failed to fetch complete batch details for editing.', 'error');
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (batchId) => {
+    if (window.confirm('Are you sure you want to delete this batch?')) {
+      try {
+        await api.delete(`/api/batches/${batchId}`);
+        showNotification('Batch deleted successfully', 'success');
+        fetchData();
+        if (editBatchId === batchId) handleCancel(); 
+      } catch (err) {
+        showNotification(err.response?.data?.message || 'Failed to delete batch.', 'error');
+      }
+    }
+  };
+
+  const navigateToDetails = (batchId) => {
+    navigate(`${location.pathname}/${batchId}`);
   };
 
   if (loading) {
@@ -205,24 +240,24 @@ const BatchManagement = () => {
       </div>
 
       {notification.show && (
-        <div className={`p-4 rounded-lg mb-6 flex items-center gap-3 ${notification.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+        <div className={`p-4 rounded-lg mb-6 flex items-center gap-3 ${notification.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : notification.type === 'info' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
           {notification.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
           <p className="font-medium">{notification.message}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* === CREATION FORM (Left/Top Side) === INCREASED WIDTH from col-span-5 to col-span-6 */}
+        {/* === FORM SECTION === */}
         <div className="lg:col-span-6 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-visible">
-            <div className="p-5 border-b border-slate-200 bg-slate-50/50 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-blue-600" />
-              <h2 className="text-lg font-semibold text-slate-800">Create New Batch</h2>
+            <div className={`p-5 border-b border-slate-200 flex items-center gap-2 ${editBatchId ? 'bg-blue-50' : 'bg-slate-50/50'}`}>
+              {editBatchId ? <Edit className="w-5 h-5 text-blue-600" /> : <Plus className="w-5 h-5 text-blue-600" />}
+              <h2 className="text-lg font-semibold text-slate-800">
+                {editBatchId ? 'Edit Batch Details' : 'Create New Batch'}
+              </h2>
             </div>
 
             <div className="p-5 space-y-5">
-              
-              {/* Batch Name */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">Batch Name <span className="text-red-500">*</span></label>
                 <input
@@ -235,7 +270,6 @@ const BatchManagement = () => {
                 />
               </div>
 
-              {/* Academic Year Row (Course link removed) */}
               <div className="w-full sm:w-1/2 space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">Academic Year <span className="text-red-500">*</span></label>
                 <select
@@ -250,11 +284,9 @@ const BatchManagement = () => {
                 </select>
               </div>
 
-              {/* === THE COMPLEX SUBJECT SELECTION UI === */}
+              {/* SUBJECTS SELECTION */}
               <div className="space-y-3 pt-2">
                 <label className="text-sm font-medium text-slate-700">Selected Subjects</label>
-                
-                {/* 1. Selected Subjects "Pill" Box */}
                 <div className="min-h-[60px] p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap gap-2 items-start">
                   {selectedSubjectDetails.length === 0 ? (
                     <span className="text-sm text-slate-400 mt-1 ml-1">No subjects selected yet...</span>
@@ -270,7 +302,6 @@ const BatchManagement = () => {
                   )}
                 </div>
 
-                {/* 2. Custom Hierarchical Dropdown (Now pushes content down) */}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     type="button"
@@ -281,18 +312,14 @@ const BatchManagement = () => {
                     {isSubjectDropdownOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                   </button>
 
-                  {/* Dropdown Menu Body - Removed 'absolute' to prevent overlapping the buttons below */}
                   {isSubjectDropdownOpen && (
                     <div className="w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-sm max-h-[400px] overflow-y-auto flex flex-col transition-all">
-                      
-                      {/* Master Grades List */}
                       <div className="flex-1 overflow-y-auto p-2 space-y-1">
                         {masterGrades.length === 0 ? (
                           <p className="p-3 text-sm text-slate-500 text-center">No grades available. Add one below.</p>
                         ) : (
                           masterGrades.map(grade => (
                             <div key={grade.id} className="border border-slate-100 rounded-lg overflow-hidden">
-                              {/* Grade Accordion Header */}
                               <button
                                 type="button"
                                 onClick={() => toggleGradeAccordion(grade.id)}
@@ -302,10 +329,8 @@ const BatchManagement = () => {
                                 {expandedGrades[grade.id] ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                               </button>
 
-                              {/* Subjects List inside Grade */}
                               {expandedGrades[grade.id] && (
                                 <div className="p-3 bg-white border-t border-slate-100 space-y-3">
-                                  {/* Render existing subjects */}
                                   {grade.subjects?.length > 0 ? (
                                     <div className="space-y-2">
                                       {grade.subjects.map(subject => (
@@ -324,7 +349,6 @@ const BatchManagement = () => {
                                     <p className="text-xs text-slate-400 italic">No subjects in this grade yet.</p>
                                   )}
 
-                                  {/* Add Subject Inline Input */}
                                   <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                                     <input
                                       type="text"
@@ -349,7 +373,6 @@ const BatchManagement = () => {
                         )}
                       </div>
 
-                      {/* Add Grade Input Fixed at Bottom */}
                       <div className="p-3 bg-slate-50 border-t border-slate-200 shrink-0">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Add New Grade</label>
                         <div className="flex items-center gap-2">
@@ -375,32 +398,33 @@ const BatchManagement = () => {
                   )}
                 </div>
               </div>
-              {/* === END OF SUBJECT SELECTION UI === */}
 
               <div className="pt-6 border-t border-slate-100 flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={() => handleSubmit('SAVE')}
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 transition-all disabled:opacity-50"
+                  className={`w-full flex items-center justify-center gap-2 px-6 py-2.5 text-white rounded-xl font-medium focus:ring-4 transition-all disabled:opacity-50 ${editBatchId ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500/20' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500/20'}`}
                 >
-                  {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save Batch'}
+                  {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (editBatchId ? 'Update Batch' : 'Save Batch')}
                 </button>
                 
                 <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => handleSubmit('SAVE_AND_ADD_ANOTHER')}
-                    disabled={submitting}
-                    className="w-full px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-medium hover:bg-slate-200 transition-all text-sm"
-                  >
-                    Save & Add Another
-                  </button>
+                  {!editBatchId && (
+                    <button
+                      type="button"
+                      onClick={() => handleSubmit('SAVE_AND_ADD_ANOTHER')}
+                      disabled={submitting}
+                      className="w-full px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-medium hover:bg-slate-200 transition-all text-sm"
+                    >
+                      Save & Add Another
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handleCancel}
                     disabled={submitting}
-                    className="w-full px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-all text-sm"
+                    className={`w-full px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-all text-sm ${editBatchId ? 'col-span-2' : ''}`}
                   >
                     Cancel
                   </button>
@@ -411,7 +435,7 @@ const BatchManagement = () => {
           </div>
         </div>
 
-        {/* === LIST SECTION (Right Side) === DECREASED WIDTH from col-span-7 to col-span-6 */}
+        {/* === LIST SECTION === */}
         <div className="lg:col-span-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full">
             <div className="p-5 border-b border-slate-200 bg-slate-50/50">
@@ -426,24 +450,46 @@ const BatchManagement = () => {
                       <th className="px-6 py-4 font-semibold">Batch Name</th>
                       <th className="px-6 py-4 font-semibold">Academic Yr</th>
                       <th className="px-6 py-4 font-semibold">Status</th>
+                      <th className="px-6 py-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {batches.map((batch) => (
                       <tr 
                         key={batch.id} 
-                        // UPDATED: Dynamic route mapping relative to current URL path
-                        onClick={() => navigate(`${location.pathname}/${batch.id}`)}
-                        className="border-b border-slate-100 hover:bg-blue-50/50 cursor-pointer transition-colors group"
+                        className={`border-b border-slate-100 hover:bg-blue-50/50 transition-colors group ${editBatchId === batch.id ? 'bg-blue-50/50' : ''}`}
                       >
-                        <td className="px-6 py-4 font-medium text-slate-800 group-hover:text-blue-600 transition-colors">
+                        {/* ONLY THESE COLUMNS TRIGGER NAVIGATION */}
+                        <td onClick={() => navigateToDetails(batch.id)} className="px-6 py-4 font-medium text-slate-800 group-hover:text-blue-600 transition-colors cursor-pointer">
                           {batch.name}
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 font-medium">{batch.academicYear || 'N/A'}</td>
-                        <td className="px-6 py-4">
+                        <td onClick={() => navigateToDetails(batch.id)} className="px-6 py-4 text-sm text-slate-600 font-medium cursor-pointer">{batch.academicYear || 'N/A'}</td>
+                        <td onClick={() => navigateToDetails(batch.id)} className="px-6 py-4 cursor-pointer">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${batch.active ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
                             {batch.active ? 'Ongoing' : 'Inactive'}
                           </span>
+                        </td>
+                        
+                        {/* ACTION COLUMN DOES NOT TRIGGER NAVIGATION */}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-3">
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(batch)}
+                              className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                              title="Edit Batch"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(batch.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                              title="Delete Batch"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
