@@ -74,6 +74,14 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
     if (path) navigate(`/courses/${path}`);
   };
 
+  // Extract price correctly from the database 'details' JSON block
+  const priceObj = course?.details?.price;
+  const displayPrice = priceObj?.discounted 
+    ? `₹${priceObj.discounted.toLocaleString()}` 
+    : priceObj?.original 
+      ? `₹${priceObj.original.toLocaleString()}` 
+      : "Free / TBA";
+
   // DUMMY DATA FALLBACKS: Keeps the UI beautiful even if backend fields are empty
   const displayFeatures = course?.features?.length > 0 
     ? course.features.slice(0, 3) 
@@ -81,9 +89,6 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
     
   const displayDuration = course?.duration || "2 Years";
   const displayBatch = course?.batchSize || "30-35 Students";
-  const displayPrice = course?.price 
-    ? `₹${course.price.toLocaleString()}` 
-    : "₹1,80,000";
 
   return (
     <div 
@@ -92,12 +97,6 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
     >
       {/* Top Section (Solid Vibrant Gradient) */}
       <div className={`p-6 flex flex-col items-start bg-gradient-to-br ${theme.gradient} relative min-h-[180px]`}>
-        {/* Optional Background Image from Backend */}
-        {course?.imageUrl && (
-          <div className="absolute inset-0 opacity-10 overflow-hidden">
-            <img src={course.imageUrl} alt="" className="w-full h-full object-cover" />
-          </div>
-        )}
         
         <BookOpen className="h-8 w-8 mb-4 text-white opacity-90 relative z-10" strokeWidth={1.5} />
         <span className="inline-block px-3 py-1 bg-white/20 text-white rounded-full text-[11px] font-bold tracking-wide mb-3 uppercase backdrop-blur-sm relative z-10">
@@ -155,8 +154,16 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
         <div className="pt-4 border-t border-slate-100 flex flex-col gap-4 mt-auto">
           <div>
             <p className="text-[11px] font-bold text-slate-400 mb-0.5 uppercase tracking-widest">Course Fee</p>
-            <div className="text-2xl font-black text-slate-900 tracking-tight">
-              {displayPrice}
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-black text-slate-900 tracking-tight">
+                {displayPrice}
+              </span>
+              {/* Show original price with a strikethrough if there's a discount */}
+              {priceObj?.original > priceObj?.discounted && (
+                <span className="text-sm font-semibold text-slate-400 line-through">
+                  ₹{priceObj.original.toLocaleString()}
+                </span>
+              )}
             </div>
           </div>
           

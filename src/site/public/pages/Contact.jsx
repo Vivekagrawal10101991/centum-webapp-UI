@@ -1,23 +1,55 @@
 import React, { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, User, BookOpen, MessageSquare } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, User, BookOpen, MessageSquare, Loader2 } from "lucide-react";
+import enquiryService from "../../services/enquiryService";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    studentName: "",
     email: "",
-    phone: "",
-    course: "",
+    phoneNumber: "",
+    location: "",
+    courseInterest: "",
     message: ""
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState({ type: "", message: "" });
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear status when user starts typing again
+    if (status.message) setStatus({ type: "", message: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted", formData);
-    alert("Thank you! We will contact you shortly.");
+    setIsSubmitting(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      await enquiryService.submitEnquiry(formData);
+      setStatus({ 
+        type: "success", 
+        message: "Thank you! Your enquiry has been submitted successfully. We will contact you shortly." 
+      });
+      // Reset form on success
+      setFormData({
+        studentName: "",
+        email: "",
+        phoneNumber: "",
+        location: "",
+        courseInterest: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error("Enquiry submission failed:", error);
+      setStatus({ 
+        type: "error", 
+        message: typeof error === 'string' ? error : "Failed to send message. Please try again later." 
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -118,6 +150,12 @@ const Contact = () => {
               <p className="text-slate-500 mt-2">Fill out the form and we'll get back to you as soon as possible.</p>
             </div>
 
+            {status.message && (
+              <div className={`p-4 mb-6 rounded-xl border ${status.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+                {status.message}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -125,10 +163,10 @@ const Contact = () => {
                 </label>
                 <input
                   type="text"
-                  name="name"
+                  name="studentName"
                   required
                   placeholder="Enter your full name"
-                  value={formData.name}
+                  value={formData.studentName}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white"
                 />
@@ -155,10 +193,25 @@ const Contact = () => {
                 </label>
                 <input
                   type="tel"
-                  name="phone"
+                  name="phoneNumber"
                   required
                   placeholder="+91 XXXXX XXXXX"
-                  value={formData.phone}
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[#7E3AF2]" /> Location (City/Area)
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  required
+                  placeholder="E.g. HSR Layout, Bengaluru"
+                  value={formData.location}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white"
                 />
@@ -169,16 +222,16 @@ const Contact = () => {
                   <BookOpen className="h-4 w-4 text-[#7E3AF2]" /> Course Interested In
                 </label>
                 <select
-                  name="course"
+                  name="courseInterest"
                   required
-                  value={formData.course}
+                  value={formData.courseInterest}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white appearance-none"
                 >
                   <option value="">Select a course</option>
-                  <option value="JEE">JEE Main + Advanced</option>
-                  <option value="NEET">NEET Program</option>
-                  <option value="Foundation">Foundation (Class 8-10)</option>
+                  <option value="JEE Main + Advanced">JEE Main + Advanced</option>
+                  <option value="NEET Program">NEET Program</option>
+                  <option value="Foundation (Class 8-10)">Foundation (Class 8-10)</option>
                   <option value="KCET">KCET</option>
                   <option value="Other">Other</option>
                 </select>
@@ -190,6 +243,7 @@ const Contact = () => {
                 </label>
                 <textarea
                   name="message"
+                  required
                   rows="4"
                   placeholder="Tell us more about your requirements..."
                   value={formData.message}
@@ -200,9 +254,18 @@ const Contact = () => {
 
               <button 
                 type="submit" 
-                className="w-full py-4 text-base font-bold bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] hover:from-[#6C2BD9] hover:to-[#1E40AF] text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all rounded-xl flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full py-4 text-base font-bold bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] hover:from-[#6C2BD9] hover:to-[#1E40AF] text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all rounded-xl flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                <Send className="w-5 h-5" /> Send Message
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" /> Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" /> Send Message
+                  </>
+                )}
               </button>
             </form>
           </div>
