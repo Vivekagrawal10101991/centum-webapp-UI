@@ -39,7 +39,7 @@ export default function MediaCenter() {
 
   // --- FORMS ---
   const [blogForm, setBlogForm] = useState({
-    title: '', content: '', author: '', imageUrl: '', category: '', published: true,
+    title: '', slug: '', content: '', author: '', imageUrl: '', category: '', published: true,
   });
 
   const [contributorForm, setContributorForm] = useState({
@@ -81,6 +81,16 @@ export default function MediaCenter() {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Auto-generate URL-friendly slug
+  const generateSlug = (text) => {
+    return text.toString().toLowerCase()
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+      .replace(/^-+/, '')             // Trim - from start of text
+      .replace(/-+$/, '');            // Trim - from end of text
   };
 
   // --- FETCHING DATA ---
@@ -130,6 +140,11 @@ export default function MediaCenter() {
 
   // 1. Blog Handlers
   const handleAddBlog = async () => {
+    if (!blogForm.title || !blogForm.slug) {
+        toast.error('Title and Slug are required');
+        return;
+    }
+
     setLoading(true);
     try {
       if (editingBlog) {
@@ -140,7 +155,7 @@ export default function MediaCenter() {
         toast.success('Blog created successfully');
       }
       await fetchBlogs();
-      setBlogForm({ title: '', content: '', author: '', imageUrl: '', category: '', published: true });
+      setBlogForm({ title: '', slug: '', content: '', author: '', imageUrl: '', category: '', published: true });
       setShowBlogForm(false);
       setEditingBlog(null);
     } catch (err) {
@@ -356,7 +371,7 @@ export default function MediaCenter() {
                 onClick={() => {
                   setShowBlogForm(true);
                   setEditingBlog(null);
-                  setBlogForm({ title: '', content: '', author: '', imageUrl: '', category: '', published: true });
+                  setBlogForm({ title: '', slug: '', content: '', author: '', imageUrl: '', category: '', published: true });
                 }}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 disabled={loading}
@@ -371,16 +386,40 @@ export default function MediaCenter() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full">
               <h3 className="font-semibold text-gray-800 mb-4">{editingBlog ? 'Edit Blog Post' : 'Add New Blog Post'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
+                
+                {/* TITLE */}
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Blog Title *</label>
                   <input
                     type="text"
                     value={blogForm.title}
-                    onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
+                    onChange={(e) => {
+                        const newTitle = e.target.value;
+                        setBlogForm(prev => ({ 
+                            ...prev, 
+                            title: newTitle,
+                            // Auto-generate slug if it's empty or we are creating a new blog
+                            slug: (!editingBlog || !prev.slug) ? generateSlug(newTitle) : prev.slug
+                        }));
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Top 10 Study Tips"
                   />
                 </div>
+
+                {/* SLUG */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">URL Slug *</label>
+                  <input
+                    type="text"
+                    value={blogForm.slug}
+                    onChange={(e) => setBlogForm({ ...blogForm, slug: generateSlug(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    placeholder="top-10-study-tips"
+                  />
+                </div>
+
+                {/* CONTENT */}
                 <div className="md:col-span-2 w-full max-w-full overflow-hidden">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Content *</label>
                   <div className="bg-white w-full">
@@ -394,6 +433,8 @@ export default function MediaCenter() {
                     />
                   </div>
                 </div>
+
+                {/* AUTHOR */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Author *</label>
                   <input
@@ -403,6 +444,8 @@ export default function MediaCenter() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
+
+                {/* IMAGE */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
                   <div className="flex gap-2">
@@ -421,6 +464,8 @@ export default function MediaCenter() {
                     </button>
                   </div>
                 </div>
+
+                {/* CATEGORY */}
                 <div className="md:col-span-2">
                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                    <input
@@ -430,6 +475,7 @@ export default function MediaCenter() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                    />
                 </div>
+
                 <div className="md:col-span-2">
                   <label className="flex items-center gap-2">
                     <input
@@ -442,6 +488,7 @@ export default function MediaCenter() {
                   </label>
                 </div>
               </div>
+
               <div className="flex items-center gap-4 mt-4">
                 <button
                   onClick={handleAddBlog}
@@ -464,7 +511,10 @@ export default function MediaCenter() {
                   {blog.imageUrl && <img src={blog.imageUrl} className="w-32 h-24 object-cover rounded-lg flex-shrink-0" alt="Blog" />}
                   <div className="flex-1 w-0">
                     <div className="flex justify-between">
-                        <h4 className="font-semibold text-gray-800 truncate">{blog.title}</h4>
+                        <div className="flex flex-col">
+                           <h4 className="font-semibold text-gray-800 truncate">{blog.title}</h4>
+                           <span className="text-xs text-gray-400 font-mono mb-2">/{blog.slug || blog.id}</span>
+                        </div>
                         <div className="flex gap-2">
                           {hasPermission(PERMISSIONS.EDIT_BLOG) && (
                             <button onClick={() => { setEditingBlog(blog); setBlogForm(blog); setShowBlogForm(true); }} className="p-2 text-blue-600 bg-blue-50 rounded-lg"><Edit2 className="w-4 h-4" /></button>

@@ -41,9 +41,37 @@ export const getAllBlogs = async () => {
 };
 
 /**
+ * Fetch a single blog by its slug
+ * @param {string} slug - The blog's URL-friendly slug
+ * @returns {Promise<Object>} The blog object
+ */
+export const getBlogBySlug = async (slug) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/tech/blogs/slug/${slug}`, {
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch blog with slug ${slug}: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      throw new Error('Invalid response format');
+    }
+  } catch (error) {
+    console.error(`Error fetching blog by slug (${slug}):`, error);
+    throw error;
+  }
+};
+
+/**
  * Add a new blog
  * @param {Object} blogData - Blog data object
  * @param {string} blogData.title - Blog title
+ * @param {string} blogData.slug - Blog slug
  * @param {string} blogData.content - Blog content
  * @param {string} blogData.author - Blog author
  * @param {string} blogData.imageUrl - Blog image URL
@@ -82,6 +110,7 @@ export const addBlog = async (blogData) => {
  * @param {string} id - Blog ID
  * @param {Object} blogData - Blog data object
  * @param {string} blogData.title - Blog title
+ * @param {string} blogData.slug - Blog slug
  * @param {string} blogData.content - Blog content
  * @param {string} blogData.author - Blog author
  * @param {string} blogData.imageUrl - Blog image URL
