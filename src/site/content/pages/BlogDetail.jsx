@@ -1,106 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, Share2, Clock, Sparkles, ArrowUpRight, User, BookOpen } from 'lucide-react';
-import { getAllBlogs } from '../../../admin/services/blogService';
-
-// --- STATIC DATA ---
-const STATIC_BLOGS = [
-  {
-    id: 'static-1',
-    title: "The Ultimate Guide to JEE Main 2026: Preparation Strategies That Work",
-    content: `
-      <p><strong>Success in JEE Main is not just about hard work; it's about working smart.</strong> As the competition intensifies every year, students need a strategic approach to secure a top rank.</p>
-      <h3>1. Understand the Syllabus & Exam Pattern</h3>
-      <p>Before diving into books, analyze the official syllabus. Focus on high-weightage chapters. For Physics, Mechanics and Electrodynamics are crucial. In Chemistry, Organic and Physical Chemistry hold significant weight.</p>
-      <h3>2. Time Management is Key</h3>
-      <p>Create a realistic timetable. Allocate time for revision and mock tests. The <strong>Pomodoro technique</strong> (25 minutes study, 5 minutes break) can help maintain focus during long study sessions.</p>
-      <h3>3. Mock Tests & Analysis</h3>
-      <p>Taking mock tests is only half the battle. The real learning comes from analyzing your mistakes. Identify whether the error was conceptual, calculation-based, or due to a lack of time.</p>
-      <blockquote>"Consistency is the hallmark of a topper. It's not about studying 15 hours for one day, but 6 hours every day for two years."</blockquote>
-      <h3>Conclusion</h3>
-      <p>Stay healthy, stay positive, and trust your preparation. The journey to IIT begins with a single step of disciplined effort.</p>
-    `,
-    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80",
-    author: "Mr. Tushar Sinha",
-    createdAt: "2026-02-05",
-    category: "JEE Preparation"
-  },
-  {
-    id: 'static-2',
-    title: "NEET 2026: How to Master Biology in 6 Months",
-    content: "<p>Biology constitutes 50% of the NEET paper. Mastering NCERT is non-negotiable...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&q=80",
-    author: "Mr. Dheeraj Singh",
-    createdAt: "2026-02-03",
-    category: "NEET Preparation"
-  },
-  {
-    id: 'static-3',
-    title: "Time Management Secrets for Competitive Exam Success",
-    content: "<p>Time is your most valuable asset. Learn how to prioritize tasks and avoid burnout...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&q=80",
-    author: "Mr. Akhil Upadhyay",
-    createdAt: "2026-01-30",
-    category: "Study Tips"
-  },
-  {
-    id: 'static-4',
-    title: "Foundation Programs: Building Strong Basics for Class 9 & 10",
-    content: "<p>Early starters have a significant advantage. Foundation courses bridge the gap between school and competitive exams...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80",
-    author: "Centum Faculty",
-    createdAt: "2026-01-28",
-    category: "Foundation"
-  },
-  {
-    id: 'static-5',
-    title: "Mock Tests: Your Secret Weapon for JEE & NEET",
-    content: "<p>Mock tests simulate the exam environment. They help in building stamina and managing exam pressure...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80",
-    author: "Mr. Tushar Sinha",
-    createdAt: "2026-01-25",
-    category: "Test Strategy"
-  },
-  {
-    id: 'static-6',
-    title: "Parent's Guide: Supporting Your Child Through Competitive Exams",
-    content: "<p>Parents play a crucial role. Be a pillar of support, not a source of pressure...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1516534775068-ba3e7458af70?w=600&q=80",
-    author: "Mr. Dheeraj Singh",
-    createdAt: "2026-01-22",
-    category: "Parent Guide"
-  },
-  {
-    id: 'static-7',
-    title: "Physics Problem-Solving: Techniques from IIT Alumni",
-    content: "<p>Physics is about visualization. Don't just memorize formulas; understand the 'Why' and 'How'...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80",
-    author: "Mr. Akhil Upadhyay",
-    createdAt: "2026-01-20",
-    category: "Subject Focus"
-  },
-  {
-    id: 'static-8',
-    title: "Overcoming Exam Anxiety: Mental Health Tips for Students",
-    content: "<p>Mental health is as important as physical health. Yoga and meditation can improve concentration...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80",
-    author: "Centum Faculty",
-    createdAt: "2026-01-18",
-    category: "Mental Health"
-  },
-  {
-    id: 'static-9',
-    title: "Chemistry for NEET: Mastering Organic & Inorganic",
-    content: "<p>Chemistry is high-scoring. Regular revision of the periodic table and reaction mechanisms is essential...</p>",
-    imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=80",
-    author: "Mr. Dheeraj Singh",
-    createdAt: "2026-01-15",
-    category: "NEET Preparation"
-  }
-];
+import { getAllBlogs, getBlogBySlug } from '../../../admin/services/blogService';
 
 const BlogDetail = () => {
-  const { id } = useParams();
+  const { slug, id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [relatedBlogs, setRelatedBlogs] = useState([]);
@@ -108,7 +12,7 @@ const BlogDetail = () => {
   const [error, setError] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Scroll Progress Logic (Native JS)
+  // Scroll Progress Logic
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollTop;
@@ -121,44 +25,62 @@ const BlogDetail = () => {
   }, []);
 
   useEffect(() => {
-    // Scroll to top when ID changes
     window.scrollTo(0, 0);
 
     const fetchBlogData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // 1. Try to find in STATIC data first (Instant load)
-        const staticMatch = STATIC_BLOGS.find(b => b.id === id);
+        const rawSlug = slug || id || '';
+        const safeSlug = decodeURIComponent(rawSlug).trim().toLowerCase();
         
+        let fetchedBlog = null;
         let allBlogs = [];
         
-        // 2. Fetch Backend Data
+        // 1. Fetch master list directly from your Backend
         try {
           const data = await getAllBlogs();
           if (Array.isArray(data)) {
-            // Transform backend data to match schema if needed
-            const formattedBackend = data.map(b => ({
+            allBlogs = data.map(b => ({
               ...b,
               id: b.id || b._id,
+              slug: b.slug || b.id, 
               imageUrl: b.imageUrl || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070"
             }));
-            allBlogs = formattedBackend;
           }
         } catch (backendErr) {
-          console.warn("Backend fetch failed, using static only", backendErr);
+          console.warn("Backend fetch failed for all blogs", backendErr);
         }
 
-        // 3. Combine Static + Backend for "Related Posts"
-        const combinedBlogs = [...allBlogs, ...STATIC_BLOGS];
+        // 2. Find the requested blog in the master list
+        fetchedBlog = allBlogs.find(b => {
+            const bSlug = b.slug ? String(b.slug).trim().toLowerCase() : '';
+            const bId = b.id ? String(b.id).trim().toLowerCase() : '';
+            return bSlug === safeSlug || bId === safeSlug;
+        });
 
-        // 4. Determine which blog to show
-        const foundBlog = staticMatch || combinedBlogs.find(b => String(b.id) === String(id));
-        
-        if (foundBlog) {
-          setBlog(foundBlog);
-          // Filter out current blog for "Related" section
-          const others = combinedBlogs.filter(b => String(b.id) !== String(id)).slice(0, 4);
+        // 3. If STILL not found, try the specific backend API as a last resort
+        if (!fetchedBlog && rawSlug.trim() !== '') {
+            try {
+                fetchedBlog = await getBlogBySlug(rawSlug.trim());
+                if (fetchedBlog && !fetchedBlog.imageUrl) {
+                    fetchedBlog.imageUrl = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070";
+                }
+            } catch (err) {
+                console.warn("Backend threw an error for specific slug (likely string mismatch)", err);
+            }
+        }
+
+        if (fetchedBlog) {
+          setBlog(fetchedBlog);
+          
+          // 4. Setup Related Blogs (Only from Database)
+          const others = allBlogs.filter(b => {
+             const bSlug = b.slug ? String(b.slug).trim().toLowerCase() : '';
+             const bId = b.id ? String(b.id).trim().toLowerCase() : '';
+             return bSlug !== safeSlug && bId !== safeSlug;
+          }).slice(0, 4);
+          
           setRelatedBlogs(others);
         } else {
           setError('Story not found');
@@ -171,7 +93,7 @@ const BlogDetail = () => {
     };
     
     fetchBlogData();
-  }, [id]);
+  }, [slug, id]);
 
   // Helpers
   const formatDate = (dateString) => {
@@ -231,9 +153,9 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-white font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
       
-      {/* --- Progress Bar (Native CSS) --- */}
+      {/* --- Progress Bar --- */}
       <div 
         className="fixed top-0 left-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-[60] transition-all duration-100"
         style={{ width: `${scrollProgress * 100}%` }}
@@ -266,32 +188,36 @@ const BlogDetail = () => {
             <img
               src={blog.imageUrl}
               alt={blog.title}
-              className="w-full h-full object-cover opacity-80"
-              style={{ transform: `translateY(${scrollProgress * 50}px)` }} // Simple Parallax
+              className="w-full h-full object-cover"
+              style={{ transform: `translateY(${scrollProgress * 50}px)` }} 
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center">
                <Sparkles className="w-20 h-20 text-white/10" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/30" />
+          
+          {/* THE NEW FILM OVERLAY */}
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
         </div>
 
         {/* Hero Content Overlay */}
-        <div className="absolute bottom-0 left-0 w-full pb-24 px-4">
+        <div className="absolute bottom-0 left-0 w-full pb-24 px-4 z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider mb-6 animate-fade-in-up">
               <BookOpen className="w-3 h-3" />
               {blog.category || 'Article'}
             </div>
             
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-tight mb-6 drop-shadow-sm animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            {/* UPDATED TITLE: Premium typography (smaller, tighter tracking, slightly less heavy) */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight mb-6 drop-shadow-md animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
               {blog.title}
             </h1>
 
-            {/* UPDATED: Metadata Pill Box */}
+            {/* FROSTED WHITE METADATA PILL */}
             <div 
-              className="inline-flex items-center justify-center gap-6 bg-indigo-50 border border-indigo-100 shadow-sm text-slate-700 font-medium text-sm md:text-base px-8 py-3 rounded-full animate-fade-in-up" 
+              className="inline-flex items-center justify-center gap-6 bg-white/90 backdrop-blur-md border border-white/50 shadow-lg text-slate-800 font-semibold text-sm md:text-base px-8 py-3 rounded-full animate-fade-in-up" 
               style={{ animationDelay: '0.2s' }}
             >
                <div className="flex items-center gap-2">
@@ -319,22 +245,24 @@ const BlogDetail = () => {
           
           {/* CONTENT COLUMN */}
           <div className="lg:col-span-8 bg-white rounded-3xl p-6 md:p-12 shadow-xl shadow-slate-200/50 border border-slate-100 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            {/* Article Body - Optimized for Readability */}
+            {/* Article Body */}
             <article 
                className="
-                prose prose-slate max-w-none
+                prose prose-slate max-w-none w-full break-words overflow-hidden
                 prose-lg md:prose-xl 
-                prose-headings:font-bold prose-headings:text-slate-900 prose-headings:tracking-tight
-                prose-p:text-slate-600 prose-p:leading-8 prose-p:font-serif prose-p:text-[1.125rem]
-                prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:text-indigo-700 hover:prose-a:underline
-                prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8
+                prose-headings:font-bold prose-headings:text-slate-900 prose-headings:tracking-tight prose-headings:break-words
+                prose-p:text-slate-600 prose-p:leading-8 prose-p:font-serif prose-p:text-[1.125rem] prose-p:break-words
+                prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:text-indigo-700 hover:prose-a:underline prose-a:break-all
+                prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8 prose-img:max-w-full prose-img:h-auto
                 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:bg-indigo-50/50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:font-serif prose-blockquote:text-indigo-900
-                prose-li:text-slate-600 prose-li:font-serif
+                prose-li:text-slate-600 prose-li:font-serif prose-li:break-words
+                prose-pre:overflow-x-auto prose-pre:max-w-full
+                prose-table:overflow-x-auto prose-table:block
                 
-                /* Explicit overrides to fix 'too big' text issues */
                 [&>h1]:text-3xl [&>h1]:mb-6
                 [&>h2]:text-2xl [&>h2]:mt-10 [&>h2]:mb-4
                 [&>h3]:text-xl [&>h3]:mt-8 [&>h3]:mb-3
+                [&>*]:max-w-full
                "
                dangerouslySetInnerHTML={{ __html: blog.content }}
             />
@@ -368,14 +296,14 @@ const BlogDetail = () => {
                   
                   <div className="space-y-6">
                     {relatedBlogs.length === 0 ? (
-                       <p className="text-slate-400 text-sm italic">No related stories available yet.</p>
+                       <p className="text-slate-400 text-sm italic">No other stories available yet.</p>
                     ) : (
                       relatedBlogs.map((item) => (
                         <div 
                           key={item.id}
                           onClick={() => {
                             window.scrollTo(0, 0);
-                            navigate(`/blogs/${item.id}`);
+                            navigate(`/blogs/${item.slug || item.id}`);
                           }}
                           className="group cursor-pointer flex gap-4 items-start"
                         >
@@ -388,8 +316,8 @@ const BlogDetail = () => {
                               />
                             )}
                           </div>
-                          <div className="flex-1">
-                            <h4 className="text-sm font-bold text-slate-900 leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-bold text-slate-900 leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2 break-words">
                               {item.title}
                             </h4>
                             <div className="flex items-center text-xs text-slate-400 gap-2">

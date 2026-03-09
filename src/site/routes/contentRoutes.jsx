@@ -9,7 +9,8 @@ import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } f
 export const  contentRoutes = (
   <>
     <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
-    <Route path="/blogs/:id" element={<Layout><BlogDetail /></Layout>} />
+    {/* FIXED: Changed :id to :slug to match the database and params */}
+    <Route path="/blogs/:slug" element={<Layout><BlogDetail /></Layout>} />
     <Route path="/videos" element={<Layout><Videos /></Layout>} />
     <Route path="/achievers" element={<Layout><Achievers /></Layout>} />
     <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />
