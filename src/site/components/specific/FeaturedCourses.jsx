@@ -5,11 +5,12 @@ import { Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 import CourseCard from './CourseCard';
 import { ProgramDetailModal } from './ProgramDetailModal';
+import DownloadBrochureButton from '../layout/DownloadBrochureButton';
 
 const FeaturedCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCourse, setSelectedCourse] = useState(null); // Added Modal State
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -130,9 +131,7 @@ const FeaturedCourses = () => {
               Get Free Counseling
             </button>
             
-            <button className="bg-white/10 border-2 border-white/50 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm">
-              Download Brochure
-            </button>
+            <DownloadBrochureButton isFixed={false} className="w-full sm:w-auto" />
           </div>
         </motion.div>
 

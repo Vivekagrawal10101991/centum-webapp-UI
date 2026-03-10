@@ -24,7 +24,7 @@ import {
 } from '../public';
 
 // Import New Detail Pages
-import ClassBuzzDetail from '../public/pages/ClassBuzzDetail';
+import ClassGaugeDetail from '../public/pages/ClassGaugeDetail'; // <--- FIXED IMPORT
 import MindgaugeDetail from '../public/pages/MindgaugeDetail';
 import LearnWithDashDetail from '../public/pages/LearnWithDashDetail';
 import CentumAiQuDetail from '../public/pages/CentumAiQuDetail';
@@ -48,7 +48,7 @@ export const SiteRoutes = () => {
       <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} />
       
       {/* --- INNOVATION DETAIL ROUTES --- */}
-      <Route path="/ai-innovation/class-buzz" element={<Layout><ClassBuzzDetail /></Layout>} />
+      <Route path="/ai-innovation/class-gauge" element={<Layout><ClassGaugeDetail /></Layout>} /> {/* <--- FIXED ROUTE */}
       <Route path="/ai-innovation/mindgauge" element={<Layout><MindgaugeDetail /></Layout>} />
       <Route path="/ai-innovation/learn-with-dash" element={<Layout><LearnWithDashDetail /></Layout>} />
       <Route path="/ai-innovation/centum-aiqu" element={<Layout><CentumAiQuDetail /></Layout>} />

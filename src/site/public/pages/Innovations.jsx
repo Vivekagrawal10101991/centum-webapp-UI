@@ -25,16 +25,16 @@ import centumAiQuImg from '../../../assets/AI Innovation/Centum AiQu.png';
 const Innovations = () => {
   const innovationList = [
     {
-      title: "ClassBuzz",
-      description: "ClassBuzz makes classrooms more attentive and measurable by conducting short quizzes right after teaching. Students stay engaged, teachers get instant feedback, and parents get visibility into topic-wise learning trends beyond exam marks.",
+      title: "ClassGauge",
+      description: "ClassGauge makes classrooms more attentive and measurable by conducting short quizzes right after teaching. Students stay engaged, teachers get instant feedback, and parents get visibility into topic-wise learning trends beyond exam marks.",
       image: classBuzzImg,
       features: [
         { icon: PlayCircle, label: "Live Quizzes" },
         { icon: MessageSquare, label: "Instant Feedback" },
         { icon: LayoutDashboard, label: "Parent Dashboard" }
       ],
-      linkText: "Explore ClassBuzz",
-      linkTo: "/ai-innovation/class-buzz",
+      linkText: "Explore ClassGauge",
+      linkTo: "/ai-innovation/class-gauge",
       reverse: false
     },
     {
@@ -162,7 +162,7 @@ const Innovations = () => {
           );
         })}
 
-        {/* --- EXACT FIGMA CTA SECTION --- */}
+        {/* --- CTA SECTION --- */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}

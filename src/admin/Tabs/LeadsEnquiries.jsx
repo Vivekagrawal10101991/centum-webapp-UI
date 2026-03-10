@@ -61,14 +61,30 @@ const LeadsEnquiries = () => {
     }
   };
 
-  // Filter based on search and active tab
-  // Note: Assuming 'type' or similar distinguishes between Contact vs Admission if they come from same API
-  // For now, filtering just by search term as requested structure mostly implies one main list
-  const filteredEnquiries = enquiries.filter(item => 
-    item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.phoneNumber?.includes(searchTerm)
-  );
+  // Filter based on active tab and search term
+  const filteredEnquiries = enquiries.filter(item => {
+    // 1. Tab Filtering
+    let tabMatch = true;
+    const interest = item.courseInterest || '';
+    
+    if (activeTab === 'brochure') {
+      tabMatch = interest === 'Brochure Download';
+    } else if (activeTab === 'contact') {
+      tabMatch = interest.toLowerCase().includes('contact') || interest.toLowerCase() === 'general inquiry';
+    } else {
+      // Admission tab: Exclude Brochure and Contact forms
+      tabMatch = interest !== 'Brochure Download' && !interest.toLowerCase().includes('contact') && interest.toLowerCase() !== 'general inquiry';
+    }
+
+    // 2. Search Filtering
+    const searchLower = searchTerm.toLowerCase();
+    const searchMatch = 
+      item.studentName?.toLowerCase().includes(searchLower) ||
+      item.email?.toLowerCase().includes(searchLower) ||
+      item.phoneNumber?.includes(searchTerm);
+
+    return tabMatch && searchMatch;
+  });
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -86,7 +102,7 @@ const LeadsEnquiries = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Leads & Enquiries</h1>
-          <p className="text-gray-500">Manage contact requests and admission enquiries</p>
+          <p className="text-gray-500">Manage contact requests, admissions, and brochure downloads</p>
         </div>
         <div className="flex gap-3">
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
@@ -98,12 +114,12 @@ const LeadsEnquiries = () => {
 
       {/* Tabs */}
       <div className="border-b border-gray-200">
-        <nav className="flex gap-6">
+        <nav className="flex gap-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('admission')}
-            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               activeTab === 'admission'
-                ? 'border-primary text-primary'
+                ? 'border-indigo-600 text-indigo-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -111,13 +127,23 @@ const LeadsEnquiries = () => {
           </button>
           <button
             onClick={() => setActiveTab('contact')}
-            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               activeTab === 'contact'
-                ? 'border-primary text-primary'
+                ? 'border-indigo-600 text-indigo-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             Contact Form Submissions
+          </button>
+          <button
+            onClick={() => setActiveTab('brochure')}
+            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'brochure'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Brochure Downloads
           </button>
         </nav>
       </div>
@@ -132,11 +158,11 @@ const LeadsEnquiries = () => {
               placeholder="Search by name, email or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
             />
           </div>
           <div className="flex gap-3 w-full md:w-auto">
-            <select className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <select className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-600">
               <option value="">All Status</option>
               <option value="new">New</option>
               <option value="contacted">Contacted</option>
@@ -159,7 +185,7 @@ const LeadsEnquiries = () => {
                   Contact Info
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Course Interest
+                  Source / Interest
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Date
@@ -182,7 +208,7 @@ const LeadsEnquiries = () => {
               ) : filteredEnquiries.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                    No enquiries found.
+                    No records found for {activeTab === 'brochure' ? 'Brochure Downloads' : activeTab === 'contact' ? 'Contact Submissions' : 'Admission Enquiries'}.
                   </td>
                 </tr>
               ) : (
@@ -190,7 +216,7 @@ const LeadsEnquiries = () => {
                   <tr key={enquiry.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-lg">
+                        <div className="h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
                           {enquiry.studentName?.charAt(0) || 'S'}
                         </div>
                         <div className="ml-4">
@@ -204,9 +230,9 @@ const LeadsEnquiries = () => {
                       <div className="text-sm text-gray-500">{enquiry.phoneNumber}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{enquiry.courseInterest}</div>
+                      <div className="text-sm text-gray-900 font-medium">{enquiry.courseInterest}</div>
                       {enquiry.message && (
-                        <div className="text-xs text-gray-500 truncate max-w-xs" title={enquiry.message}>
+                        <div className="text-xs text-gray-500 truncate max-w-xs mt-1" title={enquiry.message}>
                           {enquiry.message}
                         </div>
                       )}
@@ -223,7 +249,7 @@ const LeadsEnquiries = () => {
                       <select
                         value={enquiry.status || 'New'}
                         onChange={(e) => handleStatusUpdate(enquiry.id, e.target.value)}
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 ${getStatusColor(enquiry.status)}`}
+                        className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none ${getStatusColor(enquiry.status)}`}
                       >
                         <option value="New">New</option>
                         <option value="Contacted">Contacted</option>
@@ -235,7 +261,7 @@ const LeadsEnquiries = () => {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => handleDelete(enquiry.id)}
-                          className="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded"
+                          className="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
