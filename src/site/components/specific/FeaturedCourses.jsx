@@ -4,10 +4,12 @@ import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 import CourseCard from './CourseCard';
+import { ProgramDetailModal } from './ProgramDetailModal';
 
 const FeaturedCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCourse, setSelectedCourse] = useState(null); // Added Modal State
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -43,10 +45,10 @@ const FeaturedCourses = () => {
   };
 
   return (
-    <section className="py-24 px-6 bg-slate-100 font-sans overflow-hidden">
+    <section className="py-24 px-6 bg-slate-100 font-sans overflow-hidden relative">
       <div className="max-w-7xl mx-auto">
         
-        {/* SECTION HEADER - text-4xl md:text-5xl font-black (Matches Achievements) */}
+        {/* SECTION HEADER */}
         <div className="text-center mb-16">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -85,8 +87,11 @@ const FeaturedCourses = () => {
           >
             {courses.map((course, idx) => (
               <motion.div key={course.id || course._id || idx} variants={itemVariants}>
-                {/* Cards remain white (bg-white is standard for CourseCard) to pop against gray */}
-                <CourseCard course={course} index={idx} />
+                <CourseCard 
+                  course={course} 
+                  index={idx} 
+                  onViewDetails={() => setSelectedCourse(course)} 
+                />
               </motion.div>
             ))}
           </motion.div>
@@ -132,6 +137,14 @@ const FeaturedCourses = () => {
         </motion.div>
 
       </div>
+
+      {/* Detail Modal Popup */}
+      {selectedCourse && (
+        <ProgramDetailModal 
+          course={selectedCourse} 
+          onClose={() => setSelectedCourse(null)} 
+        />
+      )}
     </section>
   );
 };

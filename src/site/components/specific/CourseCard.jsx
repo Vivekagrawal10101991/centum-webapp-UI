@@ -1,15 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BookOpen, Clock, Users, Check, ArrowRight } from 'lucide-react';
 
 /**
  * CourseCard Component
  * Displays a program summary with backend data integration.
- * Includes a "View Detail" button that triggers a modal without 
- * conflicting with the card's general navigation.
+ * Triggers a Detail Modal on click instead of navigating to a new page.
  */
 const CourseCard = ({ course, index = 0, onViewDetails }) => {
-  const navigate = useNavigate();
 
   // Vibrant themes for icons, backgrounds, and buttons based on index
   const themes = [
@@ -54,9 +51,7 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
   const theme = themes[index % themes.length];
 
   /**
-   * Triggers the Detail Modal
-   * stopPropagation() is critical here to prevent the parent 
-   * div's onClick (navigation) from firing simultaneously.
+   * Triggers the Detail Modal when the button is clicked
    */
   const handleViewDetailClick = (e) => {
     e.stopPropagation(); 
@@ -66,12 +61,13 @@ const CourseCard = ({ course, index = 0, onViewDetails }) => {
   };
 
   /**
-   * General Navigation
-   * Navigates to the dedicated course page on card click.
+   * Triggers the Detail Modal when the entire card is clicked
+   * (Removed page navigation template)
    */
   const handleCardClick = () => {
-    const path = course?.slug || course?.id;
-    if (path) navigate(`/courses/${path}`);
+    if (onViewDetails) {
+      onViewDetails(course);
+    }
   };
 
   // Extract price correctly from the database 'details' JSON block
