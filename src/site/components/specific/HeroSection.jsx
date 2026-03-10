@@ -5,8 +5,7 @@ import cmsService from '../../services/cmsService';
 /**
  * HeroSection Component
  * Displays dynamic banners from the backend.
- * Updated: Ensured rounded corners are visible in mobile view by adding padding 
- * and forcing side-by-side buttons.
+ * Updated: Added specific YouTube link to the Demo Class button.
  */
 const HeroSection = () => {
   const [active, setActive] = useState(0);
@@ -58,15 +57,13 @@ const HeroSection = () => {
           key={banner.id || i} 
           className={`w-full flex flex-col transition-opacity duration-1000 ${i === active ? 'opacity-100 relative z-10' : 'opacity-0 absolute top-0 left-0 h-full z-0 pointer-events-none'}`}
         >
-          {/* Top: Banner Image Section with Round Corners in Mobile & Desktop */}
-          {/* Added p-4 on mobile to ensure the rounded corners don't touch the screen edge */}
+          {/* Top: Banner Image Section */}
           <div className="w-full bg-white p-4 pb-2 md:p-4 md:pb-6 flex justify-center">
             <div className="max-w-screen-2xl w-full relative">
               <picture>
                 <source media="(max-width: 768px)" srcSet={banner.mobileImageUrl || banner.imageUrl} />
                 <img 
                   src={banner.imageUrl} 
-                  /* rounded-xl for mobile, rounded-2xl for desktop */
                   className="w-full h-auto block object-top rounded-xl md:rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.12)] border border-slate-200" 
                   alt={banner.title} 
                 />
@@ -74,7 +71,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Bottom: Action Bar - Centered Content */}
+          {/* Bottom: Action Bar - White theme with Side-by-Side Centered Buttons */}
           <div className="bg-white border-t border-slate-100 w-full py-5 md:py-8 z-20 relative mt-auto">
             <div className="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-4 md:gap-6">
               
@@ -90,7 +87,7 @@ const HeroSection = () => {
                 ))}
               </div>
 
-              {/* Action Buttons - Side-by-Side on Mobile */}
+              {/* Action Buttons - Forced flex-row for side-by-side on mobile */}
               <div className="flex flex-row items-center justify-center gap-3 md:gap-6 w-full animate-fade-in">
                 <a 
                   href={banner.redirectUrl || "/courses"}
@@ -98,9 +95,16 @@ const HeroSection = () => {
                 >
                   View Programs <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                 </a>
-                <button className="bg-slate-50 hover:bg-slate-100 px-4 md:px-8 py-3 md:py-4 rounded-xl text-xs md:text-base font-bold uppercase tracking-wide text-slate-700 border border-slate-200 flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap">
+                
+                {/* Updated Demo Class button with the specific YouTube link */}
+                <a 
+                  href="https://www.youtube.com/watch?v=pzjJeLviWdk&list=PLiQ62JOkts64CdQlZjxrnlal1H24ozykJ" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-slate-50 hover:bg-slate-100 px-4 md:px-8 py-3 md:py-4 rounded-xl text-xs md:text-base font-bold uppercase tracking-wide text-slate-700 border border-slate-200 flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap"
+                >
                   <Play className="h-3 w-3 md:h-4 md:w-4 fill-slate-700" /> Demo Class
-                </button>
+                </a>
               </div>
 
             </div>
