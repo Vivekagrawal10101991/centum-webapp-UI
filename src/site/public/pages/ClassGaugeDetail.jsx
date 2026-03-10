@@ -19,7 +19,7 @@ import {
 const classroomImage1 = "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80";
 const classroomImage2 = "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&q=80";
 
-const ClassBuzzDetail = () => {
+const ClassGaugeDetail = () => {
   const benefits = [
     {
       icon: Eye,
@@ -103,12 +103,12 @@ const ClassBuzzDetail = () => {
               </h1>
               
               <p className="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
-                ClassBuzz uses AI-powered in-class quizzes to ensure students stay engaged, understanding is checked immediately, and parents get real visibility into daily learning.
+                ClassGauge uses AI-powered in-class quizzes to ensure students stay engaged, understanding is checked immediately, and parents get real visibility into daily learning.
               </p>
 
               <div className="flex flex-wrap gap-4">
                 <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
-                  See ClassBuzz in Action
+                  See ClassGauge in Action
                 </button>
                 <button className="px-6 py-3 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-semibold rounded-xl hover:bg-white/20 transition-colors">
                   How It Helps My Child
@@ -126,7 +126,7 @@ const ClassBuzzDetail = () => {
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20">
                 <img
                   src={classroomImage1}
-                  alt="ClassBuzz - Interactive Classroom"
+                  alt="ClassGauge - Interactive Classroom"
                   className="w-full h-[400px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent"></div>
@@ -169,14 +169,14 @@ const ClassBuzzDetail = () => {
             </p>
             <div className="inline-block bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-2xl">
               <p className="text-xl font-bold">
-                ClassBuzz combines this natural student psychology with technology.
+                ClassGauge combines this natural student psychology with technology.
               </p>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* What is ClassBuzz */}
+      {/* What is ClassGauge */}
       <div className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -190,7 +190,7 @@ const ClassBuzzDetail = () => {
                 Smart quizzes, right after teaching
               </h2>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                ClassBuzz is a classroom intelligence system that works during regular classes.
+                ClassGauge is a classroom intelligence system that works during regular classes.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -287,7 +287,7 @@ const ClassBuzzDetail = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Why Students Enjoy ClassBuzz
+              Why Students Enjoy ClassGauge
             </h2>
           </motion.div>
 
@@ -372,7 +372,7 @@ const ClassBuzzDetail = () => {
               Problems spotted <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">before exams</span>
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              ClassBuzz uses AI to analyse quiz data and identify:
+              ClassGauge uses AI to analyse quiz data and identify:
             </p>
           </motion.div>
 
@@ -464,14 +464,15 @@ const ClassBuzzDetail = () => {
               Attentive classrooms create confident learners
             </h3>
             <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-              See how ClassBuzz transforms classroom engagement and learning visibility
+              See how ClassGauge transforms classroom engagement and learning visibility
             </p>
-            <Link to="/contact">
+            {/* UPDATED CTA BUTTON WITH EXTERNAL LINK */}
+            <a href="https://classgauge.in/" target="_blank" rel="noopener noreferrer">
               <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-xl">
-                Experience ClassBuzz
+                Experience ClassGauge
                 <Zap className="h-5 w-5" />
               </button>
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>
@@ -479,4 +480,4 @@ const ClassBuzzDetail = () => {
   );
 };
 
-export default ClassBuzzDetail;
+export default ClassGaugeDetail;
