@@ -4,7 +4,7 @@ import enquiryService from "../../services/enquiryService";
 
 /**
  * Contact Component
- * Updated: Fixed Google Maps embed with verified location coordinates to resolve the 'pb' parameter error.
+ * Updated: Fixed Google Maps embed to show a red pointer at the exact location.
  */
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -282,7 +282,7 @@ const Contact = () => {
           </div>
           <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[500px]">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.7502127271!2d77.6364028!3d12.9102604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae149174246877%3A0x6a0a09e07299a9a3!2sCentum%20Academy!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin" 
+              src="https://maps.google.com/maps?q=Centum+Academy,+HSR+Layout,+Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed" 
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 
