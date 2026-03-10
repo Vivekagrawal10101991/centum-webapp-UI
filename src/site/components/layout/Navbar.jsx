@@ -32,7 +32,15 @@ const Navbar = () => {
         { name: "AI Innovation", path: "/ai-innovation" }, 
       ]
     },
-    { name: "Programs", path: "/courses" },
+    { 
+      name: "Programs", 
+      path: "/courses",
+      submenu: [
+        { name: "IIT JEE", path: "/courses?program=IIT+JEE" }, 
+        { name: "NEET", path: "/courses?program=NEET" }, 
+        { name: "Foundation", path: "/courses?program=FOUNDATION" }
+      ]
+    },
     { name: "Library", path: "/library" },
     { name: "Announcements", path: "/announcements" },
     { name: "Success Stories", path: "/student-success" },
@@ -98,6 +106,7 @@ const Navbar = () => {
                     activeDropdown === idx ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"
                   }`}
                   onClick={(e) => {
+                    // Prevent default only if the path is literally '#'
                     if (link.submenu && link.path === '#') e.preventDefault();
                   }}
                 >
