@@ -22,6 +22,8 @@ import LeaveApprovals from '../Tabs/LeaveApprovals';
 import BatchManagement from '../Tabs/BatchManagement';
 // UPDATED IMPORT: renamed to avoid collision with Operations' BatchDetails.jsx
 import SharedBatchDetails from '../Tabs/BatchDetails';
+// ✅ ADDED: Library Content Import
+import LibraryContentManagement from '../Tabs/LibraryContentManagement';
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -164,6 +166,18 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
             <DashboardLayout>
               <LeaveApprovals />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ ADDED: Library Content Route for Super Admin */}
+      <Route
+        path="/dashboard/super-admin/library-content"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <LibraryContentManagement />
             </DashboardLayout>
           </ProtectedRoute>
         }

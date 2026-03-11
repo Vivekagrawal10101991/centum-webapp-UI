@@ -4,7 +4,8 @@ import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
 import { SuperAdminDashboard } from '../dashboard/super-admin';
 import { AddUser, GetUser, DeleteUser } from '../Tabs/UserManagement';
-import LeaveApprovals from '../Tabs/LeaveApprovals'; // <-- ADDED IMPORT
+import LeaveApprovals from '../Tabs/LeaveApprovals';
+import LibraryContentManagement from '../Tabs/LibraryContentManagement'; // ✅ THIS WAS MISSING
 
 /**
  * Super Admin Dashboard Routes
@@ -52,13 +53,23 @@ export const superAdminRoutes = (
         </ProtectedRoute>
       }
     />
-    {/* ADDED LEAVE APPROVALS ROUTE */}
     <Route
       path="/dashboard/super-admin/leave-approvals"
       element={
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
           <DashboardLayout>
             <LeaveApprovals />
+          </DashboardLayout>
+        </ProtectedRoute>
+      }
+    />
+    {/* ✅ THIS ROUTE WAS MISSING, CAUSING THE WHITE PAGE */}
+    <Route
+      path="/dashboard/super-admin/library-content"
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+          <DashboardLayout>
+            <LibraryContentManagement />
           </DashboardLayout>
         </ProtectedRoute>
       }

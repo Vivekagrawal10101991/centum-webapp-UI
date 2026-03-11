@@ -146,5 +146,26 @@ export const cmsService = {
   deleteContributor: async (id) => {
     const response = await api.delete(`/api/tech/social/contributors/${id}`);
     return response.data;
+  },
+
+  // --- Library Content Endpoints ---
+  getLibraryContents: async () => {
+    const response = await api.get('/api/tech/library/all');
+    return response.data;
+  },
+
+  addLibraryContent: async (data) => {
+    const response = await api.post('/api/tech/library/add', data);
+    return response.data;
+  },
+
+  updateLibraryContent: async (id, data) => {
+    const response = await api.put(`/api/tech/library/${id}`, data);
+    return response.data;
+  },
+
+  deleteLibraryContent: async (id) => {
+    const response = await api.delete(`/api/tech/library/${id}`);
+    return response.data;
   }
 };
