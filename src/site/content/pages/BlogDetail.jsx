@@ -149,7 +149,7 @@ const BlogDetail = () => {
           <h3 className="text-xl font-bold text-slate-900 mb-2">Story Unavailable</h3>
           <p className="text-slate-500 mb-6 text-sm">We couldn't find the blog post you're looking for.</p>
           <button
-            onClick={() => navigate('/blogs')}
+            onClick={() => navigate('/blog')}
             className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-black transition-all"
           >
             Back to Library
@@ -172,7 +172,7 @@ const BlogDetail = () => {
       <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 pointer-events-none">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <button
-            onClick={() => navigate('/blogs')}
+            onClick={() => navigate('/blog')}
             className="pointer-events-auto w-10 h-10 bg-white/90 backdrop-blur-md shadow-sm border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:scale-105 transition-all cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -310,7 +310,7 @@ const BlogDetail = () => {
                           key={item.id}
                           onClick={() => {
                             window.scrollTo(0, 0);
-                            navigate(`/blogs/${item.slug || item.id}`);
+                            navigate(`/blog/${item.slug || item.id}`);
                           }}
                           className="group cursor-pointer flex gap-4 items-start"
                         >

@@ -48,7 +48,7 @@ const Navbar = () => {
       name: "Media", 
       path: "#", 
       submenu: [
-        { name: "Blogs", path: "/blogs" },
+        { name: "Blogs", path: "/blog" },
         { name: "Explore Youtube", path: "https://www.youtube.com/@centumacademy", external: true }
       ]
     },

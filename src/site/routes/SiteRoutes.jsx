@@ -78,8 +78,8 @@ export const SiteRoutes = () => {
       <Route path="/courses/foundation-legacy" element={<Layout><FoundationCourses /></Layout>} />
 
       {/* Content Routes */}
-      <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
-      <Route path="/blogs/:id" element={<Layout><BlogDetail /></Layout>} />
+      <Route path="/blog" element={<Layout><Blogs /></Layout>} />
+      <Route path="/blog/:id" element={<Layout><BlogDetail /></Layout>} />
       <Route path="/videos" element={<Layout><Videos /></Layout>} />
       <Route path="/achievers" element={<Layout><Achievers /></Layout>} />
       <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />
