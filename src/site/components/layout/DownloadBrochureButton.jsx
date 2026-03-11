@@ -50,8 +50,9 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
   };
 
   // Ensured bg-red-600 is locked in. Reduced padding (py-2 px-3) and text size (text-sm) to decrease the vertical height.
+  // Changed rounded-l-xl to rounded-r-xl to account for the rotate-180 visual swap
   const buttonClasses = isFixed
-    ? `fixed right-0 top-[45%] -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 text-sm rounded-l-xl shadow-2xl z-40 transition-transform transform hover:-translate-x-1 flex items-center gap-2 [writing-mode:vertical-rl] rotate-180 cursor-pointer ${className}`
+    ? `fixed right-0 top-[45%] -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 text-sm rounded-r-xl shadow-2xl z-40 transition-transform transform hover:-translate-x-1 flex items-center gap-2 [writing-mode:vertical-rl] rotate-180 cursor-pointer ${className}`
     : `bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer w-fit ${className}`;
 
   // Slightly scaled down the icon on the fixed button to match the reduced height
