@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { 
   Megaphone, 
   Calendar, 
@@ -16,6 +17,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cmsService } from '../../services/cmsService';
 
 const Announcements = () => {
+  usePageTitle('Latest Announcements & Updates | Centum Academy');
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');

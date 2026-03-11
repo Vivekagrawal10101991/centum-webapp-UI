@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import { 
   Target, 
   Eye, 
@@ -17,6 +18,7 @@ import {
  *
  */
 const VisionMission = () => {
+  usePageTitle('Vision & Mission | Empowering Education | Centum Academy');
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* 1. Hero Section - Matches Figma Gradient and Height */}

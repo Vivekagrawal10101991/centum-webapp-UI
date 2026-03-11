@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import { Link } from 'react-router-dom';
 import { 
   Brain, 
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 const MindgaugeDetail = () => {
+  usePageTitle('MindGauge | AI Student Assessment Tool | Centum Academy');
   const assessmentAreas = [
     {
       icon: Brain,

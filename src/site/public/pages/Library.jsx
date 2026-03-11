@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { Search, FileText, BookOpen, Download, Calendar } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 
 const Library = () => {
+  usePageTitle('Digital Library & Free Study Resources | Centum Academy');
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

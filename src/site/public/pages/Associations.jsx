@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import { useNavigate } from 'react-router-dom';
 import { 
   Award, 
@@ -20,6 +21,7 @@ import Button from '../../../components/common/Button';
  * Updated: Navigation calls now include window.scrollTo(0, 0) to ensure redirect to top of page.
  */
 const Associations = () => {
+  usePageTitle('Associations & Partnerships | Centum Academy');
   const navigate = useNavigate();
 
   // Helper function to handle navigation and scroll to top
