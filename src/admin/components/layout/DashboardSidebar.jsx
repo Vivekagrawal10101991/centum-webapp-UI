@@ -23,6 +23,8 @@ const DashboardSidebar = () => {
       { name: 'Course Management', path: '/dashboard/super-admin/course-management', icon: BookOpen },
       { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
       { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
+      // FIXED THE ICON HERE TO AVOID CRASH
+      { name: 'Library Content', path: '/dashboard/super-admin/library-content', icon: FileText }, 
       { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle },
       { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
@@ -80,7 +82,6 @@ const DashboardSidebar = () => {
 
     [ROLES.OPERATIONS_MANAGER]: [
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
-      // Updated here to point to the new full batch management route
       { name: 'Batch Management', path: '/dashboard/operations/batches', icon: Layers },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
