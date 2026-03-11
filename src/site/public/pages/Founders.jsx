@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { motion } from 'framer-motion';
 import { 
   Award, 
@@ -22,6 +23,7 @@ import akhilUpadhyayImage from '../../../assets/About/Akhil Kumar.png';
  * Maintains alternating alignment: Even = Image Left, Odd = Image Right.
  */
 const Founders = () => {
+  usePageTitle('Our Founders | The Visionaries Behind Centum Academy');
   const founders = [
     {
       name: "Mr. Tushar Sinha",

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -37,6 +38,7 @@ import { ProgramDetailModal } from "../../components/specific/ProgramDetailModal
 import CourseCard from "../../components/specific/CourseCard";
 
 const Courses = () => {
+  usePageTitle('Our Courses | JEE, NEET & Foundation Programs | Centum Academy');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams(); 
   const [courses, setCourses] = useState([]);

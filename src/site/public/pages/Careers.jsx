@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import usePageTitle from '../hooks/usePageTitle';
 import { 
   Briefcase, MapPin, Clock, Users, 
   Award, TrendingUp, Heart, Zap, Shield, Smile, ArrowRight, Calendar, X 
@@ -6,6 +7,7 @@ import {
 import api from "../../../services/api";
 
 const Careers = () => {
+  usePageTitle('Careers | Join Our Expert Faculty & Team | Centum Academy');
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
 

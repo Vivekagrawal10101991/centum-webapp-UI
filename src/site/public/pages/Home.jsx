@@ -1,5 +1,5 @@
 import React from 'react';
-
+import usePageTitle from '../hooks/usePageTitle';
 // Standard exports
 import { 
   HeroSection, 
@@ -15,6 +15,7 @@ import FeaturedCourses from '../../components/specific/FeaturedCourses';
 import AchieversGrid from '../../components/specific/AchieversGrid';
 
 const Home = () => {
+  usePageTitle('Centum Academy | Premier JEE, NEET & Foundation Coaching');
   return (
     <div className="flex flex-col gap-0 bg-white font-sans overflow-x-hidden">
       

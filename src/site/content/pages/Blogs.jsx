@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import usePageTitle from '../../public/hooks/usePageTitle';
 import { Search, Calendar, User, ArrowRight, Tag, BookOpen, Clock } from 'lucide-react';
 import { Card, Button } from '../../../components/common';
 import { cmsService } from '../../services/cmsService'; 
@@ -21,6 +22,7 @@ const formatDate = (dateString) => {
 };
 
 const Blogs = () => {
+  usePageTitle('Educational Blogs, Tips & Insights | Centum Academy');
   const categories = [
     "All Posts",
     "JEE Preparation",

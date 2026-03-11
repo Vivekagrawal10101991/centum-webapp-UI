@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import { Link } from 'react-router-dom';
 import { 
   BookOpen, 
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 const LearnWithDashDetail = () => {
+  usePageTitle('Learn With Dash | Interactive AI Learning Assistant | Centum Academy');
   const features = [
     {
       icon: BookOpen,

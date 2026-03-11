@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../../public/hooks/usePageTitle';
 import AchieversGrid from '../../components/specific/AchieversGrid';
 import { TestimonialsSection } from '../../components/specific';
 
@@ -8,6 +9,7 @@ import { TestimonialsSection } from '../../components/specific';
  * UPDATED: Removed StatsSection ("Why Choose Centum") as per request.
  */
 const StudentSuccess = () => {
+  usePageTitle('Student Success Stories & Testimonials | Centum Academy');
   return (
     <div className="bg-white font-sans">
       {/* 1. Our Students' Achievements (Includes the black stats strip) */}

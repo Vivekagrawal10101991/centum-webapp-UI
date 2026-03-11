@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { motion } from 'framer-motion';
 import { 
   Sparkles, Target, Award, BookOpen, Heart, 
@@ -26,6 +27,7 @@ function AnimatedCounter({ value, duration = 1 }) {
 }
 
 const About = () => {
+  usePageTitle('About Us | Our Vision & Expert Faculty | Centum Academy');
   const values = [
     { icon: Target, title: "Our Mission", description: "To empower students through high-quality mentorship, innovative teaching practices, and personalised attention so that they excel in both academics and life.", color: "#7E3AF2" },
     { icon: Award, title: "Our Vision", description: "To create an education ecosystem where every student enjoys learning, thinks critically, and grows into a confident contributor to society.", color: "#1C64F2" },
