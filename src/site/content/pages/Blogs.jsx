@@ -137,7 +137,7 @@ const Blogs = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayBlogs.map((post) => (post && (
                 <Card key={post.id} className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-shadow group flex flex-col h-full">
-                  <Link to={`/blogs/${post.slug}`} className="block relative aspect-[16/10] overflow-hidden">
+                  <Link to={`/blog/${post.slug}`} className="block relative aspect-[16/10] overflow-hidden">
                     <img
                       src={post.image}
                       alt={post.title}
@@ -151,7 +151,7 @@ const Blogs = () => {
                   </Link>
 
                   <div className="p-6 flex flex-col flex-grow">
-                    <Link to={`/blogs/${post.slug}`}>
+                    <Link to={`/blog/${post.slug}`}>
                       <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-[#7E3AF2] transition-colors">
                         {post.title}
                       </h3>
@@ -172,7 +172,7 @@ const Blogs = () => {
                     <div className="flex items-center justify-between mt-auto">
                       <span className="text-sm text-slate-500">{post.date}</span>
                       
-                      <Link to={`/blogs/${post.slug}`}>
+                      <Link to={`/blog/${post.slug}`}>
                         <Button variant="ghost" size="sm" className="text-[#7E3AF2] hover:text-[#6749D4] hover:bg-purple-50 p-0 hover:bg-transparent pointer-events-none">
                           Read More
                           <ArrowRight className="ml-1 h-3 w-3" />
