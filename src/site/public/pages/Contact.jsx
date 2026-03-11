@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import usePageTitle from '../hooks/usePageTitle';
 import { Mail, Phone, MapPin, Clock, Send, User, BookOpen, MessageSquare, Loader2 } from "lucide-react";
 import enquiryService from "../../services/enquiryService";
 
@@ -7,6 +8,7 @@ import enquiryService from "../../services/enquiryService";
  * Updated: Fixed Google Maps embed to show a red pointer at the exact location.
  */
 const Contact = () => {
+  usePageTitle('Contact Us | Get in Touch | Centum Academy');
   const [formData, setFormData] = useState({
     studentName: "",
     email: "",

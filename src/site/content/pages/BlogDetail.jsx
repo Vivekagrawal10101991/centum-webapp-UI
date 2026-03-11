@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, Share2, Clock, Sparkles, ArrowUpRight, User, BookOpen } from 'lucide-react';
 import { getAllBlogs, getBlogBySlug } from '../../../admin/services/blogService';
+import usePageTitle from '../../public/hooks/usePageTitle'; // <-- Imported Custom Hook
 
 const BlogDetail = () => {
   const { slug, id } = useParams();
@@ -11,6 +12,12 @@ const BlogDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  // --- Dynamic SEO Meta Title ---
+  const pageTitle = blog 
+    ? `${blog.title} | Centum Academy Blog` 
+    : 'Loading Article... | Centum Academy';
+  usePageTitle(pageTitle);
 
   // Scroll Progress Logic
   useEffect(() => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -23,6 +24,7 @@ import learnWithDashImg from '../../../assets/AI Innovation/learn with dash.png'
 import centumAiQuImg from '../../../assets/AI Innovation/Centum AiQu.png';
 
 const Innovations = () => {
+  usePageTitle('AI Innovations in Learning | The Future of Education | Centum Academy');
   const innovationList = [
     {
       title: "ClassGauge",

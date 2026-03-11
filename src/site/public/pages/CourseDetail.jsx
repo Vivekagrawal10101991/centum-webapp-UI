@@ -7,11 +7,18 @@ import {
   Sparkles, ShieldCheck, GraduationCap
 } from "lucide-react";
 import { cmsService } from '../../services/cmsService';
+import usePageTitle from '../hooks/usePageTitle'; // <-- Imported Custom Hook
 
 const CourseDetail = () => {
   const { slug } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // --- Dynamic SEO Meta Title ---
+  const pageTitle = course 
+    ? `${course.title || course.name} | Centum Academy` 
+    : 'Loading Course... | Centum Academy';
+  usePageTitle(pageTitle);
 
   useEffect(() => {
     window.scrollTo(0, 0);

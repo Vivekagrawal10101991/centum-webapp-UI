@@ -10,7 +10,7 @@ import {
   About, 
   Contact, 
   Courses, 
-  Careers, // <--- 1. ADD THIS IMPORT
+  Careers,
   Announcements,
   VisionMission,
   Founders,
@@ -24,7 +24,7 @@ import {
 } from '../public';
 
 // Import New Detail Pages
-import ClassGaugeDetail from '../public/pages/ClassGaugeDetail'; // <--- FIXED IMPORT
+import ClassGaugeDetail from '../public/pages/ClassGaugeDetail'; 
 import MindgaugeDetail from '../public/pages/MindgaugeDetail';
 import LearnWithDashDetail from '../public/pages/LearnWithDashDetail';
 import CentumAiQuDetail from '../public/pages/CentumAiQuDetail';
@@ -48,7 +48,7 @@ export const SiteRoutes = () => {
       <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} />
       
       {/* --- INNOVATION DETAIL ROUTES --- */}
-      <Route path="/ai-innovation/class-gauge" element={<Layout><ClassGaugeDetail /></Layout>} /> {/* <--- FIXED ROUTE */}
+      <Route path="/ai-innovation/class-gauge" element={<Layout><ClassGaugeDetail /></Layout>} />
       <Route path="/ai-innovation/mindgauge" element={<Layout><MindgaugeDetail /></Layout>} />
       <Route path="/ai-innovation/learn-with-dash" element={<Layout><LearnWithDashDetail /></Layout>} />
       <Route path="/ai-innovation/centum-aiqu" element={<Layout><CentumAiQuDetail /></Layout>} />
@@ -59,7 +59,7 @@ export const SiteRoutes = () => {
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
       {/* --- CAREERS ROUTE --- */}
-      <Route path="/careers" element={<Layout><Careers /></Layout>} /> {/* <--- 2. ADD THIS ROUTE */}
+      <Route path="/careers" element={<Layout><Careers /></Layout>} /> 
       
       {/* Announcements */}
       <Route path="/announcements" element={<Layout><Announcements /></Layout>} />

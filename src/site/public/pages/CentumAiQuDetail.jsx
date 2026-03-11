@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 const CentumAiQuDetail = () => {
+  usePageTitle('Centum AiQu | Advanced AI Education Integration | Centum Academy');
   return (
     <section className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-indigo-100 selection:text-indigo-900">
       

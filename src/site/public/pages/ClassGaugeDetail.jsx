@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import { Link } from 'react-router-dom';
 import { 
   Zap, 
@@ -20,6 +21,7 @@ const classroomImage1 = "https://images.unsplash.com/photo-1509062522246-3755977
 const classroomImage2 = "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&q=80";
 
 const ClassGaugeDetail = () => {
+  usePageTitle('Class Gauge | AI-Powered Classroom Analytics | Centum Academy');
   const benefits = [
     {
       icon: Eye,
