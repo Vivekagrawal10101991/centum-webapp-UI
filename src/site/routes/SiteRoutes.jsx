@@ -64,10 +64,15 @@ export const SiteRoutes = () => {
       {/* Announcements */}
       <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
       
-      {/* Main Course Listing */}
-      <Route path="/courses" element={<Layout><Courses /></Layout>} />
+      {/* --- NEW PROGRAM ROUTES --- */}
+      {/* Main Program Listing */}
+      <Route path="/program" element={<Layout><Courses /></Layout>} />
+      
+      {/* Dynamic Program Category Route (e.g., /program/IIT-JEE) */}
+      <Route path="/program/:programId" element={<Layout><Courses /></Layout>} />
       
       {/* --- DYNAMIC COURSE TEMPLATE (Matches Slug or ID) --- */}
+      {/* Keeping this as /courses/:slug for individual course details unless you want it changed */}
       <Route path="/courses/:slug" element={<Layout><CourseDetail /></Layout>} />
       
       {/* Legacy Specific Pages */}

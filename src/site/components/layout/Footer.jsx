@@ -62,8 +62,8 @@ const Footer = () => {
             <h4 className="font-bold text-indigo-400 mb-6 uppercase text-sm tracking-widest">Quick Links</h4>
             <ul className="space-y-3 text-sm text-slate-400">
               <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">JEE Preparation</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">NEET Preparation</Link></li>
+              <li><Link to="/program/iit-jee-coaching-bangalore" className="hover:text-white transition-colors">JEE Preparation</Link></li>
+              <li><Link to="/program/neet-coaching-bangalore" className="hover:text-white transition-colors">NEET Preparation</Link></li>
               <li><Link to="/student-success" className="hover:text-white transition-colors">Success Stories</Link></li>
               <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
             </ul>
@@ -73,10 +73,10 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-indigo-400 mb-6 uppercase text-sm tracking-widest">Programs</h4>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link to="/courses" className="hover:text-white transition-colors">JEE Main + Advanced</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">NEET Coaching</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">KCET Prep</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">Foundation (8-10)</Link></li>
+              <li><Link to="/program/iit-jee-coaching-bangalore" className="hover:text-white transition-colors">JEE Main + Advanced</Link></li>
+              <li><Link to="/program/neet-coaching-bangalore" className="hover:text-white transition-colors">NEET Coaching</Link></li>
+              <li><Link to="/program" className="hover:text-white transition-colors">KCET Prep</Link></li>
+              <li><Link to="/program/foundation-coaching-bangalore" className="hover:text-white transition-colors">Foundation (8-10)</Link></li>
             </ul>
           </div>
 
