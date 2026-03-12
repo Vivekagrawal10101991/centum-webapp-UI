@@ -34,11 +34,11 @@ const Navbar = () => {
     },
     { 
       name: "Programs", 
-      path: "/courses",
+      path: "/program",
       submenu: [
-        { name: "IIT JEE", path: "/courses?program=IIT+JEE" }, 
-        { name: "NEET", path: "/courses?program=NEET" }, 
-        { name: "Foundation", path: "/courses?program=FOUNDATION" }
+        { name: "IIT JEE", path: "/program/iit-jee-coaching-bangalore" }, 
+        { name: "NEET", path: "/program/neet-coaching-bangalore" }, 
+        { name: "Foundation", path: "/program/foundation-coaching-bangalore" }
       ]
     },
     { name: "Library", path: "/library" },

@@ -105,7 +105,7 @@ const FeaturedCourses = () => {
           viewport={{ once: true }}
           className="flex justify-center mb-24"
         >
-          <Link to="/courses">
+          <Link to="/program">
             <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-xl text-base font-bold uppercase tracking-wider shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 hover:-translate-y-1">
               Explore More Courses <ArrowRight className="h-5 w-5" />
             </button>

@@ -12,7 +12,10 @@ export const publicRoutes = (
     <Route path="/" element={<Layout><Home /></Layout>} />
     <Route path="/about" element={<Layout><About /></Layout>} />
     <Route path="/contact" element={<Layout><Contact /></Layout>} />
-    <Route path="/courses" element={<Layout><Courses /></Layout>} />
+    {/* Updated base route from /courses to /program */}
+    <Route path="/program" element={<Layout><Courses /></Layout>} />
+    {/* Added dynamic route to handle specific programs like /program/IIT-JEE */}
+    <Route path="/program/:programId" element={<Layout><Courses /></Layout>} />
     <Route path="/careers" element={<Layout><Careers /></Layout>} />
     <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
   </>
