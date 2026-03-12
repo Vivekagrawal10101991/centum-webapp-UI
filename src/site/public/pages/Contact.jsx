@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import usePageTitle from '../hooks/usePageTitle';
 import { Mail, Phone, MapPin, Clock, Send, User, BookOpen, MessageSquare, Loader2 } from "lucide-react";
 import enquiryService from "../../services/enquiryService";
+import { cmsService } from "../../services/cmsService";
 
 /**
  * Contact Component
- * Updated: Fixed Google Maps embed to show a red pointer at the exact location.
+ * Updated: Fetches dynamic course titles from backend for the dropdown.
  */
 const Contact = () => {
   usePageTitle('Contact Us | Get in Touch | Centum Academy');
@@ -20,6 +21,25 @@ const Contact = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState({ type: "", message: "" });
+  
+  // --- NEW STATE FOR DYNAMIC COURSES ---
+  const [courses, setCourses] = useState([]);
+  const [fetchingCourses, setFetchingCourses] = useState(true);
+
+  // --- FETCH COURSES ON MOUNT ---
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await cmsService.getCourses();
+        setCourses(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to load courses:", error);
+      } finally {
+        setFetchingCourses(false);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -229,14 +249,21 @@ const Contact = () => {
                   required
                   value={formData.courseInterest}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white appearance-none"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#7E3AF2] focus:ring-2 focus:ring-[#7E3AF2]/20 outline-none transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer"
                 >
-                  <option value="">Select a course</option>
-                  <option value="JEE Main + Advanced">JEE Main + Advanced</option>
-                  <option value="NEET Program">NEET Program</option>
-                  <option value="Foundation (Class 8-10)">Foundation (Class 8-10)</option>
-                  <option value="KCET">KCET</option>
-                  <option value="Other">Other</option>
+                  <option value="" disabled>Select a course</option>
+                  {fetchingCourses ? (
+                    <option disabled>Loading programs...</option>
+                  ) : courses.length > 0 ? (
+                    courses.map((course) => (
+                      <option key={course.id || course._id} value={course.title}>
+                        {course.title}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No programs available</option>
+                  )}
+                  <option value="Other">Other / Unsure</option>
                 </select>
               </div>
 
