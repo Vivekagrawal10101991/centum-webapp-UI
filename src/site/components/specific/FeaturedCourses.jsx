@@ -105,7 +105,7 @@ const FeaturedCourses = () => {
           viewport={{ once: true }}
           className="flex justify-center mb-24"
         >
-          <Link to="/program">
+          <Link to="/program" onClick={() => window.scrollTo(0, 0)}>
             <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-xl text-base font-bold uppercase tracking-wider shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 hover:-translate-y-1">
               Explore More Courses <ArrowRight className="h-5 w-5" />
             </button>
@@ -127,9 +127,11 @@ const FeaturedCourses = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
-            <button className="bg-white text-indigo-900 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
-              Get Free Counseling
-            </button>
+            <Link to="/contact" onClick={() => window.scrollTo(0, 0)} className="w-full sm:w-auto">
+              <button className="bg-white text-indigo-900 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
+                Get Free Counseling
+              </button>
+            </Link>
             
             <DownloadBrochureButton isFixed={false} className="w-full sm:w-auto" />
           </div>

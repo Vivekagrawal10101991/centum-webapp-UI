@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Play, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import cmsService from '../../services/cmsService';
 
 /**
  * HeroSection Component
  * Displays dynamic banners from the backend.
- * Updated: Added specific YouTube link to the Demo Class button.
+ * Updated: Added specific YouTube link to the Demo Class button and updated View Programs link.
  */
 const HeroSection = () => {
   const [active, setActive] = useState(0);
@@ -89,12 +90,13 @@ const HeroSection = () => {
 
               {/* Action Buttons - Forced flex-row for side-by-side on mobile */}
               <div className="flex flex-row items-center justify-center gap-3 md:gap-6 w-full animate-fade-in">
-                <a 
-                  href={banner.redirectUrl || "/courses"}
+                <Link 
+                  to={banner.redirectUrl || "/program"}
+                  onClick={() => window.scrollTo(0, 0)}
                   className="bg-indigo-600 hover:bg-indigo-700 px-4 md:px-8 py-3 md:py-4 rounded-xl text-xs md:text-base font-bold uppercase tracking-wide text-white flex items-center gap-2 transition-all shadow-lg active:scale-95 whitespace-nowrap"
                 >
                   View Programs <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-                </a>
+                </Link>
                 
                 {/* Updated Demo Class button with the specific YouTube link */}
                 <a 
