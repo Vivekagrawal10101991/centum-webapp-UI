@@ -46,7 +46,9 @@ export default function CourseManagement() {
     title: '',
     category: 'regular',
     tag: '',
-    program: '', // <--- NEW STATE FIELD
+    program: '', 
+    duration: '', // <--- NEW STATE FIELD
+    batchSize: '', // <--- NEW STATE FIELD
     shortDescription: '',
     slug: '',
     details: {
@@ -144,7 +146,9 @@ export default function CourseManagement() {
     setEditingCourse(course);
     const formattedCourse = {
       ...course,
-      program: course.program || '', // Ensure program is mapped
+      program: course.program || '',
+      duration: course.duration || '', // <--- POPULATE FOR EDIT
+      batchSize: course.batchSize || '', // <--- POPULATE FOR EDIT
       details: {
         ...course.details,
         about: course.details?.about || '',
@@ -271,7 +275,6 @@ export default function CourseManagement() {
                   />
                 </div>
 
-                {/* --- PROGRAM DROPDOWN (NEW) --- */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Program <span className="text-red-500">*</span></label>
                   <div className="relative">
@@ -291,7 +294,6 @@ export default function CourseManagement() {
                   </div>
                 </div>
 
-                {/* --- UPDATED TAG DROPDOWN --- */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Badge / Tag</label>
                   <div className="relative">
@@ -310,7 +312,6 @@ export default function CourseManagement() {
                   </div>
                 </div>
 
-                {/* --- UPDATED CATEGORY (Foundation Removed) --- */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Category</label>
                   <div className="relative">
@@ -327,6 +328,30 @@ export default function CourseManagement() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                   </div>
+                </div>
+                
+                {/* --- NEW FIELD: DURATION --- */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Duration</label>
+                  <input
+                    type="text"
+                    value={courseForm.duration}
+                    onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                    placeholder="e.g. 2 Years"
+                  />
+                </div>
+
+                {/* --- NEW FIELD: BATCH SIZE --- */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Batch Size</label>
+                  <input
+                    type="text"
+                    value={courseForm.batchSize}
+                    onChange={(e) => setCourseForm({ ...courseForm, batchSize: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                    placeholder="e.g. 30-35 Students"
+                  />
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
