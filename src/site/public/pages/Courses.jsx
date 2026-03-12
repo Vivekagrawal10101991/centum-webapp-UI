@@ -32,15 +32,16 @@ import {
   ArrowRight
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { cmsService } from '../../services/cmsService';
 import { ProgramDetailModal } from "../../components/specific/ProgramDetailModal";
 import CourseCard from "../../components/specific/CourseCard";
 
 const Courses = () => {
-  usePageTitle('Our Courses | JEE, NEET & Foundation Programs | Centum Academy');
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); 
+  // We use useParams now to grab the dynamic segment /program/:programId
+  const { programId } = useParams(); 
+  
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -49,15 +50,33 @@ const Courses = () => {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [tagFilter, setTagFilter] = useState('All');
 
-  // Get the program filter from URL (e.g., ?program=IIT+JEE)
-  const programFilter = searchParams.get('program');
+  // Map the new SEO URL path param to the internal program identifier
+  let programFilter = null;
+  if (programId) {
+    if (programId.toLowerCase() === 'iit-jee-coaching-bangalore') programFilter = 'IIT JEE';
+    else if (programId.toLowerCase() === 'neet-coaching-bangalore') programFilter = 'NEET';
+    else if (programId.toLowerCase() === 'foundation-coaching-bangalore') programFilter = 'FOUNDATION';
+    else programFilter = programId; // Fallback
+  }
+
+  // --- DYNAMIC META TITLE ---
+  let pageTitle = 'Our Courses | JEE, NEET & Foundation Programs | Centum Academy';
+  if (programFilter?.toUpperCase() === 'IIT JEE') {
+    pageTitle = 'IIT JEE Coaching in Bangalore for JEE Main and Advanced';
+  } else if (programFilter?.toUpperCase() === 'NEET') {
+    pageTitle = 'NEET Coaching in Bangalore for Medical Entrance Exams';
+  } else if (programFilter?.toUpperCase() === 'FOUNDATION') {
+    pageTitle = 'Foundation Coaching in Bangalore for Classes 8 to 10';
+  }
+  
+  usePageTitle(pageTitle);
 
   // Scroll to top and reset local filters whenever the program URL changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setCategoryFilter('All');
     setTagFilter('All');
-  }, [programFilter]);
+  }, [programId]);
 
   // Fetch courses from backend on mount
   useEffect(() => {
@@ -752,7 +771,7 @@ const Courses = () => {
                       At Centum Academy, our IIT Foundation Coaching program is designed to help students from Classes 8, 9, and 10 develop strong fundamentals in Mathematics and Science—laying the groundwork for IIT JEE preparation. Rather than rushing students into exam pressure, our foundation course focuses on concept clarity, logical reasoning, and analytical thinking.
                     </p>
                     <button 
-                      onClick={() => navigate('/courses?program=IIT+JEE')}
+                      onClick={() => navigate('/program/iit-jee-coaching-bangalore')}
                       className="inline-flex items-center gap-2 text-amber-600 font-bold hover:text-amber-700 transition-colors mt-auto"
                     >
                       Read More <ArrowRight className="h-4 w-4" />
@@ -769,7 +788,7 @@ const Courses = () => {
                       Centum Academy’s NEET Foundation Coaching is designed for students of Classes 8, 9, and 10 who aspire to pursue careers in medicine. This program builds strong fundamentals in Biology, Physics, and Chemistry, creating a solid base for future NEET preparation. Instead of introducing exam pressure too early, our foundation course focuses on concept understanding, scientific thinking, and application-based learning.
                     </p>
                     <button 
-                      onClick={() => navigate('/courses?program=NEET')}
+                      onClick={() => navigate('/program/neet-coaching-bangalore')}
                       className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:text-emerald-700 transition-colors mt-auto"
                     >
                       Read More <ArrowRight className="h-4 w-4" />

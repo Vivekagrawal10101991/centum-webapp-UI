@@ -109,9 +109,12 @@ const ClassGaugeDetail = () => {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
-                  See ClassGauge in Action
-                </button>
+                {/* UPDATED CTA BUTTON WITH EXTERNAL LINK */}
+                <a href="https://classgauge.in/" target="_blank" rel="noopener noreferrer">
+                  <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
+                    See ClassGauge in Action
+                  </button>
+                </a>
                 <button className="px-6 py-3 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-semibold rounded-xl hover:bg-white/20 transition-colors">
                   How It Helps My Child
                 </button>
@@ -468,7 +471,7 @@ const ClassGaugeDetail = () => {
             <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
               See how ClassGauge transforms classroom engagement and learning visibility
             </p>
-            {/* UPDATED CTA BUTTON WITH EXTERNAL LINK */}
+            {/* CTA BUTTON WITH EXTERNAL LINK */}
             <a href="https://classgauge.in/" target="_blank" rel="noopener noreferrer">
               <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-xl">
                 Experience ClassGauge
