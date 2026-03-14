@@ -28,7 +28,7 @@ const Navbar = () => {
       submenu: [
         { name: "Vision & Mission", path: "/vision-mission" }, 
         { name: "Founders", path: "/founders" }, 
-        { name: "Associations", path: "/associations" },
+        // Removed Associations link from here
         { name: "AI Innovation", path: "/ai-innovation" }, 
       ]
     },
@@ -270,4 +270,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; 
