@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout';
 // Auth pages
 import { Login, Signup, ChangePassword, Unauthorized } from '../auth';
 
-// Public pages
+// Public pages (Removed Associations from this list)
 import { 
   Home, 
   About, 
@@ -14,7 +14,6 @@ import {
   Announcements,
   VisionMission,
   Founders,
-  Associations,
   Innovations, 
   JeeMains,
   JeeAdvance,
@@ -44,7 +43,6 @@ export const SiteRoutes = () => {
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/vision-mission" element={<Layout><VisionMission /></Layout>} />
       <Route path="/founders" element={<Layout><Founders /></Layout>} />
-      <Route path="/associations" element={<Layout><Associations /></Layout>} />
       <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} />
       
       {/* --- INNOVATION DETAIL ROUTES --- */}

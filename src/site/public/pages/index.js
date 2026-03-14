@@ -6,7 +6,6 @@ export { default as Careers } from './Careers'; // <--- ADD THIS LINE
 export { default as Announcements } from './Announcements';
 export { default as VisionMission } from './VisionMission';
 export { default as Founders } from './Founders';
-export { default as Associations } from './Associations';
 export { default as Innovations } from './Innovations';
 
 // Specific Course Pages
