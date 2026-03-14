@@ -148,11 +148,11 @@ export const LoginForm = ({
 
               {/* Footer Links */}
               <div className="flex items-center justify-center gap-4 text-sm text-slate-500 mt-6">
-                <Link to="/forgot-password" class="hover:text-[#7E3AF2] font-medium transition-colors">
+                <Link to="/forgot-password" className="hover:text-[#7E3AF2] font-medium transition-colors">
                   Forgot Password?
                 </Link>
                 <span className="text-slate-300">|</span>
-                <Link to="/contact" class="hover:text-[#7E3AF2] font-medium transition-colors">
+                <Link to="/contact" className="hover:text-[#7E3AF2] font-medium transition-colors">
                   Need Help?
                 </Link>
               </div>
