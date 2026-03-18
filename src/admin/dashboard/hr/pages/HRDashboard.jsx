@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Users, Clock, FileText, Calendar, Building2, UserCheck, 
   Briefcase, Plus, CheckCircle, XCircle, ChevronRight,
-  Search, MapPin, Inbox, Mail, Phone, ExternalLink, Download
+  Search, MapPin, Inbox, Mail, Phone, ExternalLink, Download, ChevronDown 
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable'; // <-- UPDATED IMPORT
+import autoTable from 'jspdf-autotable';
 import { Card, Button, Modal, Input, Select, Textarea } from '../../../../components/common';
 import { hrService } from '../../../services/hrService';
 import api from '../../../../services/api';
@@ -160,6 +160,7 @@ const OverviewTab = ({ changeTab }) => {
 const AttendanceTab = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
   
   // Default search to today's date in YYYY-MM-DD format
   const todayStr = new Date().toISOString().split('T')[0];
@@ -183,19 +184,17 @@ const AttendanceTab = () => {
     fetchAttendance(searchDate);
   }, [searchDate]);
 
-  // <-- UPDATED PDF GENERATION FUNCTION -->
+  // PDF GENERATION
   const downloadPDF = () => {
     try {
       const doc = new jsPDF();
       
-      // Add Header
       doc.setFontSize(18);
       doc.text(`Employee Attendance Report`, 14, 15);
       doc.setFontSize(12);
       doc.setTextColor(100);
       doc.text(`Date: ${searchDate}`, 14, 22);
 
-      // Setup Table Data
       const tableColumn = ["S.No", "Employee Name", "Check-in", "Address", "Check-out", "Duration", "Status"];
       const tableRows = [];
 
@@ -204,7 +203,7 @@ const AttendanceTab = () => {
           index + 1,
           record.userName || 'N/A',
           record.checkInTime || '--',
-          record.address ? record.address.substring(0, 30) + '...' : 'N/A', // Trimmed to fit PDF nicely
+          record.address ? record.address.substring(0, 30) + '...' : 'N/A',
           record.checkOutTime || '--',
           record.totalDuration || '--',
           record.workdayStatus || '--'
@@ -212,7 +211,6 @@ const AttendanceTab = () => {
         tableRows.push(rowData);
       });
 
-      // Generate Table using the explicit autoTable function
       autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
@@ -221,15 +219,53 @@ const AttendanceTab = () => {
         headStyles: { fillColor: [41, 128, 185], textColor: 255 },
         alternateRowStyles: { fillColor: [245, 245, 245] },
         columnStyles: {
-          3: { cellWidth: 50 } // Give address column more width
+          3: { cellWidth: 50 }
         }
       });
 
-      // Save File
       doc.save(`Attendance_Report_${searchDate}.pdf`);
     } catch (error) {
       console.error("PDF Generation failed:", error);
       alert("There was an issue generating the PDF. Check console for details.");
+    }
+  };
+
+  // EXCEL (CSV) GENERATION
+  const downloadExcel = () => {
+    try {
+      const headers = ["S.No", "Employee Name", "Check-in Time", "Address", "Check-out Time", "Duration", "Status"];
+
+      const csvRows = records.map((record, index) => {
+        // Clean up text to prevent commas or quotes from breaking the Excel format
+        const cleanAddress = record.address ? record.address.replace(/"/g, '""').replace(/\n/g, ' ') : 'N/A';
+        const cleanName = record.userName ? record.userName.replace(/"/g, '""') : 'N/A';
+
+        return [
+          index + 1,
+          `"${cleanName}"`,
+          `"${record.checkInTime || '--'}"`,
+          `"${cleanAddress}"`,
+          `"${record.checkOutTime || '--'}"`,
+          `"${record.totalDuration || '--'}"`,
+          `"${record.workdayStatus || '--'}"`
+        ].join(',');
+      });
+
+      // Combine headers and rows
+      const csvString = [headers.join(','), ...csvRows].join('\n');
+      
+      // Create a downloadable Blob
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Attendance_Report_${searchDate}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Excel Generation failed:", error);
+      alert("There was an issue generating the Excel file.");
     }
   };
 
@@ -252,15 +288,44 @@ const AttendanceTab = () => {
             />
           </div>
           
-          {/* Download PDF Button */}
-          <Button 
-            onClick={downloadPDF} 
-            disabled={records.length === 0}
-            className="flex items-center shadow-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 disabled:opacity-50"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
-          </Button>
+          {/* Download Dropdown */}
+          <div className="relative">
+            <Button 
+              onClick={() => setIsExportOpen(!isExportOpen)} 
+              disabled={records.length === 0}
+              className="flex items-center shadow-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 disabled:opacity-50"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+              <ChevronDown className="w-4 h-4 ml-2" />
+            </Button>
+
+            {/* Dropdown Menu */}
+            {isExportOpen && records.length > 0 && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50 border border-gray-100 overflow-hidden">
+                <button
+                  onClick={() => {
+                    downloadPDF();
+                    setIsExportOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors border-b border-gray-50 flex items-center"
+                >
+                  <FileText className="w-4 h-4 mr-2" /> 
+                  Download as PDF
+                </button>
+                <button
+                  onClick={() => {
+                    downloadExcel();
+                    setIsExportOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors flex items-center"
+                >
+                  <div className="w-4 h-4 mr-2 flex items-center justify-center font-bold text-[10px] border border-current rounded-sm">X</div> 
+                  Download as Excel
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

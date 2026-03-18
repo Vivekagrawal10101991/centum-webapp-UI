@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'; // Added useEffect and useState
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
@@ -7,10 +8,29 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
 import { filterNavigationByPermissions } from '../../helpers/navigationPermissions';
+import { dashboardService } from '../../services/dashboardService'; // Import service
 
 const DashboardSidebar = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const [badgeCounts, setBadgeCounts] = useState({}); // Store badge data
+
+  // Function to fetch notifications
+  const fetchNotifications = async () => {
+    try {
+      const data = await dashboardService.getNotificationCounts();
+      setBadgeCounts(data.badges || {});
+    } catch (error) {
+      console.error("Failed to fetch notification counts", error);
+    }
+  };
+
+  // Poll for notifications every 60 seconds
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const navigationItems = {
     [ROLES.SUPER_ADMIN]: [
@@ -23,10 +43,19 @@ const DashboardSidebar = () => {
       { name: 'Course Management', path: '/dashboard/super-admin/course-management', icon: BookOpen },
       { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
       { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
-      // FIXED THE ICON HERE TO AVOID CRASH
       { name: 'Library Content', path: '/dashboard/super-admin/library-content', icon: FileText }, 
-      { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle },
-      { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle },
+      { 
+        name: 'Leads & Enquiries', 
+        path: '/dashboard/super-admin/leads-enquiries', 
+        icon: MessageCircle,
+        badgeKey: 'leads' // Key to look up in badgeCounts
+      },
+      { 
+        name: 'Leave Approvals', 
+        path: '/dashboard/super-admin/leave-approvals', 
+        icon: CheckCircle,
+        badgeKey: 'leaves' 
+      },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
 
@@ -34,7 +63,18 @@ const DashboardSidebar = () => {
       { name: 'Overview', path: '/dashboard/admin', icon: BarChart },
       { name: 'Users', path: '/dashboard/admin/users', icon: Users },
       { name: 'Courses', path: '/dashboard/admin/courses', icon: BookOpen },
-      { name: 'Leave Directory', path: '/dashboard/admin/leave-approvals', icon: CheckCircle }, 
+      { 
+        name: 'Leads & Enquiries', 
+        path: '/dashboard/admin/leads', 
+        icon: MessageCircle,
+        badgeKey: 'leads'
+      },
+      { 
+        name: 'Leave Directory', 
+        path: '/dashboard/admin/leave-approvals', 
+        icon: CheckCircle,
+        badgeKey: 'leaves'
+      }, 
       { name: 'Settings', path: '/dashboard/admin/settings', icon: Settings },
     ],
 
@@ -73,25 +113,52 @@ const DashboardSidebar = () => {
     [ROLES.HR]: [
       { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
       { name: 'User Management', path: '/dashboard/hr/user-management', icon: Users },
+      { 
+        name: 'Leads & Enquiries', 
+        path: '/dashboard/hr/leads', 
+        icon: MessageCircle,
+        badgeKey: 'leads'
+      },
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
-      { name: 'Leave Directory', path: '/dashboard/hr/leave-approvals', icon: CheckCircle }, 
+      { 
+        name: 'Leave Directory', 
+        path: '/dashboard/hr/leave-approvals', 
+        icon: CheckCircle,
+        badgeKey: 'leaves'
+      }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
     ],
 
     [ROLES.OPERATIONS_MANAGER]: [
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
       { name: 'Batch Management', path: '/dashboard/operations/batches', icon: Layers },
+      { 
+        name: 'Leads & Enquiries', 
+        path: '/dashboard/operations/leads', 
+        icon: MessageCircle,
+        badgeKey: 'leads'
+      },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
       { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
-      { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle }, 
+      { 
+        name: 'Leave Directory', 
+        path: '/dashboard/operations/leave-approvals', 
+        icon: CheckCircle,
+        badgeKey: 'leaves'
+      }, 
     ],
 
     [ROLES.REPORTING_MANAGER]: [
       { name: 'Overview', path: '/dashboard/reporting-manager', icon: BarChart },
       { name: 'Team Performance', path: '/dashboard/reporting-manager/team', icon: Users },
-      { name: 'Leave Approvals', path: '/dashboard/reporting-manager/leave-approvals', icon: CheckCircle },
+      { 
+        name: 'Leave Approvals', 
+        path: '/dashboard/reporting-manager/leave-approvals', 
+        icon: CheckCircle,
+        badgeKey: 'leaves'
+      },
       { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
       { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
       { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
@@ -99,7 +166,12 @@ const DashboardSidebar = () => {
 
     [ROLES.ADMISSION_MANAGER]: [
       { name: 'Overview', path: '/dashboard/admission-manager', icon: BarChart },
-      { name: 'Leads & Enquiries', path: '/dashboard/admission-manager/leads', icon: MessageCircle },
+      { 
+        name: 'Leads & Enquiries', 
+        path: '/dashboard/admission-manager/leads', 
+        icon: MessageCircle,
+        badgeKey: 'leads'
+      },
       { name: 'Student Management', path: '/dashboard/admission-manager/student-management', icon: Users },
       { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
@@ -159,6 +231,7 @@ const DashboardSidebar = () => {
           {items.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
+            const count = item.badgeKey ? badgeCounts[item.badgeKey] : null;
 
             return (
               <Link
@@ -182,9 +255,17 @@ const DashboardSidebar = () => {
                   </span>
                 </div>
                 
-                {active && (
-                   <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
-                )}
+                <div className="flex items-center gap-2">
+                  {/* Notification Badge */}
+                  {!active && count > 0 && (
+                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white shadow-lg animate-pulse">
+                      {count > 99 ? '99+' : count}
+                    </span>
+                  )}
+                  {active && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
+                  )}
+                </div>
               </Link>
             );
           })}

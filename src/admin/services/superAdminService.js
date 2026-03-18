@@ -27,6 +27,34 @@ export const superAdminService = {
   },
 
   /**
+   * Get all users across all roles (✅ NEW)
+   * @returns {Promise} Array of users
+   */
+  getAllUsers: async () => {
+    const response = await api.get('/api/super-admin/manage-users/get/all');
+    return response.data;
+  },
+
+  /**
+   * Get all valid roles dynamically (✅ NEW)
+   * @returns {Promise} Array of string roles
+   */
+  getAllRoles: async () => {
+    const response = await api.get('/api/super-admin/manage-users/roles');
+    return response.data;
+  },
+
+  /**
+   * Get a specific user by email
+   * @param {string} email - User's email address
+   * @returns {Promise} User data object
+   */
+  getUserByEmail: async (email) => {
+    const response = await api.get(`/api/super-admin/manage-users/search?email=${email}`);
+    return response.data;
+  },
+
+  /**
    * Delete a user by custom user ID
    * @param {string} customUserId - User's custom ID
    * @returns {Promise} Response
