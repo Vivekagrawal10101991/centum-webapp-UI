@@ -20,9 +20,7 @@ import Settings from '../Tabs/Settings';
 import LmsManagement from '../Tabs/LmsManagement';
 import LeaveApprovals from '../Tabs/LeaveApprovals'; 
 import BatchManagement from '../Tabs/BatchManagement';
-// UPDATED IMPORT: renamed to avoid collision with Operations' BatchDetails.jsx
 import SharedBatchDetails from '../Tabs/BatchDetails';
-// ✅ ADDED: Library Content Import
 import LibraryContentManagement from '../Tabs/LibraryContentManagement';
 
 // Admin Components
@@ -60,22 +58,14 @@ import GraphicDesignerDashboard from '../dashboard/graphic-designer/pages/Graphi
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
 
-/**
- * Admin Routes Component
- * All admin dashboard routes with role-based protection
- */
 export const AdminRoutes = () => {
   return (
     <>
       {/* ================= SUPER ADMIN ROUTES ================= */}
-      
-      {/* Root Landing Redirect */}
       <Route
         path="/dashboard/super-admin"
         element={<Navigate to="/dashboard/super-admin/dashboard" replace />}
       />
-
-      {/* Analytical Dashboard (Overview) */}
       <Route
         path="/dashboard/super-admin/dashboard"
         element={
@@ -90,8 +80,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-
-      {/* User Management Hub */}
       <Route
         path="/dashboard/super-admin/user-management"
         element={
@@ -102,8 +90,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* Batch Management Hub */}
       <Route
         path="/dashboard/super-admin/batch-management"
         element={
@@ -114,8 +100,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* NEW: Batch Details View */}
       <Route
         path="/dashboard/super-admin/batch-management/:batchId"
         element={
@@ -126,8 +110,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* Individual User Pages */}
       <Route
         path="/dashboard/super-admin/add-user"
         element={
@@ -158,8 +140,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* Leave Approvals for Super Admin */}
       <Route
         path="/dashboard/super-admin/leave-approvals"
         element={
@@ -170,8 +150,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* ✅ ADDED: Library Content Route for Super Admin */}
       <Route
         path="/dashboard/super-admin/library-content"
         element={
@@ -182,8 +160,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* CMS Management Routes */}
       <Route
         path="/dashboard/super-admin/promotions-banners"
         element={
@@ -226,8 +202,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-
-      {/* LMS Center Route */}
       <Route
         path="/dashboard/super-admin/lms-center"
         element={
@@ -238,7 +212,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/dashboard/super-admin/social-proof"
         element={
@@ -313,7 +286,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+      <Route
+        path="/dashboard/admin/leads"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <DashboardLayout>
+              <LeadsEnquiries />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route 
         path="/dashboard/admin/leave-approvals" 
         element={
@@ -324,7 +306,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         } 
       />
-
       <Route
         path="/dashboard/admin/media-center"
         element={
@@ -361,7 +342,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
       <Route
         path="/dashboard/technical/promotions-banners"
         element={
@@ -454,8 +434,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* Batch Details for Operations Manager */}
       <Route
         path="/dashboard/operations/batch-details"
         element={
@@ -466,8 +444,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* ===== NEW: FULL BATCH MANAGEMENT FOR OPERATIONS MANAGER ===== */}
       <Route
         path="/dashboard/operations/batches"
         element={
@@ -478,8 +454,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* NEW: Batch Details View FOR OPERATIONS MANAGER */}
       <Route
         path="/dashboard/operations/batches/:batchId"
         element={
@@ -490,7 +464,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+      <Route
+        path="/dashboard/operations/leads"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <LeadsEnquiries />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route 
         path="/dashboard/operations/leave-approvals" 
         element={
@@ -501,7 +484,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         } 
       />
-
       <Route
         path="/dashboard/operations/settings"
         element={
@@ -556,8 +538,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* HR User Management Hub */}
       <Route
         path="/dashboard/hr/user-management"
         element={
@@ -598,7 +578,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
+      <Route
+        path="/dashboard/hr/leads"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <LeadsEnquiries />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/dashboard/hr/employees"
         element={
@@ -629,7 +618,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
       <Route 
         path="/dashboard/hr/leave-approvals" 
         element={
@@ -640,7 +628,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         } 
       />
-
       <Route
         path="/dashboard/hr/recruitment"
         element={
@@ -849,8 +836,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* Student Management Route */}
       <Route
         path="/dashboard/admission-manager/student-management"
         element={
@@ -861,7 +846,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
       <Route
         path="/dashboard/admission-manager/settings"
         element={

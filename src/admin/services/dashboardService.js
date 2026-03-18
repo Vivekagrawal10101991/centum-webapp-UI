@@ -6,6 +6,15 @@ import api from '../../services/api';
  */
 
 export const dashboardService = {
+  /**
+   * Fetch notification badge counts for the sidebar
+   * Fetches counts for pending leads, leave approvals, etc. based on role
+   */
+  getNotificationCounts: async () => {
+    const response = await api.get('/api/notifications/counts');
+    return response.data;
+  },
+
   // Admin Dashboard APIs
   admin: {
     /**
