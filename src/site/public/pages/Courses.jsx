@@ -36,6 +36,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { cmsService } from '../../services/cmsService';
 import { ProgramDetailModal } from "../../components/specific/ProgramDetailModal";
 import CourseCard from "../../components/specific/CourseCard";
+import DownloadBrochureButton from '../../components/layout/DownloadBrochureButton'; // ✅ NEW IMPORT
+
+// IMPORT THE NEW FOUNDATION PAGES DIRECTLY
+import IitFoundation from './IitFoundation';
+import NeetFoundation from './NeetFoundation';
 
 const Courses = () => {
   const navigate = useNavigate();
@@ -117,6 +122,19 @@ const Courses = () => {
     headerDescription = "NEET Coaching in Bangalore for Medical Entrance Exams";
   } else if (programFilter?.toUpperCase() === 'FOUNDATION') {
     headerDescription = "Foundation Coaching in Bangalore for Classes 8 to 10";
+  }
+
+  // ==========================================
+  // 🚀 BULLETPROOF ROUTING FIX:
+  // If the URL perfectly matches our new foundation pages, 
+  // intercept it and render the correct component instantly!
+  // ==========================================
+  if (programId === 'iit-foundation-coaching-bangalore') {
+    return <IitFoundation />;
+  }
+  
+  if (programId === 'neet-foundation-coaching-bangalore') {
+    return <NeetFoundation />;
   }
 
   // ==========================================
@@ -771,7 +789,7 @@ const Courses = () => {
                       At Centum Academy, our IIT Foundation Coaching program is designed to help students from Classes 8, 9, and 10 develop strong fundamentals in Mathematics and Science—laying the groundwork for IIT JEE preparation. Rather than rushing students into exam pressure, our foundation course focuses on concept clarity, logical reasoning, and analytical thinking.
                     </p>
                     <button 
-                      onClick={() => navigate('/program/iit-jee-coaching-bangalore')}
+                      onClick={() => navigate('/program/iit-foundation-coaching-bangalore')} 
                       className="inline-flex items-center gap-2 text-amber-600 font-bold hover:text-amber-700 transition-colors mt-auto"
                     >
                       Read More <ArrowRight className="h-4 w-4" />
@@ -788,7 +806,7 @@ const Courses = () => {
                       Centum Academy’s NEET Foundation Coaching is designed for students of Classes 8, 9, and 10 who aspire to pursue careers in medicine. This program builds strong fundamentals in Biology, Physics, and Chemistry, creating a solid base for future NEET preparation. Instead of introducing exam pressure too early, our foundation course focuses on concept understanding, scientific thinking, and application-based learning.
                     </p>
                     <button 
-                      onClick={() => navigate('/program/neet-coaching-bangalore')}
+                      onClick={() => navigate('/program/neet-foundation-coaching-bangalore')} 
                       className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:text-emerald-700 transition-colors mt-auto"
                     >
                       Read More <ArrowRight className="h-4 w-4" />
@@ -825,13 +843,15 @@ const Courses = () => {
               >
                 Get Free Counseling
               </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05 }} 
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-white text-white font-bold px-8 py-3.5 rounded-xl hover:bg-white/10 transition-colors"
-              >
-                Download Brochure
-              </motion.button>
+              
+              {/* ✅ NEW FORM BUTTON REPLACEMENT */}
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <DownloadBrochureButton 
+                  isFixed={false} 
+                  className="!bg-transparent !border-2 !border-white !text-white hover:!bg-white/10 !shadow-none !rounded-xl !py-3.5 !m-0 !transform-none !transition-colors" 
+                />
+              </motion.div>
+
             </div>
           </motion.div>
         </div>

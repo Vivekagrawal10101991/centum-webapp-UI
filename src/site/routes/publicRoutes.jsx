@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-// Ensure 'Careers' and 'Announcements' are in the import list below
-import { Home, About, Contact, Courses, Careers, Announcements } from '../public'; 
+// Added IitFoundation and NeetFoundation to the import list below
+import { Home, About, Contact, Courses, Careers, Announcements, IitFoundation, NeetFoundation } from '../public'; 
 
 /**
  * Public Routes
@@ -12,10 +12,16 @@ export const publicRoutes = (
     <Route path="/" element={<Layout><Home /></Layout>} />
     <Route path="/about" element={<Layout><About /></Layout>} />
     <Route path="/contact" element={<Layout><Contact /></Layout>} />
-    {/* Updated base route from /courses to /program */}
+    
     <Route path="/program" element={<Layout><Courses /></Layout>} />
-    {/* Added dynamic route to handle specific programs like /program/IIT-JEE */}
+    
+    {/* NEW ROUTING FOR FOUNDATION COACHING PAGES - MUST BE ABOVE THE DYNAMIC ROUTE */}
+    <Route path="/program/iit-foundation-coaching-bangalore" element={<Layout><IitFoundation /></Layout>} />
+    <Route path="/program/neet-foundation-coaching-bangalore" element={<Layout><NeetFoundation /></Layout>} />
+    
+    {/* Dynamic route to handle specific programs like /program/IIT-JEE */}
     <Route path="/program/:programId" element={<Layout><Courses /></Layout>} />
+    
     <Route path="/careers" element={<Layout><Careers /></Layout>} />
     <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
   </>
