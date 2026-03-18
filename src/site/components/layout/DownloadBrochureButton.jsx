@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom'; // ✅ NEW: Imported createPortal
 import { Download, X, Loader2 } from 'lucide-react';
 import enquiryService from '../../services/enquiryService';
 
@@ -49,13 +50,10 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
     }
   };
 
-  // Ensured bg-red-600 is locked in. Reduced padding (py-2 px-3) and text size (text-sm) to decrease the vertical height.
-  // Changed rounded-l-xl to rounded-r-xl to account for the rotate-180 visual swap
   const buttonClasses = isFixed
     ? `fixed right-0 top-[45%] -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 text-sm rounded-r-xl shadow-2xl z-40 transition-transform transform hover:-translate-x-1 flex items-center gap-2 [writing-mode:vertical-rl] rotate-180 cursor-pointer ${className}`
     : `bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer w-fit ${className}`;
 
-  // Slightly scaled down the icon on the fixed button to match the reduced height
   const iconClasses = isFixed ? "h-4 w-4 mb-2 rotate-90" : "h-5 w-5";
 
   return (
@@ -65,8 +63,9 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
         Download Brochure
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      {/* ✅ FIX: Wrapped the modal in createPortal to teleport it to document.body. Also bumped z-index to 9999 so it covers the Navbar */}
+      {isOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative animate-fade-in-up" style={{ animation: "fadeIn 0.3s ease-out" }}>
             <button 
               onClick={() => setIsOpen(false)}
@@ -136,7 +135,8 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
