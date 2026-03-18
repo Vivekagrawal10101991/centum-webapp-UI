@@ -6,7 +6,7 @@ import DownloadBrochureButton from '../layout/DownloadBrochureButton';
 
 /**
  * CallToAction Component
- * Updated: Replaced static Download Brochure button with dynamic functional component.
+ * Updated: Increased font size for contact details at the bottom.
  */
 export const CallToAction = () => {
   return (
@@ -84,31 +84,33 @@ export const CallToAction = () => {
             </motion.div>
 
             <motion.div 
-              className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 pt-6 border-t border-white/5 max-w-2xl mx-auto"
+              className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 pt-8 border-t border-white/5 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
             >
-              <a href="tel:+916366411473" className="flex items-center gap-3 group cursor-pointer">
-                 <div className="h-8 w-8 bg-indigo-500/20 rounded-full flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
-                    <Phone className="h-4 w-4 text-indigo-300" />
+              <a href="tel:+916366411473" className="flex items-center gap-4 group cursor-pointer">
+                 <div className="h-10 w-10 bg-indigo-500/20 rounded-full flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
+                    <Phone className="h-5 w-5 text-indigo-300" />
                  </div>
                  <div className="text-left">
-                    <p className="text-[10px] text-indigo-300 uppercase font-bold tracking-wider">Call Us</p>
-                    <p className="text-xs text-white font-bold tracking-wide">+91 6366411473</p>
+                    <p className="text-[11px] text-indigo-300 uppercase font-bold tracking-wider mb-0.5">Call Us</p>
+                    {/* Increased text size here */}
+                    <p className="text-base md:text-lg text-white font-bold tracking-wide">+91 6366411473</p>
                  </div>
               </a>
 
-              <div className="hidden md:block w-px h-8 bg-white/10"></div>
+              <div className="hidden md:block w-px h-10 bg-white/10"></div>
 
-              <div className="flex items-center gap-3 group cursor-pointer">
-                 <div className="h-8 w-8 bg-indigo-500/20 rounded-full flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
-                    <Mail className="h-4 w-4 text-indigo-300" />
+              <div className="flex items-center gap-4 group cursor-pointer">
+                 <div className="h-10 w-10 bg-indigo-500/20 rounded-full flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
+                    <Mail className="h-5 w-5 text-indigo-300" />
                  </div>
                  <div className="text-left">
-                    <p className="text-[10px] text-indigo-300 uppercase font-bold tracking-wider">Email Us</p>
-                    <p className="text-xs text-white font-bold tracking-wide">contactus@centumacademy.com</p>
+                    <p className="text-[11px] text-indigo-300 uppercase font-bold tracking-wider mb-0.5">Email Us</p>
+                    {/* Increased text size here */}
+                    <p className="text-base md:text-lg text-white font-bold tracking-wide">contactus@centumacademy.com</p>
                  </div>
               </div>
             </motion.div>
