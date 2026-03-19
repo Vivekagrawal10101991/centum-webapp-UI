@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Base API configuration
- const API_BASE_URL = 'https://centumacademy.com';
-  // const API_BASE_URL = 'http://localhost:8080';
+//  const API_BASE_URL = 'https://centumacademy.com';
+  const API_BASE_URL = 'http://localhost:8080';
 
 // Create axios instance with default config
 const api = axios.create({

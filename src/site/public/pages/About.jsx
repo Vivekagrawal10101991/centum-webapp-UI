@@ -62,10 +62,10 @@ const About = () => {
 
   // Impact Statistics Data with Custom Gradients
   const impactStats = [
-    { icon: Award, value: "4,800+", label: "JEE Adv Selections", gradient: "from-[#F59E0B] to-[#D97706]" },
-    { icon: ShieldCheck, value: "26,000+", label: "JEE Main Qualified", gradient: "from-[#1C64F2] to-[#1E40AF]" },
-    { icon: Target, value: "3,400+", label: "NEET Selections", gradient: "from-[#00A67E] to-[#047857]" },
-    { icon: Clock, value: "13 Years", label: "Of Excellence", gradient: "from-[#7E3AF2] to-[#6D28D9]" }
+    { icon: Award, value: "1000+", label: "JEE Adv Selections", gradient: "from-[#F59E0B] to-[#D97706]" },
+    { icon: ShieldCheck, value: "5000+", label: "JEE Main Qualified", gradient: "from-[#1C64F2] to-[#1E40AF]" },
+    { icon: Target, value: "500+", label: "NEET Selections", gradient: "from-[#00A67E] to-[#047857]" },
+    { icon: Clock, value: "10 Years", label: "Of Excellence", gradient: "from-[#7E3AF2] to-[#6D28D9]" }
   ];
 
   return (
@@ -172,7 +172,7 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-6 relative z-20 mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] rounded-full mb-6 shadow-lg"><TrendingUp className="h-5 w-5 text-white" /><span className="text-sm font-bold text-white uppercase tracking-wider">2014 - 2026</span></div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-6">Our <span className="bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] bg-clip-text text-transparent">Journey</span></h2>
-          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">Climbing the ladder of success - 13 years of transforming dreams into reality</p>
+          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">Climbing the ladder of success - 10 years of transforming dreams into reality</p>
         </div>
 
         <div className="relative min-h-[640px] overflow-hidden">
@@ -218,7 +218,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* 6. IMPACT STATISTICS (MODIFIED: 50% REDUCED HEIGHT, GRADIENT CARDS & REDUCED RADIUS) */}
+      {/* 6. IMPACT STATISTICS */}
       <section className="py-16 bg-white border-t border-slate-100 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -232,11 +232,10 @@ const About = () => {
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 whileHover={{ y: -5 }}
               >
-                {/* 50% Reduced Height (p-5), Reduced Radius (rounded-2xl) and Solid Theme Gradient */}
+                {/* Solid Theme Gradient Cards */}
                 <div 
                   className={`text-center rounded-2xl p-5 shadow-lg transition-all duration-500 flex flex-col items-center justify-center border border-transparent hover:shadow-xl bg-gradient-to-br ${stat.gradient}`}
                 >
-                  {/* Smaller Icon Container */}
                   <motion.div
                     className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-3 bg-white/20 shadow-inner"
                     initial={{ scale: 0 }}
@@ -247,7 +246,6 @@ const About = () => {
                     <stat.icon className="h-5 w-5 text-white" />
                   </motion.div>
 
-                  {/* Smaller Value Text Size */}
                   <motion.h3 
                     className="text-2xl lg:text-3xl font-black text-white mb-1 tracking-tight"
                     initial={{ scale: 0.9 }}
@@ -258,12 +256,10 @@ const About = () => {
                     {stat.value}
                   </motion.h3>
 
-                  {/* Smaller Label Text Size */}
                   <p className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest opacity-90">
                     {stat.label}
                   </p>
 
-                  {/* Smaller Decorative Accent */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-white/20 transition-all duration-500"></div>
                 </div>
               </motion.div>
