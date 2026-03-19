@@ -1,10 +1,11 @@
-import { Route } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import PageMeta from '../../components/common/PageMeta';
 
 // Auth pages
 import { Login, Signup, ChangePassword, Unauthorized } from '../auth';
 
-// Public pages (Removed Associations from this list)
+// Public pages
 import { 
   Home, 
   About, 
@@ -19,7 +20,9 @@ import {
   JeeAdvance,
   NeetCourses,
   KcetCourses,
-  FoundationCourses
+  FoundationCourses,
+  IitFoundation, 
+  NeetFoundation 
 } from '../public';
 
 // Import New Detail Pages
@@ -38,39 +41,186 @@ import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } f
 export const SiteRoutes = () => {
   return (
     <>
-      {/* Public Routes with Layout */}
-      <Route path="/" element={<Layout><Home /></Layout>} />
-      <Route path="/about" element={<Layout><About /></Layout>} />
-      <Route path="/vision-mission" element={<Layout><VisionMission /></Layout>} />
-      <Route path="/founders" element={<Layout><Founders /></Layout>} />
-      <Route path="/ai-innovation" element={<Layout><Innovations /></Layout>} />
-      
-      {/* --- INNOVATION DETAIL ROUTES --- */}
-      <Route path="/ai-innovation/class-gauge" element={<Layout><ClassGaugeDetail /></Layout>} />
-      <Route path="/ai-innovation/mindgauge" element={<Layout><MindgaugeDetail /></Layout>} />
-      <Route path="/ai-innovation/learn-with-dash" element={<Layout><LearnWithDashDetail /></Layout>} />
-      <Route path="/ai-innovation/centum-aiqu" element={<Layout><CentumAiQuDetail /></Layout>} />
-      
-      {/* --- NEW LIBRARY ROUTE --- */}
-      <Route path="/library" element={<Layout><Library /></Layout>} />
+      {/* ========================================= */}
+      {/* 301 REDIRECTS (Old URLs to New URLs)      */}
+      {/* ========================================= */}
+      <Route path="/iit-jee-coaching-bangalore" element={<Navigate to="/program/iit-jee-coaching-bangalore" replace />} />
+      <Route path="/neet-coaching-bangalore" element={<Navigate to="/program/neet-coaching-bangalore" replace />} />
+      <Route path="/foundation-program-bangalore" element={<Navigate to="/program/foundation-coaching-bangalore" replace />} />
+      <Route path="/iit-foundation-coaching-bangalore" element={<Navigate to="/program/iit-foundation-coaching-bangalore" replace />} />
+      <Route path="/neet-foundation-coaching-bangalore" element={<Navigate to="/program/neet-foundation-coaching-bangalore" replace />} />
 
-      <Route path="/contact" element={<Layout><Contact /></Layout>} />
+      {/* ========================================= */}
+      {/* CORE PROGRAM SEO PAGES                    */}
+      {/* ========================================= */}
+      <Route path="/" element={
+        <PageMeta 
+          title="Best Coaching Centre in Bangalore for JEE & NEET | Centum Academy" 
+          description="Centum Academy is a leading coaching centre in Bangalore offering JEE, NEET & Foundation classes with expert faculty, mentoring & proven results." 
+          path="/">
+          <Layout><Home /></Layout>
+        </PageMeta>
+      } />
 
-      {/* --- CAREERS ROUTE --- */}
-      <Route path="/careers" element={<Layout><Careers /></Layout>} /> 
+      <Route path="/program/iit-jee-coaching-bangalore" element={
+        <PageMeta 
+          title="IIT JEE Coaching in Bangalore | JEE Main & Advanced" 
+          description="Expert IIT JEE coaching in Bangalore for JEE Main & Advanced. Concept-focused teaching, personalised mentoring & proven results. Enrol at Centum Academy." 
+          path="/program/iit-jee-coaching-bangalore">
+          <Layout><Courses /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/program/neet-coaching-bangalore" element={
+        <PageMeta 
+          title="NEET Coaching in Bangalore | Best Medical Entrance Prep" 
+          description="Top NEET coaching in Bangalore with expert faculty, structured study plans, mock tests & mentoring. Prepare confidently for NEET with Centum Academy." 
+          path="/program/neet-coaching-bangalore">
+          <Layout><Courses /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/program/foundation-coaching-bangalore" element={
+        <PageMeta 
+          title="Foundation Program in Bangalore for Class 8–10 | Centum Academy" 
+          description="Join our Foundation coaching in Bangalore for Class 8–10. Build strong academic basics and prepare early for IIT JEE & NEET success." 
+          path="/program/foundation-coaching-bangalore">
+          <Layout><Courses /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/program/iit-foundation-coaching-bangalore" element={
+        <PageMeta 
+          title="IIT Foundation Coaching in Bangalore for Class 8, 9 & 10" 
+          description="IIT Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Maths & Science basics and start early IIT JEE preparation with Centum Academy." 
+          path="/program/iit-foundation-coaching-bangalore">
+          <Layout><IitFoundation /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/program/neet-foundation-coaching-bangalore" element={
+        <PageMeta 
+          title="NEET Foundation Coaching in Bangalore for Class 8, 9 & 10" 
+          description="NEET Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Biology, Physics & Chemistry basics and prepare early for medical entrance exams." 
+          path="/program/neet-foundation-coaching-bangalore">
+          <Layout><NeetFoundation /></Layout>
+        </PageMeta>
+      } />
+
+      {/* ========================================= */}
+      {/* STATIC & CONTENT PAGES SEO ENHANCED       */}
+      {/* ========================================= */}
+      <Route path="/about" element={
+        <PageMeta 
+          title="About Centum Academy | IIT-Led Coaching in Bangalore" 
+          description="Learn about Centum Academy’s vision, IIT-led approach, and commitment to JEE, NEET & Foundation coaching excellence in Bangalore." 
+          path="/about">
+          <Layout><About /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/vision-mission" element={
+        <PageMeta 
+          title="Vision & Mission | Centum Academy Bangalore" 
+          description="Explore Centum Academy’s vision and mission focused on strong foundations, academic excellence, and success in JEE, NEET & future careers." 
+          path="/vision-mission">
+          <Layout><VisionMission /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/founders" element={
+        <PageMeta 
+          title="Founders of Centum Academy | IIT Alumni Leadership" 
+          description="Meet the founders of Centum Academy, IIT alumni dedicated to building strong academic foundations and guiding students for JEE & NEET success." 
+          path="/founders">
+          <Layout><Founders /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/ai-innovation" element={
+        <PageMeta 
+          title="AI Learning at Centum Academy | Smart Exam Preparation" 
+          description="Discover how Centum Academy uses AI-based learning, assignments, and analytics to improve student performance in JEE, NEET & Foundation programs." 
+          path="/ai-innovation">
+          <Layout><Innovations /></Layout>
+        </PageMeta>
+      } />
       
-      {/* Announcements */}
-      <Route path="/announcements" element={<Layout><Announcements /></Layout>} />
-      
-      {/* --- NEW PROGRAM ROUTES --- */}
-      {/* Main Program Listing */}
-      <Route path="/program" element={<Layout><Courses /></Layout>} />
+      <Route path="/program" element={
+        <PageMeta 
+          title="Coaching Programs in Bangalore | JEE, NEET & Foundation" 
+          description="Explore Centum Academy’s coaching programs in Bangalore for IIT JEE, NEET & Foundation courses designed for structured learning and success." 
+          path="/program">
+          <Layout><Courses /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/library" element={
+        <PageMeta 
+          title="Student Library & Resources | Centum Academy" 
+          description="Access study materials, resources, and academic support tools for JEE, NEET, and Foundation students at Centum Academy." 
+          path="/library">
+          <Layout><Library /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/announcements" element={
+        <PageMeta 
+          title="Announcements | Centum Academy Updates & News" 
+          description="Stay updated with the latest announcements, admissions, and academic updates from Centum Academy in Bangalore." 
+          path="/announcements">
+          <Layout><Announcements /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/student-success" element={
+        <PageMeta 
+          title="Student Success Stories | Centum Academy Results" 
+          description="Explore student success stories and academic achievements at Centum Academy in JEE, NEET, and Foundation programs." 
+          path="/student-success">
+          <Layout><StudentSuccess /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/blog" element={
+        <PageMeta 
+          title="Centum Academy Blog | JEE, NEET & Study Tips" 
+          description="Read expert blogs, study tips, and exam strategies for JEE, NEET, and Foundation students from Centum Academy." 
+          path="/blog">
+          <Layout><Blogs /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/contact" element={
+        <PageMeta 
+          title="Contact Centum Academy | Coaching in Bangalore" 
+          description="Contact Centum Academy for admissions, counselling, and enquiries about JEE, NEET, and Foundation coaching in Bangalore." 
+          path="/contact">
+          <Layout><Contact /></Layout>
+        </PageMeta>
+      } />
+
+      <Route path="/careers" element={
+        <PageMeta 
+          title="Careers at Centum Academy | Join Our Teaching Team" 
+          description="Explore career opportunities at Centum Academy. Join our team of educators and contribute to JEE, NEET & Foundation coaching excellence." 
+          path="/careers">
+          <Layout><Careers /></Layout>
+        </PageMeta>
+      } />
+
+      {/* ========================================= */}
+      {/* OTHER SUB-ROUTES (WITH CANONICALS)        */}
+      {/* ========================================= */}
+      <Route path="/ai-innovation/class-gauge" element={<PageMeta title="Class Gauge | Centum Academy" path="/ai-innovation/class-gauge"><Layout><ClassGaugeDetail /></Layout></PageMeta>} />
+      <Route path="/ai-innovation/mindgauge" element={<PageMeta title="Mindgauge | Centum Academy" path="/ai-innovation/mindgauge"><Layout><MindgaugeDetail /></Layout></PageMeta>} />
+      <Route path="/ai-innovation/learn-with-dash" element={<PageMeta title="Learn With Dash | Centum Academy" path="/ai-innovation/learn-with-dash"><Layout><LearnWithDashDetail /></Layout></PageMeta>} />
+      <Route path="/ai-innovation/centum-aiqu" element={<PageMeta title="Centum AiQu | Centum Academy" path="/ai-innovation/centum-aiqu"><Layout><CentumAiQuDetail /></Layout></PageMeta>} />
       
       {/* Dynamic Program Category Route (e.g., /program/IIT-JEE) */}
       <Route path="/program/:programId" element={<Layout><Courses /></Layout>} />
       
-      {/* --- DYNAMIC COURSE TEMPLATE (Matches Slug or ID) --- */}
-      {/* Keeping this as /courses/:slug for individual course details unless you want it changed */}
+      {/* Dynamic Course Template (Matches Slug or ID) */}
       <Route path="/courses/:slug" element={<Layout><CourseDetail /></Layout>} />
       
       {/* Legacy Specific Pages */}
@@ -80,19 +230,17 @@ export const SiteRoutes = () => {
       <Route path="/courses/kcet-legacy" element={<Layout><KcetCourses /></Layout>} />
       <Route path="/courses/foundation-legacy" element={<Layout><FoundationCourses /></Layout>} />
 
-      {/* Content Routes */}
-      <Route path="/blog" element={<Layout><Blogs /></Layout>} />
+      {/* Extra Content Routes */}
       <Route path="/blog/:id" element={<Layout><BlogDetail /></Layout>} />
-      <Route path="/videos" element={<Layout><Videos /></Layout>} />
-      <Route path="/achievers" element={<Layout><Achievers /></Layout>} />
-      <Route path="/student-success" element={<Layout><StudentSuccess /></Layout>} />
-      <Route path="/contributions" element={<Layout><Contributions /></Layout>} />
+      <Route path="/videos" element={<PageMeta title="Videos | Centum Academy" path="/videos"><Layout><Videos /></Layout></PageMeta>} />
+      <Route path="/achievers" element={<PageMeta title="Achievers | Centum Academy" path="/achievers"><Layout><Achievers /></Layout></PageMeta>} />
+      <Route path="/contributions" element={<PageMeta title="Contributions | Centum Academy" path="/contributions"><Layout><Contributions /></Layout></PageMeta>} />
 
       {/* Auth Routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/change-password" element={<ChangePassword />} />
-      <Route path="/unauthorized" element={<Layout><Unauthorized /></Layout>} />
+      <Route path="/login" element={<PageMeta title="Login | Centum Academy" path="/login"><Login /></PageMeta>} />
+      <Route path="/signup" element={<PageMeta title="Sign Up | Centum Academy" path="/signup"><Signup /></PageMeta>} />
+      <Route path="/change-password" element={<PageMeta title="Change Password | Centum Academy" path="/change-password"><ChangePassword /></PageMeta>} />
+      <Route path="/unauthorized" element={<PageMeta title="Unauthorized | Centum Academy" path="/unauthorized"><Layout><Unauthorized /></Layout></PageMeta>} />
     </>
   );
 };

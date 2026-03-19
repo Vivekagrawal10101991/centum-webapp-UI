@@ -50,9 +50,9 @@ const AchieversGrid = () => {
 
   const stats = [
     { value: "95%", label: "Success Rate", textColor: "text-purple-700", borderColor: "border-purple-200", hoverBorder: "group-hover:border-purple-500", bgColor: "bg-purple-50/50" },
-    { value: "150+", label: "Top 100 Ranks", textColor: "text-blue-700", borderColor: "border-blue-200", hoverBorder: "group-hover:border-blue-500", bgColor: "bg-blue-50/50" },
-    { value: "500+", label: "IIT Selections", textColor: "text-amber-600", borderColor: "border-amber-200", hoverBorder: "group-hover:border-amber-500", bgColor: "bg-amber-50/50" },
-    { value: "300+", label: "Medical Seats", textColor: "text-emerald-700", borderColor: "border-emerald-200", hoverBorder: "group-hover:border-emerald-500", bgColor: "bg-emerald-50/50" }
+    { value: "50+", label: "Top 100 Ranks", textColor: "text-blue-700", borderColor: "border-blue-200", hoverBorder: "group-hover:border-blue-500", bgColor: "bg-blue-50/50" },
+    { value: "1000+", label: "IIT Selections", textColor: "text-amber-600", borderColor: "border-amber-200", hoverBorder: "group-hover:border-amber-500", bgColor: "bg-amber-50/50" },
+    { value: "500+", label: "Medical Seats", textColor: "text-emerald-700", borderColor: "border-emerald-200", hoverBorder: "group-hover:border-emerald-500", bgColor: "bg-emerald-50/50" }
   ];
 
   return (

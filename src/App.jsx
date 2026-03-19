@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider as AdminAuthProvider } from './admin/context/AuthContext';
@@ -15,6 +16,15 @@ import { AdminRoutes } from './admin/routes';
  * Provides both Site and Admin auth contexts
  */
 function App() {
+
+  // ENFORCE WWW TO NON-WWW REDIRECTION
+  useEffect(() => {
+    if (window.location.hostname === 'www.centumacademy.com') {
+      const currentUrl = window.location.pathname + window.location.search;
+      window.location.replace('https://centumacademy.com' + currentUrl);
+    }
+  }, []);
+
   return (
     <SiteAuthProvider>
       <AdminAuthProvider>
