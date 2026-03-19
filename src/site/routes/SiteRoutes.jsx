@@ -1,4 +1,4 @@
-import { Route, Navigate } from 'react-router-dom';
+import { Route, Navigate, useParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import PageMeta from '../../components/common/PageMeta';
 
@@ -38,6 +38,78 @@ import CourseDetail from '../public/pages/CourseDetail';
 // Content pages
 import { Blogs, BlogDetail, Videos, Achievers, StudentSuccess, Contributions } from '../content';
 
+// =====================================================================
+// DYNAMIC SEO WRAPPER FOR PROGRAM ROUTES
+// This ensures <Courses /> gets the :programId to filter correctly,
+// while strictly applying the custom SEO tags for specific URLs.
+// =====================================================================
+const ProgramSeoWrapper = () => {
+  const { programId } = useParams();
+
+  if (programId === 'iit-jee-coaching-bangalore') {
+    return (
+      <PageMeta 
+        title="IIT JEE Coaching in Bangalore | JEE Main & Advanced" 
+        description="Expert IIT JEE coaching in Bangalore for JEE Main & Advanced. Concept-focused teaching, personalised mentoring & proven results. Enrol at Centum Academy." 
+        path={`/program/${programId}`}>
+        <Layout><Courses /></Layout>
+      </PageMeta>
+    );
+  }
+  
+  if (programId === 'neet-coaching-bangalore') {
+    return (
+      <PageMeta 
+        title="NEET Coaching in Bangalore | Best Medical Entrance Prep" 
+        description="Top NEET coaching in Bangalore with expert faculty, structured study plans, mock tests & mentoring. Prepare confidently for NEET with Centum Academy." 
+        path={`/program/${programId}`}>
+        <Layout><Courses /></Layout>
+      </PageMeta>
+    );
+  }
+  
+  if (programId === 'foundation-coaching-bangalore') {
+    return (
+      <PageMeta 
+        title="Foundation Program in Bangalore for Class 8–10 | Centum Academy" 
+        description="Join our Foundation coaching in Bangalore for Class 8–10. Build strong academic basics and prepare early for IIT JEE & NEET success." 
+        path={`/program/${programId}`}>
+        <Layout><Courses /></Layout>
+      </PageMeta>
+    );
+  }
+
+  if (programId === 'iit-foundation-coaching-bangalore') {
+    return (
+      <PageMeta 
+        title="IIT Foundation Coaching in Bangalore for Class 8, 9 & 10" 
+        description="IIT Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Maths & Science basics and start early IIT JEE preparation with Centum Academy." 
+        path={`/program/${programId}`}>
+        <Layout><IitFoundation /></Layout>
+      </PageMeta>
+    );
+  }
+
+  if (programId === 'neet-foundation-coaching-bangalore') {
+    return (
+      <PageMeta 
+        title="NEET Foundation Coaching in Bangalore for Class 8, 9 & 10" 
+        description="NEET Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Biology, Physics & Chemistry basics and prepare early for medical entrance exams." 
+        path={`/program/${programId}`}>
+        <Layout><NeetFoundation /></Layout>
+      </PageMeta>
+    );
+  }
+
+  // Fallback for any other dynamically generated program category
+  return (
+    <PageMeta title="Programs | Centum Academy" path={`/program/${programId}`}>
+      <Layout><Courses /></Layout>
+    </PageMeta>
+  );
+};
+
+
 export const SiteRoutes = () => {
   return (
     <>
@@ -62,48 +134,16 @@ export const SiteRoutes = () => {
         </PageMeta>
       } />
 
-      <Route path="/program/iit-jee-coaching-bangalore" element={
+      {/* THE FIX: Single dynamic route passes params to the wrapper to apply correct SEO & Component */}
+      <Route path="/program/:programId" element={<ProgramSeoWrapper />} />
+
+      {/* General Program Landing Page */}
+      <Route path="/program" element={
         <PageMeta 
-          title="IIT JEE Coaching in Bangalore | JEE Main & Advanced" 
-          description="Expert IIT JEE coaching in Bangalore for JEE Main & Advanced. Concept-focused teaching, personalised mentoring & proven results. Enrol at Centum Academy." 
-          path="/program/iit-jee-coaching-bangalore">
+          title="Coaching Programs in Bangalore | JEE, NEET & Foundation" 
+          description="Explore Centum Academy’s coaching programs in Bangalore for IIT JEE, NEET & Foundation courses designed for structured learning and success." 
+          path="/program">
           <Layout><Courses /></Layout>
-        </PageMeta>
-      } />
-
-      <Route path="/program/neet-coaching-bangalore" element={
-        <PageMeta 
-          title="NEET Coaching in Bangalore | Best Medical Entrance Prep" 
-          description="Top NEET coaching in Bangalore with expert faculty, structured study plans, mock tests & mentoring. Prepare confidently for NEET with Centum Academy." 
-          path="/program/neet-coaching-bangalore">
-          <Layout><Courses /></Layout>
-        </PageMeta>
-      } />
-
-      <Route path="/program/foundation-coaching-bangalore" element={
-        <PageMeta 
-          title="Foundation Program in Bangalore for Class 8–10 | Centum Academy" 
-          description="Join our Foundation coaching in Bangalore for Class 8–10. Build strong academic basics and prepare early for IIT JEE & NEET success." 
-          path="/program/foundation-coaching-bangalore">
-          <Layout><Courses /></Layout>
-        </PageMeta>
-      } />
-
-      <Route path="/program/iit-foundation-coaching-bangalore" element={
-        <PageMeta 
-          title="IIT Foundation Coaching in Bangalore for Class 8, 9 & 10" 
-          description="IIT Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Maths & Science basics and start early IIT JEE preparation with Centum Academy." 
-          path="/program/iit-foundation-coaching-bangalore">
-          <Layout><IitFoundation /></Layout>
-        </PageMeta>
-      } />
-
-      <Route path="/program/neet-foundation-coaching-bangalore" element={
-        <PageMeta 
-          title="NEET Foundation Coaching in Bangalore for Class 8, 9 & 10" 
-          description="NEET Foundation coaching in Bangalore for Class 8, 9 & 10. Build strong Biology, Physics & Chemistry basics and prepare early for medical entrance exams." 
-          path="/program/neet-foundation-coaching-bangalore">
-          <Layout><NeetFoundation /></Layout>
         </PageMeta>
       } />
 
@@ -143,15 +183,6 @@ export const SiteRoutes = () => {
           description="Discover how Centum Academy uses AI-based learning, assignments, and analytics to improve student performance in JEE, NEET & Foundation programs." 
           path="/ai-innovation">
           <Layout><Innovations /></Layout>
-        </PageMeta>
-      } />
-      
-      <Route path="/program" element={
-        <PageMeta 
-          title="Coaching Programs in Bangalore | JEE, NEET & Foundation" 
-          description="Explore Centum Academy’s coaching programs in Bangalore for IIT JEE, NEET & Foundation courses designed for structured learning and success." 
-          path="/program">
-          <Layout><Courses /></Layout>
         </PageMeta>
       } />
 
@@ -216,9 +247,6 @@ export const SiteRoutes = () => {
       <Route path="/ai-innovation/mindgauge" element={<PageMeta title="Mindgauge | Centum Academy" path="/ai-innovation/mindgauge"><Layout><MindgaugeDetail /></Layout></PageMeta>} />
       <Route path="/ai-innovation/learn-with-dash" element={<PageMeta title="Learn With Dash | Centum Academy" path="/ai-innovation/learn-with-dash"><Layout><LearnWithDashDetail /></Layout></PageMeta>} />
       <Route path="/ai-innovation/centum-aiqu" element={<PageMeta title="Centum AiQu | Centum Academy" path="/ai-innovation/centum-aiqu"><Layout><CentumAiQuDetail /></Layout></PageMeta>} />
-      
-      {/* Dynamic Program Category Route (e.g., /program/IIT-JEE) */}
-      <Route path="/program/:programId" element={<Layout><Courses /></Layout>} />
       
       {/* Dynamic Course Template (Matches Slug or ID) */}
       <Route path="/courses/:slug" element={<Layout><CourseDetail /></Layout>} />
