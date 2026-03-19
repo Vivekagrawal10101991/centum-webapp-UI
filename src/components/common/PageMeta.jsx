@@ -1,10 +1,32 @@
 import { useEffect } from 'react';
 
-const PageMeta = ({ title, children }) => {
+const PageMeta = ({ title, description, path, children }) => {
   useEffect(() => {
-    // Update the document title when the component mounts or title changes
+    // 1. Update Document Title
     document.title = title || 'Centum Academy';
-  }, [title]);
+
+    // 2. Update Meta Description
+    if (description) {
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription = document.createElement('meta');
+        metaDescription.name = 'description';
+        document.head.appendChild(metaDescription);
+      }
+      metaDescription.setAttribute('content', description);
+    }
+
+    // 3. Update Canonical Tag
+    if (path) {
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.rel = 'canonical';
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', `https://centumacademy.com${path}`);
+    }
+  }, [title, description, path]);
 
   return <>{children}</>;
 };
