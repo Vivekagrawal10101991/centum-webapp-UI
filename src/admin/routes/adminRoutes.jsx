@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { Inbox } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
@@ -48,15 +49,22 @@ import BatchDetails from '../dashboard/operations/pages/BatchDetails';
 // Reporting Manager Component
 import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
 
-// Admission Manager Components
-import AdmissionManagerDashboard from '../dashboard/admission-manager/pages/AdmissionManagerDashboard';
-import StudentManagement from '../dashboard/admission-manager/pages/StudentManagement';
+// Admission Manager Components (Lazy Loaded to prevent chunking conflicts)
+const AdmissionManagerDashboard = React.lazy(() => import('../dashboard/admission-manager/pages/AdmissionManagerDashboard'));
+const StudentManagement = React.lazy(() => import('../dashboard/admission-manager/pages/StudentManagement'));
 
 // Graphic Designer Components
 import GraphicDesignerDashboard from '../dashboard/graphic-designer/pages/GraphicDesignerDashboard';
 
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
+
+// Reusable Suspense Loader for Lazy Components
+const SuspenseLoader = () => (
+  <div className="flex w-full h-full min-h-[50vh] items-center justify-center">
+    <div className="animate-pulse text-slate-400 font-medium">Loading Module...</div>
+  </div>
+);
 
 export const AdminRoutes = () => {
   return (
@@ -821,7 +829,9 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
             <DashboardLayout>
-              <AdmissionManagerDashboard />
+              <Suspense fallback={<SuspenseLoader />}>
+                <AdmissionManagerDashboard />
+              </Suspense>
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -841,7 +851,9 @@ export const AdminRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
             <DashboardLayout>
-              <StudentManagement />
+              <Suspense fallback={<SuspenseLoader />}>
+                <StudentManagement />
+              </Suspense>
             </DashboardLayout>
           </ProtectedRoute>
         }
