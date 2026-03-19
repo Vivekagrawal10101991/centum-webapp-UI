@@ -8,7 +8,7 @@ const StatsSection = ({ showHeading = true }) => {
   const stats = [
     {
       label: "Students Cracked JEE Advanced",
-      value: "20+",
+      value: "1000+",
       description: "Top performers securing seats in premier IITs across India.",
       icon: Award,
       color: "#4F46E5", // Indigo
@@ -160,7 +160,7 @@ const StatsSection = ({ showHeading = true }) => {
             </div>
           </div>
           <Link 
-            to="/courses"
+            to="/program"
             onClick={() => window.scrollTo(0, 0)}
             className="px-8 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold rounded-full transition-all shadow-lg shadow-indigo-500/30 whitespace-nowrap inline-flex items-center justify-center"
           >
