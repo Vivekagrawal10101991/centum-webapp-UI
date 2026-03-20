@@ -1,4 +1,4 @@
-import { Route, Navigate } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 // Added IitFoundation and NeetFoundation to the import list below
 import { Home, About, Contact, Courses, Careers, Announcements, IitFoundation, NeetFoundation } from '../public'; 
@@ -51,13 +51,6 @@ export const publicRoutes = (
     <Route path="/program/foundation-coaching-bangalore" element={<PageMeta {...seoData.foundation}><Layout><Courses /></Layout></PageMeta>} />
     <Route path="/program/iit-foundation-coaching-bangalore" element={<PageMeta {...seoData.iitFoundation}><Layout><IitFoundation /></Layout></PageMeta>} />
     <Route path="/program/neet-foundation-coaching-bangalore" element={<PageMeta {...seoData.neetFoundation}><Layout><NeetFoundation /></Layout></PageMeta>} />
-
-    {/* --- Old URL Redirects --- */}
-    <Route path="/iit-jee-coaching-bangalore" element={<Navigate to="/program/iit-jee-coaching-bangalore" replace />} />
-    <Route path="/neet-coaching-bangalore" element={<Navigate to="/program/neet-coaching-bangalore" replace />} />
-    <Route path="/foundation-program-bangalore" element={<Navigate to="/program/foundation-coaching-bangalore" replace />} />
-    <Route path="/iit-foundation-coaching-bangalore" element={<Navigate to="/program/iit-foundation-coaching-bangalore" replace />} />
-    <Route path="/neet-foundation-coaching-bangalore" element={<Navigate to="/program/neet-foundation-coaching-bangalore" replace />} />
 
     {/* --- Standard Routes --- */}
     <Route path="/about" element={<PageMeta title="About Us | Centum Academy" path="/about"><Layout><About /></Layout></PageMeta>} />
