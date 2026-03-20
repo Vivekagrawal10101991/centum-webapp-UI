@@ -1,4 +1,4 @@
-import { Route, Navigate, useParams } from 'react-router-dom';
+import { Route, useParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import PageMeta from '../../components/common/PageMeta';
 
@@ -113,15 +113,6 @@ const ProgramSeoWrapper = () => {
 export const SiteRoutes = () => {
   return (
     <>
-      {/* ========================================= */}
-      {/* 301 REDIRECTS (Old URLs to New URLs)      */}
-      {/* ========================================= */}
-      <Route path="/iit-jee-coaching-bangalore" element={<Navigate to="/program/iit-jee-coaching-bangalore" replace />} />
-      <Route path="/neet-coaching-bangalore" element={<Navigate to="/program/neet-coaching-bangalore" replace />} />
-      <Route path="/foundation-program-bangalore" element={<Navigate to="/program/foundation-coaching-bangalore" replace />} />
-      <Route path="/iit-foundation-coaching-bangalore" element={<Navigate to="/program/iit-foundation-coaching-bangalore" replace />} />
-      <Route path="/neet-foundation-coaching-bangalore" element={<Navigate to="/program/neet-foundation-coaching-bangalore" replace />} />
-
       {/* ========================================= */}
       {/* CORE PROGRAM SEO PAGES                    */}
       {/* ========================================= */}
