@@ -64,7 +64,7 @@ const Navbar = () => {
   return (
     <>
       {/* Spacer div prevents content from jumping up behind the fixed navbar */}
-      <div className="h-20 md:h-24 w-full shrink-0"></div>
+      <div className="h-10 md:h-12 w-full shrink-0"></div>
 
       <nav 
         className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 border-b ${
@@ -105,7 +105,7 @@ const Navbar = () => {
                 <div className="relative group/main">
                   <Link 
                     to={link.path} 
-                    className={`px-2 lg:px-2.5 xl:px-3 py-2 text-[13px] xl:text-[14px] font-semibold transition-colors duration-200 flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-2 lg:px-2.5 xl:px-3 py-2 text-[13px] xl:text-[14px] font-semibold flex items-center gap-1 whitespace-nowrap transition-all duration-300 transform hover:scale-110 origin-center ${
                       activeDropdown === idx ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"
                     }`}
                     onClick={(e) => {
@@ -140,14 +140,16 @@ const Navbar = () => {
                               href={sub.path}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors whitespace-nowrap"
+                              // ZOOM EFFECT ADDED HERE FOR DROPDOWN ITEMS
+                              className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 origin-left whitespace-nowrap"
                             >
                               {sub.name}
                             </a>
                           ) : (
                             <Link 
                               to={sub.path} 
-                              className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors whitespace-nowrap"
+                              // ZOOM EFFECT ADDED HERE FOR DROPDOWN ITEMS
+                              className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 origin-left whitespace-nowrap"
                             >
                               {sub.name}
                             </Link>
@@ -198,12 +200,12 @@ const Navbar = () => {
                         <Link
                           to={link.path}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between text-base font-bold text-slate-900"
+                          className="flex items-center justify-between text-base font-bold text-slate-900 transition-all duration-300 transform hover:scale-105 origin-left"
                         >
                           {link.name}
                         </Link>
                       ) : (
-                        <div className="text-base font-bold text-slate-900">
+                        <div className="text-base font-bold text-slate-900 transition-all duration-300 transform hover:scale-105 origin-left w-fit">
                           {link.name}
                         </div>
                       )}
@@ -218,7 +220,8 @@ const Navbar = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="block text-sm font-medium text-slate-500 hover:text-indigo-600"
+                                // ZOOM EFFECT ADDED HERE FOR MOBILE SUBMENU
+                                className="block text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all duration-300 transform hover:scale-105 origin-left"
                               >
                                 {sub.name}
                               </a>
@@ -226,7 +229,8 @@ const Navbar = () => {
                               <Link
                                 to={sub.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="block text-sm font-medium text-slate-500 hover:text-indigo-600"
+                                // ZOOM EFFECT ADDED HERE FOR MOBILE SUBMENU
+                                className="block text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all duration-300 transform hover:scale-105 origin-left"
                               >
                                 {sub.name}
                               </Link>
@@ -239,7 +243,7 @@ const Navbar = () => {
                     <Link
                       to={link.path}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block text-base font-bold text-slate-900 hover:text-indigo-600"
+                      className="block text-base font-bold text-slate-900 hover:text-indigo-600 transition-all duration-300 transform hover:scale-105 origin-left"
                     >
                       {link.name}
                     </Link>
