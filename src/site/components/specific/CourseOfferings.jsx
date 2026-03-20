@@ -113,12 +113,12 @@ export const CourseOfferings = () => {
             <span className="text-sm font-bold uppercase tracking-widest text-white">Our Programs</span>
           </div>
           
-          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
-            Discover Your Path to <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Success</span>
-          </h2>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
+            Explore Our <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Coaching Programs</span>
+          </h1>
           
           <p className="text-lg md:text-xl font-medium text-slate-500 max-w-3xl mx-auto leading-relaxed">
-            Comprehensive programs designed by experts to help you crack JEE, NEET, and build a strong foundation.
+            Expert-led coaching classes in Bangalore for JEE, NEET, and foundation courses designed to build strong concepts and long-term success.
           </p>
         </motion.div>
 

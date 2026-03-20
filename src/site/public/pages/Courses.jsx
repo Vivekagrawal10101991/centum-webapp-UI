@@ -36,7 +36,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { cmsService } from '../../services/cmsService';
 import { ProgramDetailModal } from "../../components/specific/ProgramDetailModal";
 import CourseCard from "../../components/specific/CourseCard";
-import DownloadBrochureButton from '../../components/layout/DownloadBrochureButton'; // ✅ NEW IMPORT
+import DownloadBrochureButton from '../../components/layout/DownloadBrochureButton';
 
 // IMPORT THE NEW FOUNDATION PAGES DIRECTLY
 import IitFoundation from './IitFoundation';
@@ -114,14 +114,29 @@ const Courses = () => {
     return matchProgram && matchCategory && matchTag;
   });
 
-  // --- DYNAMIC HEADER DESCRIPTION ---
-  let headerDescription = "Comprehensive programs designed by experts to help you crack JEE, NEET, and build a strong foundation for your future.";
+  // --- PREMIUM DYNAMIC HEADER TITLE & DESCRIPTION ---
+  // DEFAULT: Shows on the main /programs page
+  let headerTitle = (
+    <>Explore Our <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">Coaching Programs</span></>
+  );
+  let headerDescription = "Expert-led coaching classes in Bangalore for JEE, NEET, and foundation courses designed to build strong concepts and long-term success.";
+
+  // SPECIFIC Overrides
   if (programFilter?.toUpperCase() === 'IIT JEE') {
-    headerDescription = "IIT JEE Coaching in Bangalore for JEE Main and Advanced";
+    headerTitle = (
+      <>IIT JEE Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">JEE Main and Advanced</span></>
+    );
+    headerDescription = "At Centum Academy, our JEE coaching centre in Bangalore helps students prepare confidently for JEE Main and Advanced with strong conceptual clarity and structured guidance. We focus on building a solid foundation in Physics, Chemistry, and Mathematics while developing problem-solving and exam skills.";
   } else if (programFilter?.toUpperCase() === 'NEET') {
-    headerDescription = "NEET Coaching in Bangalore for Medical Entrance Exams";
+    headerTitle = (
+      <>NEET Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">Medical Entrance Exams</span></>
+    );
+    headerDescription = "At Centum Academy, our NEET coaching institute in Bangalore helps students prepare confidently for medical entrance exams through structured learning and strong conceptual clarity. We focus on building a solid foundation in Biology, Physics, and Chemistry while developing problem-solving skills and exam readiness.";
   } else if (programFilter?.toUpperCase() === 'FOUNDATION') {
-    headerDescription = "Foundation Coaching in Bangalore for Classes 8 to 10";
+    headerTitle = (
+      <>Foundation Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">Classes 8 to 10</span></>
+    );
+    headerDescription = "At Centum Academy, our Foundation program in Bangalore helps students build strong academic fundamentals from an early stage through structured learning and conceptual clarity. We focus on strengthening core concepts in Mathematics and Science while developing analytical thinking, problem-solving skills, and overall academic confidence.";
   }
 
   // ==========================================
@@ -194,25 +209,40 @@ const Courses = () => {
       <section id="programs" className="bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10 py-20 px-6">
           
-          {/* Header */}
-          <motion.div className="text-center mb-16" initial="hidden" animate="visible" variants={fadeInUp}>
+          {/* ========================================================= */}
+          {/* PREMIUM HEADER SECTION                                      */}
+          {/* ========================================================= */}
+          <motion.div className="text-center mb-24 relative" initial="hidden" animate="visible" variants={fadeInUp}>
+            
+            {/* Subtle premium background glow behind the text */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-purple-400/20 to-blue-400/20 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+            {/* Sleek Badge */}
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] px-4 py-2 rounded-full mb-4 shadow-sm"
+              className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-slate-200/60 px-5 py-2.5 rounded-full mb-8 shadow-sm shadow-indigo-100/50"
             >
-              <Sparkles className="h-5 w-5 text-white" />
-              <span className="text-sm font-bold text-white uppercase tracking-wider">
+              <Sparkles className="h-4 w-4 text-[#7E3AF2]" />
+              <span className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
                 {programFilter ? `${programFilter} PROGRAMS` : 'OUR PROGRAMS'}
               </span>
             </motion.div>
-            <h2 className="text-5xl font-black text-slate-900 mb-4 tracking-tight">
-              Discover Your Path to <span className="bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] bg-clip-text text-transparent">Success</span>
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
+            
+            {/* Premium H1 Heading - REDUCED BOLDNESS to font-bold */}
+            <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-bold text-slate-900 mb-8 tracking-tighter leading-[1.1]">
+              {headerTitle}
+            </h1>
+
+            {/* Elegant Divider Line */}
+            <div className="w-20 h-1.5 bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] mx-auto rounded-full mb-8 opacity-80 shadow-sm"></div>
+            
+            {/* Premium Paragraph Text */}
+            <p className="text-lg md:text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-normal tracking-wide">
               {headerDescription}
             </p>
+
           </motion.div>
 
           {/* Categories Grid - Only show if NO specific Program filter is applied via Navbar */}
