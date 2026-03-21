@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon, Calendar, Star, Smartphone, Monitor, FileText, Upload } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, Megaphone, AlertTriangle, CheckCircle, Info, ExternalLink, Image as ImageIcon, Calendar, Star, Smartphone, Monitor, FileText, Upload, Globe } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { cmsService } from '../services/cmsService';
@@ -45,8 +45,10 @@ export default function PromotionsBanners() {
     active: true,
   });
 
-  // --- BROCHURE STATE ---
-  const [brochures, setBrochures] = useState([]);
+  // --- WEBSITE SETTINGS (BROCHURE) STATE ---
+  const [brochureFile, setBrochureFile] = useState(null);
+  const [brochureUploadLoading, setBrochureUploadLoading] = useState(false);
+  const [activeBrochureUrl, setActiveBrochureUrl] = useState('');
 
   // --- Helpers for Styling ---
   const getTypeStyles = (type) => {
@@ -118,8 +120,8 @@ export default function PromotionsBanners() {
       fetchBanners();
     } else if (activeSubTab === 'announcements') {
       fetchAnnouncements();
-    } else if (activeSubTab === 'brochures') {
-      fetchBrochures();
+    } else if (activeSubTab === 'website-settings') {
+      fetchActiveBrochure();
     }
   }, [activeSubTab]);
 
@@ -149,16 +151,15 @@ export default function PromotionsBanners() {
     }
   };
 
-  const fetchBrochures = async () => {
+  const fetchActiveBrochure = async () => {
     try {
       setLoading(true);
-      const files = await storageService.getFiles();
-      // Filter only PDF files
-      const pdfs = files.filter(f => f.toLowerCase().endsWith('.pdf'));
-      setBrochures(pdfs);
+      const res = await api.get('/api/tech/settings/ACTIVE_BROCHURE_URL');
+      if (res.data && res.data.value) {
+        setActiveBrochureUrl(res.data.value);
+      }
     } catch (error) {
-      console.error("Error fetching brochures:", error);
-      toast.error("Failed to fetch brochures");
+      console.error("Could not fetch active brochure", error);
     } finally {
       setLoading(false);
     }
@@ -222,9 +223,7 @@ export default function PromotionsBanners() {
   const toggleBannerActive = async (banner) => {
     try {
       const updatedBanner = { ...banner, active: !banner.active };
-      // Optimistic update
       setBanners(banners.map(b => b.id === banner.id ? updatedBanner : b));
-      
       await cmsService.updateBanner(banner.id, updatedBanner);
       toast.success(`Banner ${updatedBanner.active ? 'activated' : 'deactivated'}`);
     } catch (error) {
@@ -233,7 +232,6 @@ export default function PromotionsBanners() {
     }
   };
 
-  // Unified Image Selection Handler
   const handleImageSelect = (url) => {
     if (imagePickerTarget === 'desktop') {
       setBannerForm({ ...bannerForm, imageUrl: url });
@@ -244,7 +242,7 @@ export default function PromotionsBanners() {
     setImagePickerTarget(null);
   };
 
-  // --- 2. ANNOUNCEMENT HANDLERS ---
+  // --- ANNOUNCEMENT HANDLERS ---
   const handleAddAnnouncement = async () => {
     if (!announcementForm.message) {
       toast.error("Message is required");
@@ -253,10 +251,7 @@ export default function PromotionsBanners() {
 
     try {
       setSubmitLoading(true);
-      const payload = {
-        ...announcementForm,
-        type: announcementForm.type 
-      };
+      const payload = { ...announcementForm, type: announcementForm.type };
 
       if (editingAnnouncement) {
         await api.put(`/api/tech/announcements/${editingAnnouncement.id}`, payload);
@@ -270,7 +265,6 @@ export default function PromotionsBanners() {
       setAnnouncementForm({ message: '', type: 'Exam Update', startDate: '', endDate: '', linkUrl: '', active: true });
       setShowAnnouncementForm(false);
       fetchAnnouncements();
-
     } catch (error) {
       console.error("Error saving announcement:", error);
       toast.error(error?.response?.data?.message || "Failed to save announcement");
@@ -290,12 +284,9 @@ export default function PromotionsBanners() {
   };
 
   const handleDeleteAnnouncement = async (id) => {
-    if(!window.confirm("Are you sure you want to delete this announcement? This action cannot be undone.")) {
-      return;
-    }
+    if(!window.confirm("Are you sure you want to delete this announcement? This action cannot be undone.")) return;
 
     const toastId = toast.loading("Deleting announcement...");
-
     try {
       await api.delete(`/api/tech/announcements/${id}`);
       toast.success("Announcement deleted", { id: toastId });
@@ -324,41 +315,37 @@ export default function PromotionsBanners() {
     }
   };
 
-  // --- 3. BROCHURE HANDLERS ---
-  const handleUploadBrochure = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    if (file.type !== 'application/pdf') {
-        toast.error('Please select a valid PDF file.');
-        return;
-    }
+  // --- WEBSITE SETTINGS HANDLER (NEW BROCHURE LOGIC) ---
+  const handleUploadWebsiteBrochure = async () => {
+    if (!brochureFile) return;
+    setBrochureUploadLoading(true);
 
-    const toastId = toast.loading("Uploading brochure to Supabase...");
     try {
-        await storageService.uploadFile(file);
-        toast.success("Brochure uploaded successfully!", { id: toastId });
-        fetchBrochures(); // Refresh list
-    } catch (error) {
-        console.error("Upload error", error);
-        toast.error("Failed to upload brochure.", { id: toastId });
-    }
-  };
-
-  const handleDeleteBrochure = async (url) => {
-      if(!window.confirm("Are you sure you want to delete this PDF? The website will not be able to download it anymore.")) return;
+      // 1. Upload to Supabase
+      const formData = new FormData();
+      formData.append('file', brochureFile);
       
-      // Extract just the filename from the URL to pass to deleteFile
-      const fileName = url.split('/').pop();
-      const toastId = toast.loading("Deleting brochure...");
-      try {
-          await storageService.deleteFile(fileName);
-          toast.success("Brochure deleted", { id: toastId });
-          fetchBrochures(); // Refresh list
-      } catch (error) {
-          console.error("Delete error", error);
-          toast.error("Failed to delete brochure", { id: toastId });
-      }
+      const uploadRes = await api.post('/api/tech/storage/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const newUrl = uploadRes.data.url;
+
+      // 2. Save the new URL to the Database Settings Table
+      await api.post('/api/tech/settings', {
+        key: 'ACTIVE_BROCHURE_URL',
+        value: newUrl
+      });
+
+      setActiveBrochureUrl(newUrl);
+      toast.success('Website Brochure updated successfully!');
+      setBrochureFile(null);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to upload brochure. Please try again.');
+    } finally {
+      setBrochureUploadLoading(false);
+    }
   };
 
   return (
@@ -373,7 +360,7 @@ export default function PromotionsBanners() {
 
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Promotions & Banners</h2>
-        <p className="text-gray-600 mt-1">Manage hero banners, website announcements, and brochures</p>
+        <p className="text-gray-600 mt-1">Manage hero banners, website announcements, and website settings.</p>
       </div>
 
       {/* Sub Tabs */}
@@ -398,19 +385,20 @@ export default function PromotionsBanners() {
         >
           Announcements
         </button>
+        {/* ✅ NEW: Website Settings Tab */}
         <button
-          onClick={() => setActiveSubTab('brochures')}
+          onClick={() => setActiveSubTab('website-settings')}
           className={`pb-3 px-4 font-medium transition-colors ${
-            activeSubTab === 'brochures'
+            activeSubTab === 'website-settings'
               ? 'text-blue-600 border-b-2 border-blue-600'
               : 'text-gray-600 hover:text-gray-800'
           }`}
         >
-          Brochures (PDF)
+          Website Settings
         </button>
       </div>
 
-      {/* Home Banners Tab */}
+      {/* Home Banners Tab Content */}
       {activeSubTab === 'banners' && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -674,7 +662,6 @@ export default function PromotionsBanners() {
       {/* Announcements Tab Content */}
       {activeSubTab === 'announcements' && (
          <>
-         {/* HEADER */}
          <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">Manage marquee announcements and popup notifications</p>
             <button
@@ -863,68 +850,62 @@ export default function PromotionsBanners() {
         </>
       )}
 
-      {/* --- BROCHURES TAB CONTENT --- */}
-      {activeSubTab === 'brochures' && (
-          <div>
-              <div className="flex justify-between items-center mb-4">
-                <p className="text-gray-600">Manage the downloadable PDF brochure for the main website.</p>
-                
-                {/* Custom File Upload Button */}
-                <label className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer shadow-sm">
-                  <Upload className="w-4 h-4" />
-                  Upload New PDF
-                  <input 
-                    type="file" 
-                    accept="application/pdf" 
-                    className="hidden" 
-                    onChange={handleUploadBrochure} 
-                  />
-                </label>
-              </div>
-
-              {loading ? (
-                <div className="flex justify-center items-center py-10">
-                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {brochures.length === 0 ? (
-                    <div className="col-span-full text-center text-gray-500 py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                      <FileText className="w-10 h-10 mx-auto mb-2 text-gray-300"/>
-                      <p>No PDF brochures found in storage. Upload one above!</p>
-                    </div>
-                  ) : (
-                    brochures.map((url, index) => {
-                        const fileName = url.split('/').pop();
-                        return (
-                            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center gap-4">
-                                <div className="h-12 w-12 bg-red-50 text-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <FileText className="w-6 h-6" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-semibold text-gray-800 truncate" title={fileName}>
-                                        {fileName}
-                                    </h4>
-                                    <a href={url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1">
-                                        View PDF <ExternalLink className="w-3 h-3"/>
-                                    </a>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => handleDeleteBrochure(url)}
-                                        className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                                        title="Delete PDF"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-                        )
-                    })
-                  )}
-                </div>
-              )}
+      {/* --- ✅ NEW: WEBSITE SETTINGS TAB CONTENT (BROCHURE LOGIC) --- */}
+      {activeSubTab === 'website-settings' && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="mb-6">
+            <div className="flex items-center space-x-3 mb-2">
+              <Globe className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold text-gray-900">Website Configuration</h2>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Manage downloadable assets and public configurations for the main website.
+            </p>
           </div>
+
+          <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+            <h3 className="text-lg font-bold text-gray-800 mb-1">Update Website Brochure</h3>
+            <p className="text-gray-500 mb-5 text-sm">
+              Upload a new PDF document. The public website will automatically start downloading this new file when users submit the enquiry form.
+            </p>
+            
+            {loading ? (
+              <div className="flex items-center gap-2 text-gray-500 mb-5">
+                 <Loader2 className="w-4 h-4 animate-spin" /> Fetching current brochure...
+              </div>
+            ) : activeBrochureUrl ? (
+              <div className="mb-5 p-4 bg-white rounded-md border border-gray-200 shadow-sm">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Currently Active Brochure:</span>
+                <a href={activeBrochureUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 truncate hover:underline flex items-center gap-1">
+                  <FileText className="w-4 h-4" />
+                  {activeBrochureUrl.split('/').pop()}
+                </a>
+              </div>
+            ) : (
+              <div className="mb-5 p-4 bg-yellow-50 rounded-md border border-yellow-200">
+                <span className="text-sm font-medium text-yellow-800">No active brochure is currently set. Upload one below.</span>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <input 
+                type="file" 
+                accept="application/pdf"
+                onChange={(e) => setBrochureFile(e.target.files[0])}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors"
+              />
+              
+              <button 
+                onClick={handleUploadWebsiteBrochure}
+                disabled={!brochureFile || brochureUploadLoading}
+                className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium"
+              >
+                {brochureUploadLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {brochureUploadLoading ? 'Uploading...' : 'Upload & Save'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
