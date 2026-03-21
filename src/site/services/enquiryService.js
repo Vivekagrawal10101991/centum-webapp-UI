@@ -2,7 +2,7 @@ import api from '../../services/api';
 
 /**
  * Enquiry Service
- * Handles enquiry/lead submission
+ * Handles enquiry/lead submission and dynamic brochure fetching
  */
 
 export const enquiryService = {
@@ -16,6 +16,15 @@ export const enquiryService = {
     const response = await api.post('/api/public/enquire', enquiryData);
     return response.data;
   },
+
+  /**
+   * Fetch the dynamic brochure URL from the backend (Supabase)
+   * @returns {Promise} Response containing the URL
+   */
+  getBrochureUrl: async () => {
+    const response = await api.get('/api/public/brochure-link');
+    return response.data; 
+  }
 };
 
 export default enquiryService;

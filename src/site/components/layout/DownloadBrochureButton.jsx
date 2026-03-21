@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom'; // ✅ NEW: Imported createPortal
+import { createPortal } from 'react-dom'; 
 import { Download, X, Loader2 } from 'lucide-react';
 import enquiryService from '../../services/enquiryService';
 
@@ -27,24 +27,44 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
       // 1. Save data to database via API
       await enquiryService.submitEnquiry(formData);
       
-      // 2. Trigger Brochure Download
+      // 2. Fetch the dynamic Brochure URL from backend (Supabase URL)
+      const { url: brochureUrl } = await enquiryService.getBrochureUrl();
+      
+      if (!brochureUrl) {
+         throw new Error("Brochure is not currently available. Please try again later.");
+      }
+
+      // 3. Simply use Supabase's built-in download parameter. 
+      // This completely bypasses CORS issues and fetch() 400 errors!
+      const downloadUrl = `${brochureUrl}?download=Centum_Academy_Brochure.pdf`;
+      
       const link = document.createElement('a');
-      link.href = '/brochure.pdf'; // Ensure your actual brochure PDF is in the public folder
-      link.download = 'Centum_Academy_Brochure.pdf';
+      link.href = downloadUrl;
+      link.setAttribute('download', 'Centum_Academy_Brochure.pdf');
+      // Added target='_blank' as a fallback so it opens in a new tab if the browser blocks direct downloads
+      link.target = '_blank'; 
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      
+      // Clean up the DOM
+      link.parentNode.removeChild(link);
 
-      // 3. Show success state and auto-close
+      // 4. Show success state and auto-close
       setSuccess(true);
       setTimeout(() => {
         setIsOpen(false);
         setSuccess(false);
-        setFormData({ studentName: '', phoneNumber: '', email: '', courseInterest: 'Brochure Download', message: 'Requested Brochure Download' });
+        setFormData({ 
+          studentName: '', 
+          phoneNumber: '', 
+          email: '', 
+          courseInterest: 'Brochure Download', 
+          message: 'Requested Brochure Download' 
+        });
       }, 3000);
     } catch (error) {
-      console.error("Failed to save enquiry:", error);
-      alert("Something went wrong. Please try again.");
+      console.error("Failed to save enquiry or download brochure:", error);
+      alert(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,7 +83,6 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
         Download Brochure
       </button>
 
-      {/* ✅ FIX: Wrapped the modal in createPortal to teleport it to document.body. Also bumped z-index to 9999 so it covers the Navbar */}
       {isOpen && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative animate-fade-in-up" style={{ animation: "fadeIn 0.3s ease-out" }}>
@@ -126,7 +145,7 @@ const DownloadBrochureButton = ({ isFixed = true, className = "" }) => {
                   <button 
                     type="submit" 
                     disabled={loading}
-                    className="w-full bg-[#27295c] hover:bg-indigo-900 text-white font-bold py-3 rounded-lg transition-colors mt-2 flex justify-center items-center gap-2 shadow-md"
+                    className="w-full bg-[#27295c] hover:bg-indigo-900 text-white font-bold py-3 rounded-lg transition-colors mt-2 flex justify-center items-center gap-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
                     {loading ? "Processing..." : "Download Now"}

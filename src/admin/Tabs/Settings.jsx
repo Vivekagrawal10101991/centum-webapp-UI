@@ -34,8 +34,6 @@ const Settings = () => {
         newPassword: data.newPassword,
       });
 
-      console.log('Password change response:', response);
-
       if (response.token) {
         localStorage.setItem('adminToken', response.token);
         localStorage.setItem('authToken', response.token);
