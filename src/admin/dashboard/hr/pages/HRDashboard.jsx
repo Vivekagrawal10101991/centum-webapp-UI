@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Users, Clock, FileText, Calendar, Building2, UserCheck, 
   Briefcase, Plus, CheckCircle, XCircle, ChevronRight,
-  Search, MapPin, Inbox, Mail, Phone, ExternalLink, Download, ChevronDown 
+  Search, MapPin, Inbox, Mail, Phone, ExternalLink, Download, ChevronDown, Trash2
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -544,6 +544,21 @@ const RecruitmentTab = () => {
     }
   };
 
+  // ✅ NEW: Delete Job Handler with Confirmation
+  const handleDeleteJob = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this job posting? All associated applications will also be permanently deleted. This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      await hrService.deleteJob(id);
+      fetchJobs();
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      alert("Failed to delete job posting.");
+    }
+  };
+
   const handleViewApplications = async (job) => {
     setSelectedJob(job);
     setIsAppsModalOpen(true);
@@ -680,6 +695,7 @@ const RecruitmentTab = () => {
                 </div>
               </div>
 
+              {/* Card Footer with Delete Button */}
               <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center mt-auto">
                 <button 
                   onClick={() => handleViewApplications(job)}
@@ -688,14 +704,23 @@ const RecruitmentTab = () => {
                   Applications 
                   <ChevronRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                 </button>
-                <Button 
-                  variant={job.open ? "danger" : "secondary"} 
-                  onClick={() => handleToggleStatus(job.id)} 
-                  size="sm"
-                  className={job.open ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-100" : ""}
-                >
-                  {job.open ? 'Close Role' : 'Reopen Role'}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant={job.open ? "danger" : "secondary"} 
+                    onClick={() => handleToggleStatus(job.id)} 
+                    size="sm"
+                    className={job.open ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-100" : ""}
+                  >
+                    {job.open ? 'Close Role' : 'Reopen Role'}
+                  </Button>
+                  <button 
+                    onClick={() => handleDeleteJob(job.id)}
+                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                    title="Delete Job"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </Card>
           ))}

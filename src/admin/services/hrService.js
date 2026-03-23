@@ -16,6 +16,9 @@ export const hrService = {
   
   toggleJobStatus: (id) => api.put(`/api/hr/jobs/${id}/toggle`),
   
+  // ✅ NEW: Added delete job API call
+  deleteJob: (id) => api.delete(`/api/hr/jobs/${id}`),
+  
   getJobApplications: (jobId) => api.get(`/api/hr/jobs/${jobId}/applications`),
   
   updateApplicationStatus: (id, status) => 
