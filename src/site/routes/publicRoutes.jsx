@@ -1,7 +1,17 @@
+import React from 'react';
 import { Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-// Added IitFoundation and NeetFoundation to the import list below
-import { Home, About, Contact, Courses, Careers, Announcements, IitFoundation, NeetFoundation } from '../public'; 
+import { 
+  Home, 
+  About, 
+  Contact, 
+  Courses, 
+  Careers, 
+  Announcements, 
+  IitFoundation, 
+  NeetFoundation, 
+  PrivacyPolicy 
+} from '../public/pages'; 
 import PageMeta from '../../components/common/PageMeta';
 
 // Centralized SEO Data Mapping
@@ -62,5 +72,21 @@ export const publicRoutes = (
     
     <Route path="/careers" element={<PageMeta title="Careers | Centum Academy" path="/careers"><Layout><Careers /></Layout></PageMeta>} />
     <Route path="/announcements" element={<PageMeta title="Announcements | Centum Academy" path="/announcements"><Layout><Announcements /></Layout></PageMeta>} />
+    
+    {/* Privacy Policy Route */}
+    <Route 
+      path="/privacy-policy" 
+      element={
+        <PageMeta 
+          title="Privacy Policy | Centum Academy" 
+          description="Privacy Policy and terms for Centum Academy." 
+          path="/privacy-policy"
+        >
+          <Layout>
+            <PrivacyPolicy />
+          </Layout>
+        </PageMeta>
+      } 
+    />
   </>
 );

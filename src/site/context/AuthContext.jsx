@@ -7,7 +7,7 @@ const AuthContext = createContext(null);
 /**
  * Site AuthProvider Component
  * Manages site authentication state
- * UPDATED: Added Event Listeners to auto-detect logout from Dashboard
+ * UPDATED: Fixed error handling to correctly pass backend error messages to the UI
  */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -150,9 +150,20 @@ export const AuthProvider = ({ children }) => {
       };
     } catch (error) {
       console.error('Login error:', error);
+      
+      // ✅ FIX: Correctly extract the error string depending on how it was thrown
+      let errorMessage = 'Login failed. Please check your credentials.';
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
       return { 
         success: false, 
-        error: error.response?.data?.message || error.message || 'Login failed'
+        error: errorMessage
       };
     }
   };
