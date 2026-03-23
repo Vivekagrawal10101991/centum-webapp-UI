@@ -36,9 +36,15 @@ api.interceptors.response.use(
       const { status, data } = error.response;
       
       if (status === 401) {
-        // Unauthorized - clear token and redirect to login
+        // Unauthorized - clear token
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        
+        // ✅ FIX: Only redirect to login if the user isn't already on the login page!
+        // This prevents the page from refreshing when they type a wrong password,
+        // allowing the "Invalid Credentials" toast message to finally show up.
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
       }
       
       // Return error message from backend or default message

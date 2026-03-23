@@ -66,6 +66,8 @@ const Footer = () => {
               <li><Link to="/program/neet-coaching-bangalore" className="hover:text-white transition-colors">NEET Preparation</Link></li>
               <li><Link to="/student-success" className="hover:text-white transition-colors">Success Stories</Link></li>
               <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              {/* ✅ NEW: Added Privacy Policy to Quick Links */}
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors text-indigo-300 font-medium">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -114,8 +116,8 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <p>© 2026 Centum Academy. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-indigo-400">Terms of Service</a>
-            <a href="#" className="hover:text-indigo-400">Privacy Policy</a>
+            <Link to="/terms-of-service" className="hover:text-indigo-400 transition-colors">Terms of Service</Link>
+            <Link to="/privacy-policy" className="hover:text-indigo-400 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </div>
