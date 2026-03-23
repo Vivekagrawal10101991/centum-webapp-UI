@@ -35,10 +35,6 @@ export const useLogin = () => {
         if (isFirstLogin) {
           authService.setFirstLogin(true);
           
-          console.log('First login detected');
-          console.log('Dashboard route:', result.dashboardRoute);
-          console.log('Settings route:', result.dashboardRoute + '/settings');
-          
           toast.success(result.data.message || 'Login successful! Please change your password.', {
             duration: 3000,
             position: 'top-center',
@@ -49,7 +45,6 @@ export const useLogin = () => {
           }, 500);
         } else {
           const dashboardRoute = result.dashboardRoute || '/dashboard';
-          console.log('Navigating to dashboard:', dashboardRoute);
           
           toast.success('Login successful! Welcome back.', {
             duration: 3000,
@@ -61,14 +56,24 @@ export const useLogin = () => {
           }, 500);
         }
       } else {
-        toast.error(result.error || 'Login failed. Please check your credentials.', {
+        // ✅ FIX: Force the message to be exactly "Invalid Credentials" 
+        // unless it is specifically a network connection error.
+        let errorMessage = 'Invalid Credentials';
+        
+        if (typeof result.error === 'string' && result.error.toLowerCase().includes('network')) {
+          errorMessage = result.error;
+        }
+
+        toast.error(errorMessage, {
           duration: 4000,
           position: 'top-center',
         });
       }
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error?.message || 'An unexpected error occurred. Please try again.', {
+      console.error('Login error catch block:', error);
+      
+      // ✅ FIX: Fallback catch block also shows "Invalid Credentials"
+      toast.error('Invalid Credentials', {
         duration: 4000,
         position: 'top-center',
       });

@@ -22,7 +22,8 @@ import {
   KcetCourses,
   FoundationCourses,
   IitFoundation, 
-  NeetFoundation 
+  NeetFoundation,
+  PrivacyPolicy // ✅ NEW: Added Privacy Policy Import
 } from '../public';
 
 // Import New Detail Pages
@@ -228,6 +229,16 @@ export const SiteRoutes = () => {
           description="Explore career opportunities at Centum Academy. Join our team of educators and contribute to JEE, NEET & Foundation coaching excellence." 
           path="/careers">
           <Layout><Careers /></Layout>
+        </PageMeta>
+      } />
+
+      {/* ✅ NEW: Privacy Policy Route */}
+      <Route path="/privacy-policy" element={
+        <PageMeta 
+          title="Privacy Policy | Centum Academy" 
+          description="Privacy Policy and terms for Centum Academy." 
+          path="/privacy-policy">
+          <Layout><PrivacyPolicy /></Layout>
         </PageMeta>
       } />
 

@@ -1,12 +1,6 @@
 import { PERMISSIONS } from './rolePermissions';
 import { ROLE_PERMISSIONS } from './permissions';
 
-/**
- * Maps navigation items to required permissions
- * Each navigation item can have:
- * - requiredPermissions: Array of permissions (user needs at least one)
- * - requiredRole: Specific role requirement
- */
 export const NAVIGATION_PERMISSIONS = {
   // Super Admin - Overview
   '/dashboard/super-admin': {
@@ -48,9 +42,6 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/super-admin/leads-enquiries': {
     requiredPermissions: [PERMISSIONS.ENQUIRE_LIST, PERMISSIONS.SYSTEM_ADMIN],
   },
-  '/dashboard/super-admin/settings': {
-    requiredPermissions: [PERMISSIONS.VIEW_SETTINGS, PERMISSIONS.MANAGE_SETTINGS, PERMISSIONS.SYSTEM_ADMIN],
-  },
   
   // Super Admin - Batch Management
   '/dashboard/super-admin/batch-management': {
@@ -78,9 +69,6 @@ export const NAVIGATION_PERMISSIONS = {
   },
   '/dashboard/admin/analytics': {
     requiredPermissions: [PERMISSIONS.VIEW_REPORTS],
-  },
-  '/dashboard/admin/settings': {
-    requiredPermissions: [PERMISSIONS.VIEW_SETTINGS],
   },
 
   // Admin Routes - Media Center
@@ -123,9 +111,6 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/technical/reports': {
     requiredPermissions: [PERMISSIONS.VIEW_REPORTS],
   },
-  '/dashboard/technical/settings': {
-    requiredPermissions: [],
-  },
 
   // HR Routes
   '/dashboard/hr': {
@@ -154,9 +139,6 @@ export const NAVIGATION_PERMISSIONS = {
   '/dashboard/graphic-designer/media-center': {
     requiredPermissions: [PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS],
   },
-  '/dashboard/graphic-designer/settings': {
-    requiredPermissions: [PERMISSIONS.VIEW_SETTINGS],
-  },
 
   // Operations Manager Routes
   '/dashboard/operations': {
@@ -175,12 +157,10 @@ export const NAVIGATION_PERMISSIONS = {
 const getUserPermissions = (user) => {
   if (!user || !user.role) return [];
   
-  // Super admin has all permissions
   if (user.role === 'SUPER_ADMIN') {
     return Object.values(PERMISSIONS);
   }
   
-  // Get permissions for the user's role
   const permissions = ROLE_PERMISSIONS[user.role];
   return permissions || [];
 };
@@ -194,6 +174,9 @@ const getUserPermissions = (user) => {
 export const canAccessRoute = (path, user) => {
   if (!user) return false;
 
+  // ✅ GLOBAL OVERRIDE: Every user MUST be able to access their own Settings (Profile/Password changes).
+  if (path.endsWith('/settings')) return true;
+
   const navPermission = NAVIGATION_PERMISSIONS[path];
   
   // If no permission config, allow access (public route)
@@ -201,17 +184,14 @@ export const canAccessRoute = (path, user) => {
 
   // Check role requirement
   if (navPermission.requiredRole && user.role !== navPermission.requiredRole) {
-    // Super admin has access to everything
     if (user.role === 'SUPER_ADMIN') return true;
     return false;
   }
 
   // Check permission requirement
   if (navPermission.requiredPermissions) {
-    // Get user's permissions based on their role
     const userPermissions = getUserPermissions(user);
     
-    // User needs at least one of the required permissions
     return navPermission.requiredPermissions.some(permission => 
       userPermissions.includes(permission)
     );

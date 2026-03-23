@@ -15,6 +15,9 @@ export { default as NeetCourses } from './NeetCourses';
 export { default as KcetCourses } from './KcetCourses';
 export { default as FoundationCourses } from './FoundationCourses';
 
-// NEW: Foundation Detailed Pages added here
+// Foundation Detailed Pages
 export { default as IitFoundation } from './IitFoundation';
 export { default as NeetFoundation } from './NeetFoundation';
+
+// Policies
+export { default as PrivacyPolicy } from './PrivacyPolicy';

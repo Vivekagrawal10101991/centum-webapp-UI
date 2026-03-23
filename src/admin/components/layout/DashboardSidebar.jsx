@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Added useEffect and useState
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
@@ -8,14 +8,13 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
 import { filterNavigationByPermissions } from '../../helpers/navigationPermissions';
-import { dashboardService } from '../../services/dashboardService'; // Import service
+import { dashboardService } from '../../services/dashboardService';
 
 const DashboardSidebar = () => {
   const location = useLocation();
   const { user } = useAuth();
-  const [badgeCounts, setBadgeCounts] = useState({}); // Store badge data
+  const [badgeCounts, setBadgeCounts] = useState({});
 
-  // Function to fetch notifications
   const fetchNotifications = async () => {
     try {
       const data = await dashboardService.getNotificationCounts();
@@ -25,7 +24,6 @@ const DashboardSidebar = () => {
     }
   };
 
-  // Poll for notifications every 60 seconds
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
@@ -48,7 +46,7 @@ const DashboardSidebar = () => {
         name: 'Leads & Enquiries', 
         path: '/dashboard/super-admin/leads-enquiries', 
         icon: MessageCircle,
-        badgeKey: 'leads' // Key to look up in badgeCounts
+        badgeKey: 'leads' 
       },
       { 
         name: 'Leave Approvals', 
@@ -129,6 +127,7 @@ const DashboardSidebar = () => {
         badgeKey: 'leaves'
       }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
+      { name: 'Settings', path: '/dashboard/hr/settings', icon: Settings }, // ✅ ADDED HR SETTINGS
     ],
 
     [ROLES.OPERATIONS_MANAGER]: [
@@ -148,6 +147,7 @@ const DashboardSidebar = () => {
         icon: CheckCircle,
         badgeKey: 'leaves'
       }, 
+      { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings }, // ✅ ADDED OP SETTINGS
     ],
 
     [ROLES.REPORTING_MANAGER]: [
@@ -182,6 +182,12 @@ const DashboardSidebar = () => {
       { name: 'Media Center', path: '/dashboard/graphic-designer/media-center', icon: Video },
       { name: 'Settings', path: '/dashboard/graphic-designer/settings', icon: Settings },
     ],
+
+    // ✅ ADDED COMPLETE COORDINATOR CONFIG
+    [ROLES.COORDINATOR]: [
+      { name: 'Overview', path: '/dashboard/coordinator', icon: BarChart },
+      { name: 'Settings', path: '/dashboard/coordinator/settings', icon: Settings }, 
+    ],
   };
 
   const allItems = navigationItems[user?.role] || [];
@@ -201,7 +207,8 @@ const DashboardSidebar = () => {
       '/dashboard/operations',
       '/dashboard/reporting-manager',
       '/dashboard/admission-manager',
-      '/dashboard/graphic-designer'
+      '/dashboard/graphic-designer',
+      '/dashboard/coordinator' // ✅ ADDED
     ];
 
     if (basePaths.includes(path)) {
