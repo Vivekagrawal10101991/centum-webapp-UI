@@ -55,8 +55,8 @@ const IitFoundation = () => {
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               IIT Foundation Coaching in Bangalore <br/> <span className="text-blue-600">for Classes 8 to 10</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
-              Build a Strong Academic Base for Future IIT Aspirants
+            <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
+              Start building a strong foundation for your IIT dream from an early stage. Learn concepts in a very simple and clear way with regular practice. This helps you gain confidence and do better step by step.
             </p>
           </motion.div>
 

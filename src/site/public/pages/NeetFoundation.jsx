@@ -53,8 +53,8 @@ const NeetFoundation = () => {
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               NEET Foundation Coaching <br/> <span className="text-emerald-600">for Classes 8 to 10</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
-              Start Building Medical Excellence Early
+            <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
+              Begin your journey towards becoming a doctor with the right start. Understand the basics easily through simple yet structured learning. With the right support, you can feel confident and improve every day.
             </p>
           </motion.div>
 
