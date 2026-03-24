@@ -94,12 +94,12 @@ const EducationWithEmotion = () => {
               <span className="text-sm font-bold uppercase tracking-widest">Why Choose Centum Academy</span>
             </motion.div>
 
-            <motion.h2 variants={textItemVariants} className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
-              Education with <span className="text-purple-600">Emotion</span>
+            <motion.h2 variants={textItemVariants} className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
+              Leading Coaching Institute in Bangalore for <span className="text-purple-600">Academic Excellence</span>
             </motion.h2>
 
             <motion.p variants={textItemVariants} className="text-lg font-normal text-slate-600 mb-10 leading-relaxed">
-              Experience the perfect blend of academic excellence and personalized care. We focus on quality mentorship and building an ecosystem where learning is enjoyable, effective, and future-ready.
+              Find the perfect combination of academic knowledge and individual attention at our coaching centre in Bangalore. We build a learning environment that encourages students to be productive and future-oriented, enabling each student to build a successful career.
             </motion.p>
 
             <motion.div variants={textItemVariants} className="flex flex-wrap gap-4">

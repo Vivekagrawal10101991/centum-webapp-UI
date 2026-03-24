@@ -105,8 +105,8 @@ const HeroSection = () => {
             Prepare for JEE, NEET, and <br className="hidden md:block" /> Your Future with <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">CENTUM</span>
           </h1>
           
-          <p className="text-slate-500 font-normal text-base md:text-xl max-w-2xl mb-2">
-            Join Bangalore's premier coaching institute. Expert faculty, personalized mentoring, and a proven track record of success.
+          <p className="text-slate-500 font-normal text-base md:text-xl max-w-3xl mb-2">
+            Join a top coaching institute in Bangalore for IIT JEE and NEET, offering expert faculty, personalised mentoring, and a proven track record of success.
           </p>
 
           {/* Action Buttons */}
