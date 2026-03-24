@@ -128,17 +128,17 @@ const Courses = () => {
     headerTitle = (
       <>IIT JEE Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">JEE Main and Advanced</span></>
     );
-    headerDescription = "At Centum Academy, our JEE coaching centre in Bangalore helps students prepare confidently for JEE Main and Advanced with strong conceptual clarity and structured guidance. We focus on building a solid foundation in Physics, Chemistry, and Mathematics while developing problem-solving and exam skills.";
+    headerDescription = "At Centum Academy, our IIT JEE coaching in Bangalore helps students crack JEE Main and Advanced through clear concepts and structured guidance. We build a strong foundation in Physics, Chemistry, and Mathematics to enhance problem-solving skills and achieve higher scores.";
   } else if (programFilter?.toUpperCase() === 'NEET') {
     headerTitle = (
       <>NEET Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">Medical Entrance Exams</span></>
     );
-    headerDescription = "At Centum Academy, our NEET coaching institute in Bangalore helps students prepare confidently for medical entrance exams through structured learning and strong conceptual clarity. We focus on building a solid foundation in Biology, Physics, and Chemistry while developing problem-solving skills and exam readiness.";
+    headerDescription = "For Students preparing for NEET coaching in Bangalore, Centum Academy ensures they are confident for medical entrance exams through structured learning and strong conceptual and visual understanding. We ensure that students have a strong knowledge in  Biology, Physics, and Chemistry, along with problem-solving skills, so that they are fear- free in their exams.";
   } else if (programFilter?.toUpperCase() === 'FOUNDATION') {
     headerTitle = (
       <>Foundation Coaching in Bangalore for <br className="hidden md:block"/><span className="bg-gradient-to-r from-[#7E3AF2] via-[#4F46E5] to-[#1C64F2] bg-clip-text text-transparent">Classes 8 to 10</span></>
     );
-    headerDescription = "At Centum Academy, our Foundation program in Bangalore helps students build strong academic fundamentals from an early stage through structured learning and conceptual clarity. We focus on strengthening core concepts in Mathematics and Science while developing analytical thinking, problem-solving skills, and overall academic confidence.";
+    headerDescription = "Our IIT & NEET Foundation program at Centum Academy helps students develop strong academic fundamentals through a systematic approach and clear conceptual understanding. We focus on building core concepts in Mathematics and Science, along with enhancing analytical thinking and problem-solving abilities to strengthen academic confidence.";
   }
 
   // ==========================================
@@ -232,7 +232,7 @@ const Courses = () => {
               </span>
             </motion.div>
             
-            {/* Premium H1 Heading - REDUCED BOLDNESS to font-bold */}
+            {/* Premium H1 Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-bold text-slate-900 mb-8 tracking-tighter leading-[1.1]">
               {headerTitle}
             </h1>
@@ -240,8 +240,8 @@ const Courses = () => {
             {/* Elegant Divider Line */}
             <div className="w-20 h-1.5 bg-gradient-to-r from-[#7E3AF2] to-[#1C64F2] mx-auto rounded-full mb-8 opacity-80 shadow-sm"></div>
             
-            {/* Premium Paragraph Text */}
-            <p className="text-lg md:text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-normal tracking-wide">
+            {/* Premium Paragraph Text - REDUCED FONT SIZE HERE */}
+            <p className="text-base md:text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal tracking-wide">
               {headerDescription}
             </p>
 
@@ -374,10 +374,10 @@ const Courses = () => {
                     Structured preparation for IITs, NITs and Beyond
                   </h2>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    Cracking JEE Main & Advanced requires more than hard work; it's all about strategic planning, strong basics, and a lot of practice. Our program at Centum Academy, a trusted IIT coaching in Bangalore, provides students with the tools to not only excel in Physics, Chemistry, and Mathematics, but also to develop confidence in exams.
+                    Cracking JEE requires strategic planning and strong basics. As a trusted IIT coaching institute in Bangalore, Centum Academy provides students with the exact tools needed to excel in Physics, Chemistry, and Mathematics.
                   </p>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    We help students get into the IITs, NITs, and other leading engineering institutes in India through AI-supported practice, personalised mentoring, and academic guidance from IIT graduates.
+                    Through AI-supported practice, personalised mentoring, and guidance from IIT graduates, we help students secure spots in IITs, NITs, and other top engineering institutes.
                   </p>
                 </motion.div>
                 <motion.div variants={slideInRight} className="relative">
@@ -406,33 +406,33 @@ const Courses = () => {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <BookOpen className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Strong Foundation in Concepts</h4>
-                    <p className="text-slate-600">We focus on building a strong foundation in Physics, Chemistry, and Mathematics. We have a curriculum that is in line with NCERT, which covers advanced topics for JEE, ensuring students are conceptually prepared.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Strong Concepts</h4>
+                    <p className="text-slate-600">We build a solid foundation aligned with NCERT while covering advanced topics, ensuring students are conceptually prepared for JEE.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Zap className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Speed & Accuracy Development</h4>
-                    <p className="text-slate-600">Learn time management methods to handle complicated problems and use structured methods to improve problem-solving efficiency.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Speed & Accuracy</h4>
+                    <p className="text-slate-600">Learn essential time management methods to handle complex problems and improve overall exam efficiency.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Cpu className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">AI-Based Practice & Analytics</h4>
-                    <p className="text-slate-600">AI-Based assignments help to identify major learning gaps and support targeted areas for improvement.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">AI Analytics</h4>
+                    <p className="text-slate-600">AI-based assignments identify learning gaps instantly, allowing for highly targeted areas of improvement.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <FileText className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Mock Tests & Exam Simulations</h4>
-                    <p className="text-slate-600">Detailed test analysis helps find your strengths and systematically guides you to improve weak areas.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Mock Tests</h4>
+                    <p className="text-slate-600">Detailed test analysis highlights your strengths and systematically guides you to overcome weak areas.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Users className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Small Batches & Mentorship</h4>
-                    <p className="text-slate-600">Individual attention ensures all doubts are cleared, ideas are grasped, and students are guided in the manner that best fits them.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Personal Mentorship</h4>
+                    <p className="text-slate-600">Small batches ensure all doubts are cleared, and students are guided in a way that best fits their learning style.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Award className="h-10 w-10 text-blue-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Expert Faculty from IIT</h4>
-                    <p className="text-slate-600">Programs are designed and guided by IIT graduates who use structured problem-solving approaches.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Expert Faculty</h4>
+                    <p className="text-slate-600">Programs are designed and taught by IIT graduates who utilize proven, structured problem-solving approaches.</p>
                   </motion.div>
                 </div>
               </motion.div>
@@ -442,12 +442,12 @@ const Courses = () => {
                 <motion.h3 variants={fadeInUp} className="text-3xl font-black text-slate-900 mb-8 text-center">Program <span className="text-blue-600">Highlights</span></motion.h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {[
-                    "Professional faculty of IIT, BITS, and NIT experience.",
-                    "Progressive preparation from Class XI and XII.",
-                    "Building foundations and Olympiads.",
-                    "Topic-wise assignments, question banks, and practice sheets.",
-                    "Class XII dedicated revision module for final preperation.",
-                    "Frequent parent-teacher meetings to check progress and improvement."
+                    "Faculty with proven IIT, BITS, and NIT experience.",
+                    "Progressive syllabus coverage from Class XI to XII.",
+                    "Foundation building and Olympiad prep integration.",
+                    "Topic-wise assignments and extensive question banks.",
+                    "Dedicated Class XII revision module for final prep.",
+                    "Frequent parent-teacher meetings to track progress."
                   ].map((highlight, i) => (
                     <motion.div key={i} variants={fadeInUp} whileHover={{ scale: 1.02 }} className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
                       <CheckCircle2 className="h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -461,7 +461,7 @@ const Courses = () => {
               <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 <motion.div variants={fadeInUp} className="text-center mb-12">
                   <h3 className="text-3xl font-black text-slate-900 mb-4">JEE Success Formula at <span className="text-blue-600">Centum Academy</span></h3>
-                  <p className="text-slate-600 text-lg max-w-2xl mx-auto">Centum has three layers to attain JEE success, an integrated system that ensures students are not only ready, but at their best on the actual day.</p>
+                  <p className="text-slate-600 text-lg max-w-2xl mx-auto">Our three-layered integrated system ensures students are not only prepared, but at their absolute best on exam day.</p>
                 </motion.div>
                 <div className="grid md:grid-cols-3 gap-8 relative">
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl border-2 border-slate-100 text-center relative z-10 hover:border-blue-200 transition-colors">
@@ -469,21 +469,21 @@ const Courses = () => {
                       <Lightbulb className="h-8 w-8 text-blue-600" />
                     </div>
                     <h4 className="text-xl font-bold text-slate-900 mb-3">Concept Mastery</h4>
-                    <p className="text-slate-600">A proper understanding of all the basic concepts.</p>
+                    <p className="text-slate-600">A deep, practical understanding of all foundational concepts.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl border-2 border-slate-100 text-center relative z-10 hover:border-blue-200 transition-colors">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Target className="h-8 w-8 text-blue-600" />
                     </div>
-                    <h4 className="text-xl font-bold text-slate-900 mb-3">Problem-Solving Excellence</h4>
-                    <p className="text-slate-600">Improve accuracy and speed through specific practice.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-3">Problem Solving</h4>
+                    <p className="text-slate-600">Improved accuracy and speed through targeted, repetitive practice.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl border-2 border-slate-100 text-center relative z-10 hover:border-blue-200 transition-colors">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Trophy className="h-8 w-8 text-blue-600" />
                     </div>
-                    <h4 className="text-xl font-bold text-slate-900 mb-3">Exam Strategy & Confidence</h4>
-                    <p className="text-slate-600">Practice mock tests, statistics, and individualized guidance to perform better in exams.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-3">Exam Strategy</h4>
+                    <p className="text-slate-600">Mock tests, statistical analysis, and guidance to maximize scores.</p>
                   </motion.div>
                 </div>
               </motion.div>
@@ -501,19 +501,19 @@ const Courses = () => {
                     <ul className="space-y-4">
                       <motion.li variants={fadeInUp} className="flex items-start gap-4">
                         <div className="bg-white p-2 rounded-lg shadow-sm"><Building className="h-6 w-6 text-blue-600" /></div>
-                        <span className="text-slate-700 text-lg">Convenient JEE coaching centres in Bangalore at HSR Layout, Whitefield, and Rajajinagar.</span>
+                        <span className="text-slate-700 text-lg">Convenient centers in HSR Layout, Whitefield, and Rajajinagar.</span>
                       </motion.li>
                       <motion.li variants={fadeInUp} className="flex items-start gap-4">
                         <div className="bg-white p-2 rounded-lg shadow-sm"><School className="h-6 w-6 text-blue-600" /></div>
-                        <span className="text-slate-700 text-lg">Close cooperation with reputed schools (NPS, NAFL, etc).</span>
+                        <span className="text-slate-700 text-lg">Close partnerships with reputed schools (NPS, NAFL, etc).</span>
                       </motion.li>
                       <motion.li variants={fadeInUp} className="flex items-start gap-4">
                         <div className="bg-white p-2 rounded-lg shadow-sm"><Target className="h-6 w-6 text-blue-600" /></div>
-                        <span className="text-slate-700 text-lg">Combined approach: School boards with JEE preparation.</span>
+                        <span className="text-slate-700 text-lg">Seamlessly combining board exams with JEE preparation.</span>
                       </motion.li>
                       <motion.li variants={fadeInUp} className="flex items-start gap-4">
                         <div className="bg-white p-2 rounded-lg shadow-sm"><Users className="h-6 w-6 text-blue-600" /></div>
-                        <span className="text-slate-700 text-lg">Highly valued for mentorship, small batches, and sophisticated problem solving advice.</span>
+                        <span className="text-slate-700 text-lg">Highly valued for personalized mentorship and small batch sizes.</span>
                       </motion.li>
                     </ul>
                   </div>
@@ -542,10 +542,10 @@ const Courses = () => {
                     Your Road to High-Ranking Medical Positions
                   </h2>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    At Centum Academy, we make our students believe that NEET is not just a test; it is the gateway to realising their dream of becoming a doctor, and we are one of the leading NEET coaching institutes in Bangalore. Our program is designed to master Biology, Physics, and Chemistry, as well as enhance speed, accuracy, and exam readiness.
+                    NEET is the gateway to realizing your dream of becoming a doctor. As a leading NEET coaching institute in Bangalore, our program is designed to help you master Biology, Physics, and Chemistry while enhancing exam readiness.
                   </p>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    Guided by expert NEET coaching in Bangalore, mentors, comprehensive study materials, and continuous testing, we are confident that our students will be well prepared to secure leading positions in India’s top medical colleges.
+                    With expert mentors, comprehensive study materials, and continuous testing, we ensure our students are fully prepared to secure top ranks in India’s premier medical colleges.
                   </p>
                 </motion.div>
                 <motion.div variants={slideInRight} className="relative">
@@ -569,38 +569,38 @@ const Courses = () => {
               {/* 2. Why Choose Section */}
               <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 <motion.h3 variants={fadeInUp} className="text-3xl font-black text-center text-slate-900 mb-12">
-                  Why Choose Centum Academy for <span className="text-emerald-600">NEET Coaching in Bangalore</span>
+                  Why Choose Centum Academy for <span className="text-emerald-600">NEET</span>
                 </motion.h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Microscope className="h-10 w-10 text-emerald-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Comprehensive Subject Coverage</h4>
-                    <p className="text-slate-600">Focused learning for Biology, Physics, and Chemistry focuses on enhancing conceptual knowledge. The curriculum guidelines align with NCERT and the use of the NEET-focused problem-solving approach.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Focused Coverage</h4>
+                    <p className="text-slate-600">Our curriculum aligns with NCERT, offering a NEET-focused problem-solving approach to enhance conceptual knowledge in all sciences.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Lightbulb className="h-10 w-10 text-emerald-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Simplified Teaching Approach</h4>
-                    <p className="text-slate-600">Topics are made into sections with diagrams, visual demonstrations, practical experiments, and real-life examples for easy understanding.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Simplified Teaching</h4>
+                    <p className="text-slate-600">Complex topics are broken down using visual demonstrations, diagrams, and real-life examples for faster understanding.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Activity className="h-10 w-10 text-emerald-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Targeted Practice & Test Series</h4>
-                    <p className="text-slate-600">Daily tests are followed by performance analysis and error review sessions in accordance with the recent NEET scheme to find gaps and areas for improvement.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Targeted Testing</h4>
+                    <p className="text-slate-600">Daily tests and intensive error review sessions aligned with the recent NEET scheme instantly identify learning gaps.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Users className="h-10 w-10 text-emerald-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Small Batches & Personal Mentorship</h4>
-                    <p className="text-slate-600">Individual attention is given to each student in the form of doubt-clearing sessions and personalised guidance so that the pace can be adjusted to the learning style of each student.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Personal Mentorship</h4>
+                    <p className="text-slate-600">Small batches guarantee individual attention, regular doubt-clearing sessions, and pacing adjusted to each student.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <BookOpen className="h-10 w-10 text-emerald-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Exclusive Learning Materials</h4>
-                    <p className="text-slate-600">Exclusive learning materials will be provided to every student. It has structured study modules, curated assignments, and extensive question banks. Past NEET papers are also made available to students to help them with intensive practice.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Exclusive Materials</h4>
+                    <p className="text-slate-600">Students receive structured study modules, curated assignments, and extensive access to past NEET papers.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Award className="h-10 w-10 text-emerald-500 mb-4" />
                     <h4 className="text-xl font-bold text-slate-900 mb-2">Experienced Faculty</h4>
-                    <p className="text-slate-600">Our team of faculty with strong experience in NEET-focused teaching builds confidence and ensures a deep understanding of concepts.</p>
+                    <p className="text-slate-600">Our faculty brings years of specialized NEET teaching experience, building deep confidence in our students.</p>
                   </motion.div>
                 </div>
               </motion.div>
@@ -610,11 +610,11 @@ const Courses = () => {
                 <motion.h3 variants={fadeInUp} className="text-3xl font-black text-slate-900 mb-8 text-center">Program <span className="text-emerald-600">Highlights</span></motion.h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {[
-                    "Faculty from IIT, BITS, and NIT.",
-                    "Specialised courses in Biology (Zoology and Botany), Physics, and Chemistry.",
-                    "Early preparation for Class XI students.",
-                    "Class XII students will be assigned to intensive crash courses.",
-                    "Individual mentoring, doubt-clearing sessions, and frequent parent-teacher meetings."
+                    "Faculty from IIT, BITS, and premier institutes.",
+                    "Specialized courses in Zoology, Botany, Physics, and Chemistry.",
+                    "Early preparation modules for Class XI students.",
+                    "Intensive revision crash courses for Class XII.",
+                    "Individual mentoring and frequent parent-teacher meetings."
                   ].map((highlight, i) => (
                     <motion.div key={i} variants={fadeInUp} whileHover={{ scale: 1.02 }} className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
                       <CheckCircle2 className="h-6 w-6 text-emerald-500 flex-shrink-0" />
@@ -632,31 +632,27 @@ const Courses = () => {
                     NEET Success Starts Here
                   </motion.h4>
                   <motion.p variants={fadeInUp} className="text-slate-600 mb-6">
-                    The Centum Academy offers mastery of concepts and exam-focused practice. Students not only grasp subjects in-depth but also work correctly within the time frames. Our holistic approach has helped students achieve consistent improvement in NEET preparation with our exam-focused strategy.
+                    We combine mastery of concepts with exam-focused practice. Students grasp subjects in-depth and learn to work efficiently under time constraints. This holistic approach ensures consistent improvement and stellar final results.
                   </motion.p>
                 </motion.div>
                 
                 <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="bg-slate-50 p-8 rounded-2xl">
                   <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
                     <ShieldCheck className="text-emerald-500 h-8 w-8" />
-                    Why Students in Bangalore Trust Centum Academy
+                    Why Bangalore Trusts Us
                   </h4>
                   <ul className="space-y-4">
                     <li className="flex items-start gap-3">
                       <div className="bg-white p-2 rounded-lg shadow-sm"><MapPin className="h-5 w-5 text-emerald-600" /></div>
-                      <span className="text-slate-700">Convenient NEET Coaching Classes in Bangalore in HSR Layout, Whitefield, and Koramangala.</span>
+                      <span className="text-slate-700">Convenient centers in HSR Layout, Whitefield, and Koramangala.</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-white p-2 rounded-lg shadow-sm"><Building className="h-5 w-5 text-emerald-600" /></div>
-                      <span className="text-slate-700">Integrated programs in affiliation with well-known schools such as NPS and NAFL.</span>
+                      <span className="text-slate-700">Integrated programs with well-known schools (NPS, NAFL).</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-white p-2 rounded-lg shadow-sm"><TrendingUp className="h-5 w-5 text-emerald-600" /></div>
-                      <span className="text-slate-700">High student outcomes in NEET and Olympiads.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="bg-white p-2 rounded-lg shadow-sm"><Users className="h-5 w-5 text-emerald-600" /></div>
-                      <span className="text-slate-700">Personalised mentoring, small batch attention, and sophisticated instruction are highly treasured.</span>
+                      <span className="text-slate-700">Consistently high student outcomes in NEET and Olympiads.</span>
                     </li>
                   </ul>
                 </motion.div>
@@ -681,14 +677,13 @@ const Courses = () => {
                     Classes 8 to 10
                   </div>
                   <h2 className="text-4xl font-black text-slate-900 leading-tight">
-                    IIT Foundation Coaching in Bangalore for Classes 8 to 10
+                    Laying a Strong Academic Base for Future Aspirants
                   </h2>
-                  <h3 className="text-2xl font-bold text-amber-600">Laying a Strong Academic Base for Future IIT Aspirants</h3>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    The IIT Foundation Coaching Program is a structured program offered by Centum Academy available to students of Classes 8, 9, and 10. We are also keen on reinforcing the basics in Mathematics and Science, making young students ready for the challenges of IIT JEE systematically and assuredly.
+                    Our Foundation Coaching Program reinforces basics in Mathematics and Science, systematically preparing Class 8-10 students for future competitive exams like IIT JEE and NEET.
                   </p>
                   <p className="text-slate-600 leading-relaxed text-lg">
-                    Rather than subjecting the students to exam stress, our foundation course for IIT JEE focuses on understanding concepts, analytical thinking, and rational reasoning. This will ensure that students have an inquisitive mind, clarity, and the academic confidence to succeed.
+                    Rather than pushing exam stress early on, we focus on deep concept understanding, analytical thinking, and rational reasoning to build long-lasting academic confidence.
                   </p>
                 </motion.div>
                 <motion.div variants={slideInRight} className="relative">
@@ -712,38 +707,38 @@ const Courses = () => {
               {/* 2. Why Choose Section */}
               <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 <motion.h3 variants={fadeInUp} className="text-3xl font-black text-center text-slate-900 mb-12">
-                  Why Choose Our <span className="text-amber-600">Foundation Program in Bangalore</span>
+                  Why Choose Our <span className="text-amber-600">Foundation Program</span>
                 </motion.h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <BrainCircuit className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Concept-Based Learning, Not Rote Memorisation</h4>
-                    <p className="text-slate-600">Students are encouraged to understand concepts deeply rather than just preparing for exams. Our methodology builds critical thinking and analytical skills that last a lifetime.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">No Rote Learning</h4>
+                    <p className="text-slate-600">We encourage deep concept understanding over memorization, building critical thinking skills that last a lifetime.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Trophy className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Olympiad & Speed Math Preparation</h4>
-                    <p className="text-slate-600">Specialised modules for Olympiad Geometry, Mental Maths, and Speed Maths give our students a sharp edge in Mathematics and Science.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Olympiad Prep</h4>
+                    <p className="text-slate-600">Specialized modules for Mental Maths and Speed Maths give our students a sharp edge early on.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Users className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Small Batch Sizes, Personal Mentoring</h4>
-                    <p className="text-slate-600">With limited students in each batch, every learner gets individual attention. Faculty closely track progress and customise support based on aptitude.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Small Batches</h4>
+                    <p className="text-slate-600">Limited batch sizes mean faculty can closely track progress and customize support for every learner.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Compass className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Field Trips & Practical Exposure</h4>
-                    <p className="text-slate-600">We connect academics with real-world applications through industrial visits, science fairs, and interactive projects.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Practical Exposure</h4>
+                    <p className="text-slate-600">We connect academics with real-world applications through science fairs, projects, and industrial visits.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Briefcase className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Career Exploration Early On</h4>
-                    <p className="text-slate-600">Students are introduced to various career paths in STEM, research, and beyond, helping them explore interests before choosing higher education streams.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Career Exploration</h4>
+                    <p className="text-slate-600">Students are introduced to various STEM career paths, helping them discover interests before high school.</p>
                   </motion.div>
                   <motion.div variants={scaleUp} whileHover={{ y: -5 }} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                     <Award className="h-10 w-10 text-amber-500 mb-4" />
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Experienced IIT Alumni Faculty</h4>
-                    <p className="text-slate-600">Learn from IIT graduates who combine strong academics with real-world insight. Innovative teaching methods make concepts clear and engaging.</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Expert Alumni</h4>
+                    <p className="text-slate-600">Learn from IIT graduates who combine strong academics with real-world insight to make concepts engaging.</p>
                   </motion.div>
                 </div>
               </motion.div>
@@ -761,9 +756,9 @@ const Courses = () => {
                     <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mb-6">
                       <Rocket className="h-7 w-7 text-amber-600" />
                     </div>
-                    <h4 className="text-2xl font-bold text-slate-900 mb-4">IIT Foundation Coaching in Bangalore for Classes 8 to 10</h4>
+                    <h4 className="text-2xl font-bold text-slate-900 mb-4">IIT Foundation Coaching</h4>
                     <p className="text-slate-600 mb-6 flex-grow">
-                      At Centum Academy, our IIT Foundation Coaching program is designed to help students from Classes 8, 9, and 10 develop strong fundamentals in Mathematics and Science—laying the groundwork for IIT JEE preparation. Rather than rushing students into exam pressure, our foundation course focuses on concept clarity, logical reasoning, and analytical thinking.
+                      Designed for Classes 8-10, this program builds strong fundamentals in Math and Science. We focus on concept clarity, logical reasoning, and analytical thinking to lay a solid groundwork for future IIT JEE preparation without early exam stress.
                     </p>
                     <button 
                       onClick={() => navigate('/program/iit-foundation-coaching-bangalore')} 
@@ -778,9 +773,9 @@ const Courses = () => {
                     <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center mb-6">
                       <Microscope className="h-7 w-7 text-emerald-600" />
                     </div>
-                    <h4 className="text-2xl font-bold text-slate-900 mb-4">NEET Foundation Coaching for Classes 8 to 10</h4>
+                    <h4 className="text-2xl font-bold text-slate-900 mb-4">NEET Foundation Coaching</h4>
                     <p className="text-slate-600 mb-6 flex-grow">
-                      Centum Academy’s NEET Foundation Coaching is designed for students of Classes 8, 9, and 10 who aspire to pursue careers in medicine. This program builds strong fundamentals in Biology, Physics, and Chemistry, creating a solid base for future NEET preparation. Instead of introducing exam pressure too early, our foundation course focuses on concept understanding, scientific thinking, and application-based learning.
+                      Aimed at aspiring medical students in Classes 8-10. This program builds a strong base in Biology, Physics, and Chemistry through application-based learning, setting the stage for future NEET success.
                     </p>
                     <button 
                       onClick={() => navigate('/program/neet-foundation-coaching-bangalore')} 
@@ -821,7 +816,6 @@ const Courses = () => {
                 Get Free Counseling
               </motion.button>
               
-              {/* ✅ NEW FORM BUTTON REPLACEMENT */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <DownloadBrochureButton 
                   isFixed={false} 
