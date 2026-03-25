@@ -46,9 +46,6 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 import BatchDetails from '../dashboard/operations/pages/BatchDetails';
 
-// Reporting Manager Component
-import ReportingManagerDashboard from '../dashboard/reporting-manager/pages/ReportingManagerDashboard';
-
 // Admission Manager Components (Lazy Loaded to prevent chunking conflicts)
 const AdmissionManagerDashboard = React.lazy(() => import('../dashboard/admission-manager/pages/AdmissionManagerDashboard'));
 const StudentManagement = React.lazy(() => import('../dashboard/admission-manager/pages/StudentManagement'));
@@ -784,38 +781,6 @@ export const AdminRoutes = () => {
         path="/dashboard/coordinator/settings"
         element={
           <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= REPORTING MANAGER ROUTES ================= */}
-      <Route
-        path="/dashboard/reporting-manager"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
-            <DashboardLayout>
-              <ReportingManagerDashboard />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/reporting-manager/leave-approvals"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
-            <DashboardLayout>
-              <LeaveApprovals />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/reporting-manager/settings"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.REPORTING_MANAGER]}>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>
