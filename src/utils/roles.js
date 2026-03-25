@@ -14,7 +14,6 @@ export const ROLES = {
   COORDINATOR: 'COORDINATOR',
   OPERATIONS_MANAGER: 'OPERATIONS_MANAGER',
   HR: 'HR',
-  REPORTING_MANAGER: 'REPORTING_MANAGER',
   ADMISSION_MANAGER: 'ADMISSION_MANAGER',
   GRAPHIC_DESIGNER: 'GRAPHIC_DESIGNER', // <-- Added Graphic Designer
 };
@@ -30,7 +29,6 @@ export const ROLE_NAMES = {
   [ROLES.COORDINATOR]: 'Coordinator',
   [ROLES.OPERATIONS_MANAGER]: 'Operations Manager',
   [ROLES.HR]: 'HR',
-  [ROLES.REPORTING_MANAGER]: 'Reporting Manager', 
   [ROLES.ADMISSION_MANAGER]: 'Admission Manager',
   [ROLES.GRAPHIC_DESIGNER]: 'Graphic Designer', // <-- Added Graphic Designer
 };
@@ -46,7 +44,6 @@ export const ROLE_DASHBOARDS = {
   [ROLES.COORDINATOR]: '/dashboard/coordinator',
   [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', 
   [ROLES.HR]: '/dashboard/hr',
-  [ROLES.REPORTING_MANAGER]: '/dashboard/reporting-manager', 
   [ROLES.ADMISSION_MANAGER]: '/dashboard/admission-manager',
   [ROLES.GRAPHIC_DESIGNER]: '/dashboard/graphic-designer', // <-- Added Graphic Designer Route
 };
@@ -132,14 +129,6 @@ export const PERMISSIONS = {
     'view_dashboard',
     'manage_employees',
     'view_reports',
-  ],
-
-  // Reporting Manager Permissions
-  [ROLES.REPORTING_MANAGER]: [
-    'view_dashboard',
-    'view_reports',
-    'manage_team',
-    'view_analytics',
   ],
 
   // Admission Manager Permissions

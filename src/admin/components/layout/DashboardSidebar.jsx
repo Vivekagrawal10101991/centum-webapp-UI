@@ -127,7 +127,7 @@ const DashboardSidebar = () => {
         badgeKey: 'leaves'
       }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
-      { name: 'Settings', path: '/dashboard/hr/settings', icon: Settings }, // ✅ ADDED HR SETTINGS
+      { name: 'Settings', path: '/dashboard/hr/settings', icon: Settings },
     ],
 
     [ROLES.OPERATIONS_MANAGER]: [
@@ -147,21 +147,7 @@ const DashboardSidebar = () => {
         icon: CheckCircle,
         badgeKey: 'leaves'
       }, 
-      { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings }, // ✅ ADDED OP SETTINGS
-    ],
-
-    [ROLES.REPORTING_MANAGER]: [
-      { name: 'Overview', path: '/dashboard/reporting-manager', icon: BarChart },
-      { name: 'Team Performance', path: '/dashboard/reporting-manager/team', icon: Users },
-      { 
-        name: 'Leave Approvals', 
-        path: '/dashboard/reporting-manager/leave-approvals', 
-        icon: CheckCircle,
-        badgeKey: 'leaves'
-      },
-      { name: 'Analytics', path: '/dashboard/reporting-manager/analytics', icon: Activity },
-      { name: 'Reports', path: '/dashboard/reporting-manager/reports', icon: FileText },
-      { name: 'Settings', path: '/dashboard/reporting-manager/settings', icon: Settings },
+      { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings },
     ],
 
     [ROLES.ADMISSION_MANAGER]: [
@@ -183,7 +169,6 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/graphic-designer/settings', icon: Settings },
     ],
 
-    // ✅ ADDED COMPLETE COORDINATOR CONFIG
     [ROLES.COORDINATOR]: [
       { name: 'Overview', path: '/dashboard/coordinator', icon: BarChart },
       { name: 'Settings', path: '/dashboard/coordinator/settings', icon: Settings }, 
@@ -205,10 +190,9 @@ const DashboardSidebar = () => {
       '/dashboard/parent',
       '/dashboard/hr',
       '/dashboard/operations',
-      '/dashboard/reporting-manager',
       '/dashboard/admission-manager',
       '/dashboard/graphic-designer',
-      '/dashboard/coordinator' // ✅ ADDED
+      '/dashboard/coordinator' 
     ];
 
     if (basePaths.includes(path)) {
