@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Clock, CheckCircle, XCircle, Search, ChevronDown } from 'lucide-react';
 import { Card, Button, Input, Select, Textarea } from '../../../components/common';
 import { attendanceService } from '../../services/attendanceService';
-// Fixed the import path here from ../../../ to ../../
 import { useAuth } from '../../context/AuthContext'; 
 
 const LeaveApplicationWidget = () => {
@@ -33,6 +32,11 @@ const LeaveApplicationWidget = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  // Custom Searchable Dropdown State
+  const [showApproverDropdown, setShowApproverDropdown] = useState(false);
+  const [approverSearch, setApproverSearch] = useState('');
+  const dropdownRef = useRef(null);
+
   // History State
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -40,13 +44,24 @@ const LeaveApplicationWidget = () => {
   useEffect(() => {
     fetchBalances();
     if (user?.role !== 'SUPER_ADMIN') {
-      fetchApprovers(); // Fetch managers dropdown for everyone except Super Admin
+      fetchApprovers();
     }
   }, [user]);
 
   useEffect(() => {
     if (activeTab === 'history') fetchHistory();
   }, [activeTab]);
+
+  // Handle clicks outside the dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowApproverDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const fetchBalances = async () => {
     try {
@@ -64,7 +79,10 @@ const LeaveApplicationWidget = () => {
     try {
       const res = await attendanceService.getApprovers();
       if (res.success || Array.isArray(res.data)) {
-        setApprovers(res.data || res);
+        const data = res.data || res;
+        // Filter out REPORTING_MANAGER just in case the backend hasn't been updated yet
+        const filteredData = data.filter(a => a.role !== 'REPORTING_MANAGER');
+        setApprovers(filteredData);
       }
     } catch (error) {
       console.error("Failed to fetch approvers", error);
@@ -135,6 +153,7 @@ const LeaveApplicationWidget = () => {
       await attendanceService.applyLeave(payload);
       setMessage({ type: 'success', text: 'Leave application submitted successfully!' });
       setFormData({ leaveType: 'CASUAL_LEAVE', startDate: '', endDate: '', reason: '', approverId: '' });
+      setApproverSearch('');
       
       fetchBalances();
       setTimeout(() => setActiveTab('history'), 2000);
@@ -144,6 +163,11 @@ const LeaveApplicationWidget = () => {
       setIsSubmitting(false);
     }
   };
+
+  const filteredApprovers = approvers.filter(a => 
+    a.name.toLowerCase().includes(approverSearch.toLowerCase()) || 
+    a.role.replace('_', ' ').toLowerCase().includes(approverSearch.toLowerCase())
+  );
 
   return (
     <Card className="p-6">
@@ -207,16 +231,67 @@ const LeaveApplicationWidget = () => {
           )}
 
           {user?.role !== 'SUPER_ADMIN' && (
-            <Select 
-              label="Select Reporting Person"
-              value={formData.approverId}
-              onChange={(e) => setFormData({...formData, approverId: e.target.value})}
-              options={[
-                { value: '', label: 'Select your manager...' },
-                ...approvers.map(a => ({ value: a.id, label: `${a.name} (${a.role.replace('_', ' ')})` }))
-              ]}
-              required
-            />
+            <div className="relative" ref={dropdownRef}>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Select Reporting Person <span className="text-red-500">*</span>
+              </label>
+              <div 
+                className={`w-full px-4 py-2 border rounded-lg bg-white flex justify-between items-center cursor-pointer ${showApproverDropdown ? 'border-primary ring-2 ring-primary-100' : 'border-gray-300'}`}
+                onClick={() => setShowApproverDropdown(!showApproverDropdown)}
+              >
+                <span className={!formData.approverId ? "text-gray-500" : "text-gray-900"}>
+                  {formData.approverId 
+                    ? (() => {
+                        const selected = approvers.find(a => a.id === formData.approverId);
+                        return selected ? `${selected.name} (${selected.role.replace('_', ' ')})` : 'Select your manager...';
+                      })()
+                    : 'Select your manager...'}
+                </span>
+                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${showApproverDropdown ? 'rotate-180' : ''}`} />
+              </div>
+              
+              {showApproverDropdown && (
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+                  <div className="p-2 border-b border-gray-100 bg-gray-50">
+                    <div className="relative">
+                      <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                      <input 
+                        type="text" 
+                        placeholder="Search by name or role..." 
+                        className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        value={approverSearch}
+                        onChange={(e) => setApproverSearch(e.target.value)}
+                        autoFocus
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-56 overflow-y-auto custom-scrollbar">
+                    {filteredApprovers.length > 0 ? (
+                      filteredApprovers.map(a => (
+                        <div 
+                          key={a.id} 
+                          className={`px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 ${formData.approverId === a.id ? 'bg-primary-50' : ''}`}
+                          onClick={() => {
+                            setFormData({...formData, approverId: a.id});
+                            setShowApproverDropdown(false);
+                            setApproverSearch('');
+                          }}
+                        >
+                          <div className="font-semibold text-gray-900 text-sm">{a.name}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{a.role.replace('_', ' ')}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-6 text-sm text-gray-500 text-center flex flex-col items-center">
+                        <Search className="w-6 h-6 text-gray-300 mb-2" />
+                        No matching managers found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
           
           <Select 

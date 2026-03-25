@@ -31,6 +31,7 @@ export default function MediaCenter() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleteConfirmModal, setDeleteConfirmModal] = useState({ isOpen: false, itemId: null, type: null });
+  const [updateConfirmModal, setUpdateConfirmModal] = useState(false); // Added state for Update Confirmation
 
   // Data States
   const [blogs, setBlogs] = useState([]);
@@ -139,6 +140,21 @@ export default function MediaCenter() {
   // --- HANDLERS ---
 
   // 1. Blog Handlers
+  const onSaveBlogClick = () => {
+    if (!blogForm.title || !blogForm.slug) {
+        toast.error('Title and Slug are required');
+        return;
+    }
+
+    if (editingBlog) {
+      // If editing, trigger the confirmation modal first
+      setUpdateConfirmModal(true);
+    } else {
+      // If adding new, proceed directly
+      handleAddBlog();
+    }
+  };
+
   const handleAddBlog = async () => {
     if (!blogForm.title || !blogForm.slug) {
         toast.error('Title and Slug are required');
@@ -262,7 +278,7 @@ export default function MediaCenter() {
   const getDeleteModalContent = () => {
     const { type } = deleteConfirmModal;
     switch (type) {
-      case 'blog': return { title: 'Delete Blog Post', message: 'Are you sure you want to delete this blog post?' };
+      case 'blog': return { title: 'Delete Blog Post', message: 'Are you sure do you want to delete , if you delete this you will permanently lost the content ' };
       case 'contributor': return { title: 'Delete Contribution', message: 'Are you sure you want to remove this contribution?' };
       case 'video': return { title: 'Delete Video', message: 'Are you sure you want to remove this video from the library?' };
       default: return { title: 'Confirm Delete', message: 'Are you sure you want to delete this item?' };
@@ -273,15 +289,31 @@ export default function MediaCenter() {
 
   return (
     <div className="w-full max-w-full overflow-hidden">
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={deleteConfirmModal.isOpen}
         onClose={closeDeleteModal}
         onConfirm={handleDelete}
         title={modalContent.title}
         message={modalContent.message}
-        confirmText="Delete"
+        confirmText="OK"
         cancelText="Cancel"
         type="danger"
+      />
+
+      {/* Update Confirmation Modal (Specifically for Blogs) */}
+      <ConfirmModal
+        isOpen={updateConfirmModal}
+        onClose={() => setUpdateConfirmModal(false)}
+        onConfirm={() => {
+          setUpdateConfirmModal(false);
+          handleAddBlog();
+        }}
+        title="Update Blog Post"
+        message="Are you sure to implement this changes , Once this changes are applied you will lost your original content "
+        confirmText="OK"
+        cancelText="Cancel"
+        type="warning"
       />
 
       <ImagePicker 
@@ -491,7 +523,7 @@ export default function MediaCenter() {
 
               <div className="flex items-center gap-4 mt-4">
                 <button
-                  onClick={handleAddBlog}
+                  onClick={onSaveBlogClick}
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
                   disabled={loading}
                 >
