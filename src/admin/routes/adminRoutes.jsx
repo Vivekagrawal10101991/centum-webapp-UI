@@ -23,6 +23,8 @@ import LeaveApprovals from '../Tabs/LeaveApprovals';
 import BatchManagement from '../Tabs/BatchManagement';
 import SharedBatchDetails from '../Tabs/BatchDetails';
 import LibraryContentManagement from '../Tabs/LibraryContentManagement';
+import BroadcastMessage from '../Tabs/BroadcastMessage'; 
+import NotificationHistory from '../Tabs/NotificationHistory'; // <-- ADDED IMPORT
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -259,6 +261,28 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
+      {/* ====== BROADCAST ADDED ====== */}
+      <Route
+        path="/dashboard/super-admin/broadcast"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <BroadcastMessage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/super-admin/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/dashboard/super-admin/settings"
         element={
@@ -323,6 +347,28 @@ export const AdminRoutes = () => {
               <MediaCenter />
             </DashboardLayout>
           </PermissionProtectedRoute>
+        }
+      />
+      {/* ====== BROADCAST ADDED ====== */}
+      <Route
+        path="/dashboard/admin/broadcast"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <DashboardLayout>
+              <BroadcastMessage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/admin/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
         }
       />
       <Route
@@ -417,6 +463,17 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/technical/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TECHNICAL_HEAD]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/dashboard/technical/settings"
         element={
@@ -488,6 +545,28 @@ export const AdminRoutes = () => {
             </DashboardLayout>
           </ProtectedRoute>
         } 
+      />
+      {/* ====== BROADCAST ADDED ====== */}
+      <Route
+        path="/dashboard/operations/broadcast"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <BroadcastMessage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/operations/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/dashboard/operations/settings"
@@ -643,6 +722,28 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      {/* ====== BROADCAST ADDED ====== */}
+      <Route
+        path="/dashboard/hr/broadcast"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <BroadcastMessage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/hr/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.HR]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/dashboard/hr/settings"
         element={
@@ -661,6 +762,17 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.FACULTY]}>
             <DashboardLayout>
               <FacultyDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/faculty/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.FACULTY]}>
+            <DashboardLayout>
+              <NotificationHistory />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -721,6 +833,17 @@ export const AdminRoutes = () => {
         path="/dashboard/student/grades"
         element={<Navigate to="/dashboard/student" replace />}
       />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/student/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/dashboard/student/settings"
         element={
@@ -739,6 +862,17 @@ export const AdminRoutes = () => {
           <ProtectedRoute allowedRoles={[ROLES.PARENT]}>
             <DashboardLayout>
               <ParentDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/parent/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.PARENT]}>
+            <DashboardLayout>
+              <NotificationHistory />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -773,6 +907,17 @@ export const AdminRoutes = () => {
                   <LeaveApplicationWidget />
                 </div>
               </div>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/coordinator/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.COORDINATOR]}>
+            <DashboardLayout>
+              <NotificationHistory />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -819,6 +964,17 @@ export const AdminRoutes = () => {
               <Suspense fallback={<SuspenseLoader />}>
                 <StudentManagement />
               </Suspense>
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/admission-manager/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMISSION_MANAGER]}>
+            <DashboardLayout>
+              <NotificationHistory />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -871,6 +1027,17 @@ export const AdminRoutes = () => {
               <MediaCenter />
             </DashboardLayout>
           </PermissionProtectedRoute>
+        }
+      />
+      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
+      <Route
+        path="/dashboard/graphic-designer/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.GRAPHIC_DESIGNER]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
         }
       />
       <Route
