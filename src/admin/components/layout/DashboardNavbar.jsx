@@ -16,6 +16,7 @@ import { ROLE_NAMES, ROLES } from '../../../utils/roles';
 import logo from '../../../assets/logo.png';
 import { attendanceService } from '../../services/attendanceService';
 import ConfirmModal from '../../../components/common/ConfirmModal';
+import NotificationCenter from '../common/NotificationCenter'; // Added NotificationCenter Import
 
 const DashboardNavbar = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
@@ -255,6 +256,11 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
                 <Home className="w-4 h-4" />
                 <span>Visit Site</span>
               </Link>
+
+              {/* === ADDED NOTIFICATION CENTER HERE === */}
+              <NotificationCenter />
+              
+              <div className="hidden sm:block h-6 w-px bg-slate-200 mx-1"></div>
 
               {/* User Icon & Dropdown */}
               <div className="relative" ref={userMenuRef}>

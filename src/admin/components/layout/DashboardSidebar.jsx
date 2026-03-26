@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers, Image as ImageIcon
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers, Image as ImageIcon, Send
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -54,6 +54,7 @@ const DashboardSidebar = () => {
         icon: CheckCircle,
         badgeKey: 'leaves' 
       },
+      { name: 'Internal Broadcast', path: '/dashboard/super-admin/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
 
@@ -73,6 +74,7 @@ const DashboardSidebar = () => {
         icon: CheckCircle,
         badgeKey: 'leaves'
       }, 
+      { name: 'Internal Broadcast', path: '/dashboard/admin/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/admin/settings', icon: Settings },
     ],
 
@@ -127,6 +129,7 @@ const DashboardSidebar = () => {
         badgeKey: 'leaves'
       }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
+      { name: 'Internal Broadcast', path: '/dashboard/hr/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/hr/settings', icon: Settings },
     ],
 
@@ -147,6 +150,7 @@ const DashboardSidebar = () => {
         icon: CheckCircle,
         badgeKey: 'leaves'
       }, 
+      { name: 'Internal Broadcast', path: '/dashboard/operations/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings },
     ],
 
