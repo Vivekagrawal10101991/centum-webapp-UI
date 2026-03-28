@@ -15,7 +15,9 @@ export const ROLES = {
   OPERATIONS_MANAGER: 'OPERATIONS_MANAGER',
   HR: 'HR',
   ADMISSION_MANAGER: 'ADMISSION_MANAGER',
-  GRAPHIC_DESIGNER: 'GRAPHIC_DESIGNER', // <-- Added Graphic Designer
+  GRAPHIC_DESIGNER: 'GRAPHIC_DESIGNER',
+  ZONAL_HEAD: 'ZONAL_HEAD', // <-- Added Zonal Head
+  DTP: 'DTP',               // <-- Added DTP
 };
 
 // Role Display Names
@@ -30,7 +32,9 @@ export const ROLE_NAMES = {
   [ROLES.OPERATIONS_MANAGER]: 'Operations Manager',
   [ROLES.HR]: 'HR',
   [ROLES.ADMISSION_MANAGER]: 'Admission Manager',
-  [ROLES.GRAPHIC_DESIGNER]: 'Graphic Designer', // <-- Added Graphic Designer
+  [ROLES.GRAPHIC_DESIGNER]: 'Graphic Designer',
+  [ROLES.ZONAL_HEAD]: 'Zonal Head',     // <-- Added Zonal Head
+  [ROLES.DTP]: 'DTP (Desktop Publishing)', // <-- Added DTP
 };
 
 // Dashboard Routes for Each Role
@@ -45,7 +49,9 @@ export const ROLE_DASHBOARDS = {
   [ROLES.OPERATIONS_MANAGER]: '/dashboard/operations', 
   [ROLES.HR]: '/dashboard/hr',
   [ROLES.ADMISSION_MANAGER]: '/dashboard/admission-manager',
-  [ROLES.GRAPHIC_DESIGNER]: '/dashboard/graphic-designer', // <-- Added Graphic Designer Route
+  [ROLES.GRAPHIC_DESIGNER]: '/dashboard/graphic-designer',
+  [ROLES.ZONAL_HEAD]: '/dashboard/zonal-head', // <-- Added Zonal Head Route
+  [ROLES.DTP]: '/dashboard/dtp',               // <-- Added DTP Route
 };
 
 // Permissions for Each Role
@@ -145,6 +151,22 @@ export const PERMISSIONS = {
     'manage_banners',
     'manage_media',
     'create_content',
+  ],
+
+  // Zonal Head Permissions
+  [ROLES.ZONAL_HEAD]: [
+    'view_dashboard',
+    'view_reports',
+    'view_analytics',
+    'manage_operations',
+  ],
+
+  // DTP Permissions
+  [ROLES.DTP]: [
+    'view_dashboard',
+    'manage_media',
+    'create_content',
+    'manage_content',
   ],
 };
 

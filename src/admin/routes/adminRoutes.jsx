@@ -24,7 +24,7 @@ import BatchManagement from '../Tabs/BatchManagement';
 import SharedBatchDetails from '../Tabs/BatchDetails';
 import LibraryContentManagement from '../Tabs/LibraryContentManagement';
 import BroadcastMessage from '../Tabs/BroadcastMessage'; 
-import NotificationHistory from '../Tabs/NotificationHistory'; // <-- ADDED IMPORT
+import NotificationHistory from '../Tabs/NotificationHistory'; 
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -54,6 +54,12 @@ const StudentManagement = React.lazy(() => import('../dashboard/admission-manage
 
 // Graphic Designer Components
 import GraphicDesignerDashboard from '../dashboard/graphic-designer/pages/GraphicDesignerDashboard';
+
+// Zonal Head Components
+import ZonalHeadDashboard from '../dashboard/zonal-head/pages/ZonalHeadDashboard';
+
+// DTP Components
+import DtpDashboard from '../dashboard/dtp/pages/DtpDashboard';
 
 // Common Components
 import LeaveApplicationWidget from '../components/common/LeaveApplicationWidget';
@@ -261,7 +267,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-      {/* ====== BROADCAST ADDED ====== */}
       <Route
         path="/dashboard/super-admin/broadcast"
         element={
@@ -272,7 +277,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/super-admin/notifications"
         element={
@@ -349,7 +353,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-      {/* ====== BROADCAST ADDED ====== */}
       <Route
         path="/dashboard/admin/broadcast"
         element={
@@ -360,7 +363,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/admin/notifications"
         element={
@@ -463,7 +465,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/technical/notifications"
         element={
@@ -546,7 +547,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         } 
       />
-      {/* ====== BROADCAST ADDED ====== */}
       <Route
         path="/dashboard/operations/broadcast"
         element={
@@ -557,7 +557,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/operations/notifications"
         element={
@@ -722,7 +721,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== BROADCAST ADDED ====== */}
       <Route
         path="/dashboard/hr/broadcast"
         element={
@@ -733,7 +731,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/hr/notifications"
         element={
@@ -766,7 +763,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/faculty/notifications"
         element={
@@ -833,7 +829,6 @@ export const AdminRoutes = () => {
         path="/dashboard/student/grades"
         element={<Navigate to="/dashboard/student" replace />}
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/student/notifications"
         element={
@@ -866,7 +861,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/parent/notifications"
         element={
@@ -911,7 +905,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/coordinator/notifications"
         element={
@@ -968,7 +961,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/admission-manager/notifications"
         element={
@@ -1029,7 +1021,6 @@ export const AdminRoutes = () => {
           </PermissionProtectedRoute>
         }
       />
-      {/* ====== NOTIFICATION HISTORY ADDED ====== */}
       <Route
         path="/dashboard/graphic-designer/notifications"
         element={
@@ -1050,6 +1041,119 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* ================= ZONAL HEAD ROUTES ================= */}
+      <Route
+        path="/dashboard/zonal-head"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ZONAL_HEAD]}>
+            <DashboardLayout>
+              <ZonalHeadDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/zonal-head/batches"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ZONAL_HEAD]}>
+            <DashboardLayout>
+              <BatchManagement />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/zonal-head/broadcast"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ZONAL_HEAD]}>
+            <DashboardLayout>
+              <BroadcastMessage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/zonal-head/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ZONAL_HEAD]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/zonal-head/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ZONAL_HEAD]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= DTP ROUTES ================= */}
+      <Route
+        path="/dashboard/dtp"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.DTP]}>
+            <DashboardLayout>
+              <DtpDashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dtp/promotions-banners"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.DTP]} 
+            requiredPermissions={[PERMISSIONS.MANAGE_BANNERS, PERMISSIONS.MANAGE_CMS]}
+            routePath="/dashboard/dtp/promotions-banners"
+          >
+            <DashboardLayout>
+              <PromotionsBanners />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dtp/media-center"
+        element={
+          <PermissionProtectedRoute 
+            allowedRoles={[ROLES.DTP]} 
+            requiredPermissions={[PERMISSIONS.VIEW_BLOGS, PERMISSIONS.VIEW_VIDEOS]}
+            routePath="/dashboard/dtp/media-center"
+          >
+            <DashboardLayout>
+              <MediaCenter />
+            </DashboardLayout>
+          </PermissionProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dtp/notifications"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.DTP]}>
+            <DashboardLayout>
+              <NotificationHistory />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dtp/settings"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.DTP]}>
+            <DashboardLayout>
+              <Settings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
     </>
   );
 };
