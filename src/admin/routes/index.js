@@ -12,3 +12,5 @@ export { studentRoutes } from './studentRoutes';
 export { parentRoutes } from './parentRoutes';
 export { hrRoutes } from './hrRoutes'; 
 export { admissionManagerRoutes } from './admissionManagerRoutes';
+export { zonalHeadRoutes } from './zonalHeadRoutes'; // <-- Added Export
+export { dtpRoutes } from './dtpRoutes';             // <-- Added Export

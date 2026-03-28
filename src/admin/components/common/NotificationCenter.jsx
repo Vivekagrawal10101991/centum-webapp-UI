@@ -78,7 +78,9 @@ const NotificationCenter = () => {
       'OPERATIONS_MANAGER': '/dashboard/operations',
       'ADMISSION_MANAGER': '/dashboard/admission-manager',
       'GRAPHIC_DESIGNER': '/dashboard/graphic-designer',
-      'COORDINATOR': '/dashboard/coordinator'
+      'COORDINATOR': '/dashboard/coordinator',
+      'ZONAL_HEAD': '/dashboard/zonal-head', // <-- Added Zonal Head Fix
+      'DTP': '/dashboard/dtp'                // <-- Added DTP Fix
     };
     return rolePathMap[role] || '/dashboard';
   };

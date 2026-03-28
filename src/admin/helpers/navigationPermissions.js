@@ -146,6 +146,16 @@ export const NAVIGATION_PERMISSIONS = {
   },
   '/dashboard/operations/batches': {
     requiredPermissions: [PERMISSIONS.MANAGE_BATCHES],
+  },
+
+  // Zonal Head Routes
+  '/dashboard/zonal-head': {
+    requiredRole: 'ZONAL_HEAD',
+  },
+
+  // DTP Routes
+  '/dashboard/dtp': {
+    requiredRole: 'DTP',
   }
 };
 

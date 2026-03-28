@@ -173,6 +173,16 @@ const DashboardSidebar = () => {
       { name: 'Settings', path: '/dashboard/graphic-designer/settings', icon: Settings },
     ],
 
+    [ROLES.ZONAL_HEAD]: [
+      { name: 'Overview', path: '/dashboard/zonal-head', icon: BarChart },
+      { name: 'Settings', path: '/dashboard/zonal-head/settings', icon: Settings },
+    ],
+
+    [ROLES.DTP]: [
+      { name: 'Overview', path: '/dashboard/dtp', icon: BarChart },
+      { name: 'Settings', path: '/dashboard/dtp/settings', icon: Settings },
+    ],
+
     [ROLES.COORDINATOR]: [
       { name: 'Overview', path: '/dashboard/coordinator', icon: BarChart },
       { name: 'Settings', path: '/dashboard/coordinator/settings', icon: Settings }, 
@@ -196,6 +206,8 @@ const DashboardSidebar = () => {
       '/dashboard/operations',
       '/dashboard/admission-manager',
       '/dashboard/graphic-designer',
+      '/dashboard/zonal-head',
+      '/dashboard/dtp',        
       '/dashboard/coordinator' 
     ];
 
