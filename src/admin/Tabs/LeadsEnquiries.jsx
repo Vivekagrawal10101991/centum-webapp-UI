@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Download, Trash2, Eye, MoreVertical, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Search, Filter, Download, Trash2, Eye, MoreVertical, CheckCircle, Clock, XCircle, RefreshCw } from 'lucide-react';
 import { Card } from '../../components/common';
 import toast from 'react-hot-toast';
 import { leadsService } from '../services/leadsService';
@@ -9,39 +9,57 @@ const LeadsEnquiries = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch data on component mount
+  // Fetch data on component mount and setup background polling
   useEffect(() => {
     fetchEnquiries();
+
+    // Background polling: silently fetch updates every 15 seconds 
+    // This keeps all users' dashboards in sync when someone changes a status
+    const pollInterval = setInterval(() => {
+      fetchEnquiries(true);
+    }, 15000);
+
+    return () => clearInterval(pollInterval);
   }, []);
 
-  const fetchEnquiries = async () => {
+  const fetchEnquiries = async (isBackground = false) => {
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       const data = await leadsService.getAllEnquiries();
       // Ensure data is an array before setting
       setEnquiries(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching enquiries:', error);
-      toast.error('Failed to load enquiries');
+      if (!isBackground) toast.error('Failed to load enquiries');
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
+      setIsRefreshing(false);
     }
+  };
+
+  const handleManualRefresh = () => {
+    setIsRefreshing(true);
+    fetchEnquiries(true);
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
     try {
-      await leadsService.updateStatus(id, newStatus);
-      
-      // Update local state
+      // Optimistic UI update for immediate feedback for the user making the change
       setEnquiries(prev => prev.map(item => 
         item.id === id ? { ...item, status: newStatus } : item
       ));
       
+      await leadsService.updateStatus(id, newStatus);
       toast.success(`Status updated to ${newStatus}`);
+      
+      // Fetch fresh data to ensure we are perfectly in sync with the DB
+      fetchEnquiries(true);
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Failed to update status');
+      fetchEnquiries(true); // Revert to DB state if it fails
     }
   };
 
@@ -53,7 +71,6 @@ const LeadsEnquiries = () => {
       
       // Remove from local state
       setEnquiries(prev => prev.filter(item => item.id !== id));
-      
       toast.success('Enquiry deleted successfully');
     } catch (error) {
       console.error('Error deleting enquiry:', error);
@@ -88,7 +105,8 @@ const LeadsEnquiries = () => {
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'new': return 'bg-blue-100 text-blue-800';
+      case 'new': 
+      case 'pending': return 'bg-blue-100 text-blue-800';
       case 'contacted': return 'bg-yellow-100 text-yellow-800';
       case 'enrolled': return 'bg-green-100 text-green-800';
       case 'closed': return 'bg-gray-100 text-gray-800';
@@ -105,6 +123,13 @@ const LeadsEnquiries = () => {
           <p className="text-gray-500">Manage contact requests, admissions, and brochure downloads</p>
         </div>
         <div className="flex gap-3">
+          <button 
+            onClick={handleManualRefresh}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Sync Data
+          </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
             <Download className="w-4 h-4" />
             Export CSV
@@ -164,9 +189,10 @@ const LeadsEnquiries = () => {
           <div className="flex gap-3 w-full md:w-auto">
             <select className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-600">
               <option value="">All Status</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="enrolled">Enrolled</option>
+              <option value="PENDING">Pending</option>
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Enrolled">Enrolled</option>
             </select>
           </div>
         </div>
@@ -247,11 +273,12 @@ const LeadsEnquiries = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
-                        value={enquiry.status || 'New'}
+                        value={enquiry.status || 'PENDING'}
                         onChange={(e) => handleStatusUpdate(enquiry.id, e.target.value)}
                         className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none ${getStatusColor(enquiry.status)}`}
                       >
-                        <option value="New">New</option>
+                        {/* Included PENDING since the Spring Boot backend defaults to it */}
+                        <option value="PENDING">Pending (New)</option>
                         <option value="Contacted">Contacted</option>
                         <option value="Enrolled">Enrolled</option>
                         <option value="Closed">Closed</option>
