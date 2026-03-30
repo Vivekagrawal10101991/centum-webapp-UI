@@ -25,6 +25,7 @@ import SharedBatchDetails from '../Tabs/BatchDetails';
 import LibraryContentManagement from '../Tabs/LibraryContentManagement';
 import BroadcastMessage from '../Tabs/BroadcastMessage'; 
 import NotificationHistory from '../Tabs/NotificationHistory'; 
+import Employees from '../Tabs/Employees'; // <--- NEW IMPORT ADDED HERE
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -671,16 +672,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* === UPDATED HR EMPLOYEES ROUTE === */}
       <Route
         path="/dashboard/hr/employees"
         element={
           <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
-              <div className="p-8"><h2>Employee Directory (Coming Soon)</h2></div>
+              <Employees /> {/* <--- UPDATED: NOW RENDERS THE NEW EMPLOYEES COMPONENT */}
             </DashboardLayout>
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/dashboard/hr/attendance"
         element={
