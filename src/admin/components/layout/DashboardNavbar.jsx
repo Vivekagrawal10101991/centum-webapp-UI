@@ -16,7 +16,7 @@ import { ROLE_NAMES, ROLES } from '../../../utils/roles';
 import logo from '../../../assets/logo.png';
 import { attendanceService } from '../../services/attendanceService';
 import ConfirmModal from '../../../components/common/ConfirmModal';
-import NotificationCenter from '../common/NotificationCenter'; // Added NotificationCenter Import
+import NotificationCenter from '../common/NotificationCenter'; 
 
 const DashboardNavbar = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
@@ -36,6 +36,29 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
   const userMenuRef = useRef(null);
 
   const showAttendance = user?.role !== ROLES.STUDENT && user?.role !== ROLES.PARENT;
+
+  // Dynamically resolve the settings path based on user role
+  const getSettingsPath = () => {
+    const role = user?.role;
+    if (!role) return '/dashboard';
+
+    switch (role) {
+      case ROLES.SUPER_ADMIN: return '/dashboard/super-admin/settings';
+      case ROLES.ADMIN: return '/dashboard/admin/settings';
+      case ROLES.TECHNICAL_HEAD: return '/dashboard/technical/settings';
+      case ROLES.OPERATIONS_MANAGER: return '/dashboard/operations/settings';
+      case ROLES.HR: return '/dashboard/hr/settings';
+      case ROLES.FACULTY: return '/dashboard/faculty/settings';
+      case ROLES.STUDENT: return '/dashboard/student/settings';
+      case ROLES.PARENT: return '/dashboard/parent/settings';
+      case ROLES.COORDINATOR: return '/dashboard/coordinator/settings';
+      case ROLES.ADMISSION_MANAGER: return '/dashboard/admission-manager/settings';
+      case ROLES.GRAPHIC_DESIGNER: return '/dashboard/graphic-designer/settings';
+      case ROLES.ZONAL_HEAD: return '/dashboard/zonal-head/settings';
+      case ROLES.DTP: return '/dashboard/dtp/settings';
+      default: return '/dashboard';
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -179,7 +202,6 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
     }
   };
 
-  // This function does the actual heavy lifting (Location + API)
   const executeAttendanceAction = async () => {
     setIsLoadingAttendance(true);
 
@@ -202,13 +224,10 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
     );
   };
 
-  // This handles the button click
   const handleAttendanceAction = () => {
     if (isCheckedIn) {
-      // Show the beautiful modal instead of the browser popup
       setShowCheckoutModal(true);
     } else {
-      // If checking in, just proceed directly
       executeAttendanceAction();
     }
   };
@@ -241,7 +260,6 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
 
             <div className="flex items-center gap-4">
               
-              {/* --- VISIBLE DASHBOARD TIMER --- */}
               {showAttendance && (
                 <div className={`hidden sm:flex items-center gap-3 px-4 py-2 border rounded-xl shadow-sm transition-colors ${isCheckedIn ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}`}>
                   <Clock className={`w-4 h-4 ${isCheckedIn ? 'text-emerald-500 animate-pulse' : 'text-slate-400'}`} />
@@ -251,18 +269,15 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
                 </div>
               )}
 
-              {/* Visit Site Link */}
               <Link to="/" className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-all">
                 <Home className="w-4 h-4" />
                 <span>Visit Site</span>
               </Link>
 
-              {/* === ADDED NOTIFICATION CENTER HERE === */}
               <NotificationCenter />
               
               <div className="hidden sm:block h-6 w-px bg-slate-200 mx-1"></div>
 
-              {/* User Icon & Dropdown */}
               <div className="relative" ref={userMenuRef}>
                 <button 
                   onClick={() => setShowUserMenu(!showUserMenu)} 
@@ -277,12 +292,14 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
                   <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 animate-in fade-in zoom-in-95 origin-top-right overflow-hidden">
                     <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/50">
                       <p className="text-sm font-bold text-slate-800">{user?.name}</p>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{ROLE_NAMES[user?.role]}</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{ROLE_NAMES[user?.role] || user?.role}</p>
                     </div>
 
                     <div className="p-2 space-y-1">
+                      
+                      {/* === UPDATED LINK HERE === */}
                       <Link 
-                        to="/dashboard/settings" 
+                        to={getSettingsPath()} 
                         onClick={() => setShowUserMenu(false)}
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 rounded-xl hover:bg-slate-50 transition-colors"
                       >
@@ -290,7 +307,6 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
                         <span>My Profile</span>
                       </Link>
 
-                      {/* Attendance Dropdown Button */}
                       {showAttendance && (
                         <>
                           <button 
@@ -342,7 +358,6 @@ const DashboardNavbar = ({ onToggleSidebar }) => {
         </div>
       </nav>
 
-      {/* Check-Out Confirmation Modal */}
       <ConfirmModal
         isOpen={showCheckoutModal}
         onClose={() => setShowCheckoutModal(false)}
