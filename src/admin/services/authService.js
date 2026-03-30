@@ -25,11 +25,21 @@ export const authService = {
   /**
    * Change password
    * @param {Object} passwordData - { currentPassword, newPassword }
-   * @returns {Promise} Response
+   * @returns {Promise} Response with success flag
    */
   changePassword: async (passwordData) => {
-    const response = await api.post('/api/auth/change-password', passwordData);
-    return response.data;
+    try {
+      const response = await api.post('/api/auth/change-password', passwordData);
+      // Return a standardized success object that Settings.jsx expects
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error('Change password error:', error.response?.data || error);
+      // Return a standardized error object so Settings.jsx can show the correct toast
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Invalid credentials' 
+      };
+    }
   },
 
   /**
