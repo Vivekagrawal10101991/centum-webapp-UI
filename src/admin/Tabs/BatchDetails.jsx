@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Layers, Calendar, CheckCircle, 
   Users, BookOpen, Loader2, AlertCircle, Plus, 
-  X, Search, Activity, GraduationCap, IdCard, Mail, BookMarked
+  X, Search, Activity, GraduationCap, IdCard, Mail, BookMarked,
+  Video, FileText, Link, Trash2 
 } from 'lucide-react';
 import api from '../../services/api';
 
@@ -23,6 +24,14 @@ const BatchDetails = () => {
   const [isFetchingStudents, setIsFetchingStudents] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [assigningId, setAssigningId] = useState(null);
+
+  // --- Video & Document Modal States ---
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showDocModal, setShowDocModal] = useState(false);
+  
+  // Forms to include subjectId
+  const [videoForm, setVideoForm] = useState({ title: '', url: '', description: '', subjectId: '' });
+  const [docForm, setDocForm] = useState({ title: '', fileUrl: '', description: '', subjectId: '' });
 
   useEffect(() => {
     if (batchId) {
@@ -83,6 +92,59 @@ const BatchDetails = () => {
       showNotification(err.response?.data?.message || 'Failed to assign student', 'error');
     } finally {
       setAssigningId(null);
+    }
+  };
+
+  // --- Remove Student Logic (Wired to Backend) ---
+  const handleRemoveStudent = async (studentId) => {
+    if (!window.confirm("Are you sure you want to remove this student from the batch?")) {
+      return;
+    }
+
+    try {
+      // Calling the backend remove endpoint
+      await api.post('/api/batches/remove', { 
+        batchId: batchId, 
+        studentId: studentId 
+      });
+      
+      showNotification("Student removed successfully!", "success");
+      
+      // Update UI immediately without needing to refresh
+      setBatchData(prev => ({
+        ...prev,
+        students: prev.students.filter(s => s.id !== studentId)
+      }));
+    } catch (err) {
+      console.error("Error removing student:", err);
+      showNotification(err.response?.data?.message || 'Failed to remove student', 'error');
+    }
+  };
+
+  // --- Handlers for Video & Document (Wired to Backend) ---
+  const handleShareVideo = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/api/batches/${batchId}/videos`, videoForm);
+      showNotification("Video shared successfully!", "success");
+      setShowVideoModal(false);
+      setVideoForm({ title: '', url: '', description: '', subjectId: '' }); // Reset
+    } catch (err) {
+      console.error("Failed to share video:", err);
+      showNotification(err.response?.data?.message || "Failed to share video", "error");
+    }
+  };
+
+  const handleShareDocument = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/api/batches/${batchId}/documents`, docForm);
+      showNotification("Document shared successfully!", "success");
+      setShowDocModal(false);
+      setDocForm({ title: '', fileUrl: '', description: '', subjectId: '' }); // Reset
+    } catch (err) {
+      console.error("Failed to share document:", err);
+      showNotification(err.response?.data?.message || "Failed to share document", "error");
     }
   };
 
@@ -158,6 +220,36 @@ const BatchDetails = () => {
                 </span>
               </div>
               <p className="text-slate-500 font-medium">Manage curriculum, subjects, and student enrollments.</p>
+              
+              {/* --- ACTION NAVBAR --- */}
+              <div className="flex flex-wrap items-center gap-2 mt-5 p-1.5 bg-slate-50 border border-slate-200/60 rounded-xl w-fit shadow-sm">
+                
+                <button 
+                  onClick={() => setShowVideoModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 text-sm font-semibold rounded-lg hover:text-blue-600 hover:bg-blue-50 border border-slate-200/50 transition-all shadow-sm group"
+                >
+                  <Video className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" /> Share Video
+                </button>
+                
+                <button 
+                  onClick={() => setShowDocModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 text-sm font-semibold rounded-lg hover:text-purple-600 hover:bg-purple-50 border border-slate-200/50 transition-all shadow-sm group"
+                >
+                  <FileText className="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform" /> Share Document
+                </button>
+
+                <div className="w-px h-6 bg-slate-200 mx-2 hidden sm:block"></div>
+
+                <button 
+                  onClick={handleOpenModal}
+                  className="flex items-center gap-2 px-5 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 hover:-translate-y-0.5 transition-all shadow-md"
+                >
+                  <Plus className="w-4 h-4" /> Add Student
+                </button>
+
+              </div>
+              {/* --------------------------------------------------------- */}
+
             </div>
           </div>
         </div>
@@ -179,10 +271,8 @@ const BatchDetails = () => {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-100/80 flex flex-col justify-center transition-colors hover:border-slate-200">
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <Calendar className="w-4 h-4" />
-                  {/* UPDATED: Added whitespace-nowrap to keep it on one line */}
                   <p className="text-xs font-bold uppercase tracking-wider whitespace-nowrap">Academic Yr</p>
                 </div>
-                {/* UPDATED: Changed from font-extrabold to font-bold */}
                 <p className="text-lg font-bold text-slate-800">{batchData.academicYear || 'N/A'}</p>
               </div>
               
@@ -191,7 +281,6 @@ const BatchDetails = () => {
                   <GraduationCap className="w-4 h-4" />
                   <p className="text-xs font-bold uppercase tracking-wider whitespace-nowrap">Students</p>
                 </div>
-                {/* UPDATED: Changed from font-extrabold to font-bold */}
                 <p className="text-lg font-bold text-slate-800">{batchData.students?.length || 0}</p>
               </div>
             </div>
@@ -249,18 +338,10 @@ const BatchDetails = () => {
                   <Users className="w-6 h-6" />
                 </div>
                 <div>
-                  {/* UPDATED: Changed font-extrabold to font-bold */}
                   <h3 className="text-lg font-bold text-slate-800">Enrolled Students</h3>
                   <p className="text-sm text-slate-500 font-medium mt-0.5">Currently managing {batchData.students?.length || 0} active students</p>
                 </div>
               </div>
-              
-              <button 
-                onClick={handleOpenModal}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 hover:-translate-y-0.5 transition-all shadow-md hover:shadow-lg focus:ring-4 focus:ring-slate-200"
-              >
-                <Plus className="w-4 h-4" /> Add Student
-              </button>
             </div>
 
             {/* Students Table */}
@@ -280,6 +361,7 @@ const BatchDetails = () => {
                           <Mail className="w-4 h-4 text-slate-400" /> Email Address
                         </div>
                       </th>
+                      <th className="px-6 py-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -293,6 +375,15 @@ const BatchDetails = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-500 font-medium">
                           {student.email}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                           <button 
+                             onClick={() => handleRemoveStudent(student.id)}
+                             className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                             title="Remove from batch"
+                           >
+                             <Trash2 className="w-4 h-4" />
+                           </button>
                         </td>
                       </tr>
                     ))}
@@ -408,6 +499,156 @@ const BatchDetails = () => {
               )}
             </div>
             
+          </div>
+        </div>
+      )}
+
+      {/* --- SHARE VIDEO MODAL --- */}
+      {showVideoModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white relative">
+              <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                <Video className="w-5 h-5 text-blue-600" /> Share Video
+              </h3>
+              <button onClick={() => setShowVideoModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleShareVideo} className="p-5 space-y-4 bg-slate-50/30">
+              
+              {/* Subject Dropdown */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Batch Subject <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <select 
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm shadow-sm appearance-none cursor-pointer"
+                    value={videoForm.subjectId} 
+                    onChange={(e) => setVideoForm({...videoForm, subjectId: e.target.value})}
+                  >
+                    <option value="" disabled>-- Select Subject --</option>
+                    {batchData?.subjects?.map(sub => (
+                      <option key={sub.id} value={sub.id}>{sub.name}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Video Title <span className="text-red-500">*</span></label>
+                <input 
+                  type="text" required
+                  placeholder="e.g., Introduction to Algebra"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm shadow-sm"
+                  value={videoForm.title} onChange={(e) => setVideoForm({...videoForm, title: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Video URL / Link <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    type="url" required
+                    placeholder="https://youtube.com/..."
+                    className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm shadow-sm"
+                    value={videoForm.url} onChange={(e) => setVideoForm({...videoForm, url: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Short Description</label>
+                <textarea 
+                  rows="3"
+                  placeholder="What is this video about?"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none text-sm shadow-sm"
+                  value={videoForm.description} onChange={(e) => setVideoForm({...videoForm, description: e.target.value})}
+                />
+              </div>
+              <div className="pt-3 flex gap-3">
+                <button type="button" onClick={() => setShowVideoModal(false)} className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-bold text-sm shadow-sm">Cancel</button>
+                <button type="submit" className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-sm shadow-sm">Share to Batch</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- SHARE DOCUMENT MODAL --- */}
+      {showDocModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white relative">
+              <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-purple-600" /> Share Document
+              </h3>
+              <button onClick={() => setShowDocModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleShareDocument} className="p-5 space-y-4 bg-slate-50/30">
+              
+              {/* Subject Dropdown */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Batch Subject <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <select 
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm shadow-sm appearance-none cursor-pointer"
+                    value={docForm.subjectId} 
+                    onChange={(e) => setDocForm({...docForm, subjectId: e.target.value})}
+                  >
+                    <option value="" disabled>-- Select Subject --</option>
+                    {batchData?.subjects?.map(sub => (
+                      <option key={sub.id} value={sub.id}>{sub.name}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Document Title <span className="text-red-500">*</span></label>
+                <input 
+                  type="text" required
+                  placeholder="e.g., Chapter 1 Notes (PDF)"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm shadow-sm"
+                  value={docForm.title} onChange={(e) => setDocForm({...docForm, title: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">File URL / Drive Link <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    type="url" required
+                    placeholder="https://drive.google.com/..."
+                    className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all text-sm shadow-sm"
+                    value={docForm.fileUrl} onChange={(e) => setDocForm({...docForm, fileUrl: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Instructions / Description</label>
+                <textarea 
+                  rows="3"
+                  placeholder="Any specific instructions for reading?"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all resize-none text-sm shadow-sm"
+                  value={docForm.description} onChange={(e) => setDocForm({...docForm, description: e.target.value})}
+                />
+              </div>
+              <div className="pt-3 flex gap-3">
+                <button type="button" onClick={() => setShowDocModal(false)} className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-bold text-sm shadow-sm">Cancel</button>
+                <button type="submit" className="flex-1 px-4 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-bold text-sm shadow-sm">Share Document</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
