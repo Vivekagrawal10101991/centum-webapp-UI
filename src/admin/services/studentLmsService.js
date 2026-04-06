@@ -1,10 +1,7 @@
+// src/admin/services/studentLmsService.js
 import api from '../../services/api';
 
 export const studentLmsService = {
-  /**
-   * Fetch all courses the current student is enrolled in.
-   * Endpoint: GET /api/student/lms/my-courses
-   */
   getMyCourses: async () => {
     try {
       const response = await api.get('/api/student/lms/my-courses');
@@ -15,10 +12,17 @@ export const studentLmsService = {
     }
   },
 
-  /**
-   * Fetch assignments for a specific course.
-   * Endpoint: GET /api/student/lms/assignments/{courseId}
-   */
+  // NEW: Fetch personal batch resources
+  getMyResources: async () => {
+    try {
+      const response = await api.get('/api/student/lms/my-resources');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching resources:', error);
+      throw error;
+    }
+  },
+
   getCourseAssignments: async (courseId) => {
     try {
       const response = await api.get(`/api/student/lms/assignments/${courseId}`);
@@ -29,10 +33,6 @@ export const studentLmsService = {
     }
   },
 
-  /**
-   * Fetch the live class schedule for a specific course.
-   * Endpoint: GET /api/student/lms/schedule/{courseId}
-   */
   getCourseSchedule: async (courseId) => {
     try {
       const response = await api.get(`/api/student/lms/schedule/${courseId}`);
@@ -43,11 +43,6 @@ export const studentLmsService = {
     }
   },
 
-  /**
-   * Submit an assignment.
-   * Endpoint: POST /api/student/lms/submit-assignment
-   * Payload: { assignmentId, fileUrl, comments }
-   */
   submitAssignment: async (submissionData) => {
     try {
       const response = await api.post('/api/student/lms/submit-assignment', submissionData);
