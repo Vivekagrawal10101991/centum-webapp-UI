@@ -6,7 +6,8 @@ import {
   Clock, 
   FileText, 
   Video, 
-  ArrowLeft, 
+  ArrowLeft,
+  ArrowRight,
   Upload, 
   CheckCircle,
   Link as LinkIcon,
@@ -14,17 +15,20 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-// added 'section' prop to handle routing logic
 const StudentDashboard = ({ section }) => {
   // --- STATE MANAGEMENT ---
   const [courses, setCourses] = useState([]);
+  const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Tab State
+  const [mainTab, setMainTab] = useState('courses'); // 'courses' | 'resources'
 
   // Classroom Mode State
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [assignments, setAssignments] = useState([]);
   const [schedule, setSchedule] = useState([]);
-  const [viewMode, setViewMode] = useState('assignments'); // 'assignments' | 'schedule'
+  const [viewMode, setViewMode] = useState('assignments'); 
   
   // Submission Modal State
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -34,10 +38,8 @@ const StudentDashboard = ({ section }) => {
 
   // --- INITIAL DATA FETCH ---
   useEffect(() => {
-    fetchMyCourses();
+    fetchDashboardData();
 
-    // UX Improvement: If user came from "Assignments" or "Schedule" link, 
-    // tell them they need to pick a course first.
     if (section === 'assignments' || section === 'schedule') {
       toast('Please select a course first to view ' + section, {
         icon: '👈',
@@ -46,12 +48,17 @@ const StudentDashboard = ({ section }) => {
     }
   }, [section]);
 
-  const fetchMyCourses = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const data = await studentLmsService.getMyCourses();
-      setCourses(data);
+      // Parallel fetch for courses and personal batch resources
+      const [coursesData, resourcesData] = await Promise.all([
+        studentLmsService.getMyCourses(),
+        studentLmsService.getMyResources()
+      ]);
+      setCourses(coursesData);
+      setResources(resourcesData);
     } catch (error) {
-      toast.error("Failed to load your courses");
+      toast.error("Failed to load your dashboard data");
     } finally {
       setLoading(false);
     }
@@ -59,17 +66,14 @@ const StudentDashboard = ({ section }) => {
 
   // --- ACTIONS ---
 
-  // 1. Enter Classroom
   const handleEnterClassroom = async (course) => {
     setSelectedCourse(course);
     setLoading(true);
     
-    // Auto-select tab based on previous intent or default
     if (section === 'schedule') setViewMode('schedule');
     else setViewMode('assignments');
 
     try {
-      // Fetch both assignments and schedule in parallel
       const [assData, schData] = await Promise.all([
         studentLmsService.getCourseAssignments(course.courseId),
         studentLmsService.getCourseSchedule(course.courseId)
@@ -83,7 +87,6 @@ const StudentDashboard = ({ section }) => {
     }
   };
 
-  // 2. Open Submission Modal
   const openSubmitModal = (assignment) => {
     setActiveAssignment(assignment);
     setSubmissionUrl('');
@@ -91,7 +94,6 @@ const StudentDashboard = ({ section }) => {
     setShowSubmitModal(true);
   };
 
-  // 3. Submit Assignment
   const handleSubmitAssignment = async (e) => {
     e.preventDefault();
     if (!submissionUrl) {
@@ -134,7 +136,6 @@ const StudentDashboard = ({ section }) => {
   if (selectedCourse) {
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Header Navigation */}
         <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
           <button 
             onClick={() => setSelectedCourse(null)}
@@ -148,7 +149,6 @@ const StudentDashboard = ({ section }) => {
           </div>
         </div>
 
-        {/* Tab Navigation */}
         <div className="flex gap-6 border-b border-slate-200">
           <button
             onClick={() => setViewMode('assignments')}
@@ -180,9 +180,7 @@ const StudentDashboard = ({ section }) => {
           </button>
         </div>
 
-        {/* Content Area */}
         <div className="min-h-[400px]">
-          {/* ASSIGNMENTS VIEW */}
           {viewMode === 'assignments' && (
             <div className="grid gap-4">
               {assignments.length === 0 ? (
@@ -216,7 +214,6 @@ const StudentDashboard = ({ section }) => {
             </div>
           )}
 
-          {/* SCHEDULE VIEW */}
           {viewMode === 'schedule' && (
             <div className="space-y-4">
               {schedule.length === 0 ? (
@@ -258,7 +255,6 @@ const StudentDashboard = ({ section }) => {
           )}
         </div>
 
-        {/* --- MODAL: SUBMIT ASSIGNMENT --- */}
         {showSubmitModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
@@ -318,7 +314,7 @@ const StudentDashboard = ({ section }) => {
     );
   }
 
-  // === VIEW 2: DASHBOARD HOME (Course Grid) ===
+  // === VIEW 2: DASHBOARD HOME (Course & Resources Grid) ===
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Welcome Banner */}
@@ -327,86 +323,191 @@ const StudentDashboard = ({ section }) => {
           <h1 className="text-3xl font-bold mb-2">My Learning Dashboard</h1>
           <p className="text-blue-100 text-lg">Track your progress, access your classroom, and stay updated with your schedule.</p>
         </div>
-        {/* Decorative Circles */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
         <div className="absolute bottom-0 left-20 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl"></div>
       </div>
 
-      {/* Course Grid */}
+      {/* Main Tabs Navigation */}
+      <div className="flex gap-6 border-b border-slate-200">
+        <button
+          onClick={() => setMainTab('courses')}
+          className={`pb-3 px-2 font-medium text-sm transition-all relative ${
+            mainTab === 'courses' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            My Courses
+          </div>
+          {mainTab === 'courses' && (
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 rounded-t-full" />
+          )}
+        </button>
+        <button
+          onClick={() => setMainTab('resources')}
+          className={`pb-3 px-2 font-medium text-sm transition-all relative ${
+            mainTab === 'resources' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Shared Resources
+          </div>
+          {mainTab === 'resources' && (
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 rounded-t-full" />
+          )}
+        </button>
+      </div>
+
+      {/* Main Content Render */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-blue-600" />
-          Enrolled Courses
-        </h2>
-
-        {courses.length === 0 ? (
-          <div className="bg-white p-16 rounded-2xl text-center border border-dashed border-slate-200 shadow-sm">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <BookOpen className="w-8 h-8 text-slate-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-700">No Active Courses</h3>
-            <p className="text-slate-500 mt-1 max-w-sm mx-auto">You haven't enrolled in any courses yet. Contact your administrator to get started.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((enrollment) => (
-              <div 
-                key={enrollment.id} 
-                className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full ring-1 ring-slate-900/5"
-              >
-                {/* Course Image */}
-                <div className="h-44 bg-slate-100 relative overflow-hidden">
-                  {enrollment.courseImage ? (
-                    <img 
-                      src={enrollment.courseImage} 
-                      alt={enrollment.courseTitle} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
-                      <BookOpen className="w-10 h-10 mb-2" />
-                      <span className="text-xs font-medium uppercase tracking-wider">No Image</span>
-                    </div>
-                  )}
-                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-md text-xs font-bold text-green-600 flex items-center gap-1 shadow-sm border border-green-100">
-                    <CheckCircle className="w-3 h-3" />
-                    {enrollment.status}
-                  </div>
+        {mainTab === 'courses' && (
+          <>
+            {courses.length === 0 ? (
+              <div className="bg-white p-16 rounded-2xl text-center border border-dashed border-slate-200 shadow-sm">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="w-8 h-8 text-slate-400" />
                 </div>
-
-                {/* Content */}
-                <div className="p-5 flex flex-col flex-grow">
-                  <h3 className="font-bold text-lg text-slate-800 mb-2 line-clamp-1">{enrollment.courseTitle}</h3>
-                  <div className="text-xs text-slate-500 mb-5 flex items-center gap-2">
-                    <Calendar className="w-3 h-3" />
-                    Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="mt-auto space-y-2">
-                    <div className="flex justify-between text-xs font-semibold text-slate-600">
-                      <span>Course Progress</span>
-                      <span>{enrollment.progress}%</span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                      <div 
-                        className="bg-blue-600 h-full rounded-full transition-all duration-1000 ease-out" 
-                        style={{ width: `${enrollment.progress}%` }}
-                      />
-                    </div>
-                    
-                    <button 
-                      onClick={() => handleEnterClassroom(enrollment)}
-                      className="w-full mt-4 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-blue-600 hover:shadow-lg transition-all shadow-sm flex items-center justify-center gap-2"
-                    >
-                      Go to Class
-                      <ArrowLeft className="w-4 h-4 rotate-180" />
-                    </button>
-                  </div>
-                </div>
+                <h3 className="text-lg font-semibold text-slate-700">No Active Courses</h3>
+                <p className="text-slate-500 mt-1 max-w-sm mx-auto">You haven't enrolled in any courses yet. Contact your administrator to get started.</p>
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {courses.map((enrollment) => (
+                  <div 
+                    key={enrollment.id} 
+                    className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full ring-1 ring-slate-900/5"
+                  >
+                    <div className="h-44 bg-slate-100 relative overflow-hidden">
+                      {enrollment.courseImage ? (
+                        <img 
+                          src={enrollment.courseImage} 
+                          alt={enrollment.courseTitle} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                          <BookOpen className="w-10 h-10 mb-2" />
+                          <span className="text-xs font-medium uppercase tracking-wider">No Image</span>
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-md text-xs font-bold text-green-600 flex items-center gap-1 shadow-sm border border-green-100">
+                        <CheckCircle className="w-3 h-3" />
+                        {enrollment.status}
+                      </div>
+                    </div>
+
+                    <div className="p-5 flex flex-col flex-grow">
+                      <h3 className="font-bold text-lg text-slate-800 mb-2 line-clamp-1">{enrollment.courseTitle}</h3>
+                      <div className="text-xs text-slate-500 mb-5 flex items-center gap-2">
+                        <Calendar className="w-3 h-3" />
+                        Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}
+                      </div>
+                      
+                      <div className="mt-auto space-y-2">
+                        <div className="flex justify-between text-xs font-semibold text-slate-600">
+                          <span>Course Progress</span>
+                          <span>{enrollment.progress}%</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className="bg-blue-600 h-full rounded-full transition-all duration-1000 ease-out" 
+                            style={{ width: `${enrollment.progress}%` }}
+                          />
+                        </div>
+                        
+                        <button 
+                          onClick={() => handleEnterClassroom(enrollment)}
+                          className="w-full mt-4 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-blue-600 hover:shadow-lg transition-all shadow-sm flex items-center justify-center gap-2"
+                        >
+                          Go to Class
+                          <ArrowLeft className="w-4 h-4 rotate-180" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* RESOURCES TAB RENDER (NEW PREMIUM DESIGN) */}
+        {mainTab === 'resources' && (
+          <>
+            {resources.length === 0 ? (
+              <div className="bg-white p-16 rounded-2xl text-center border border-dashed border-slate-200 shadow-sm">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-slate-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-700">No Resources Found</h3>
+                <p className="text-slate-500 mt-1 max-w-sm mx-auto">Your teachers haven't shared any documents or videos for your batches yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {resources.map((res) => (
+                  <div 
+                    key={res.id} 
+                    className="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 hover:border-blue-100 transition-all duration-300 flex flex-col h-full relative overflow-hidden"
+                  >
+                    {/* Subtle decorative background on hover */}
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
+
+                    <div className="relative z-10 flex flex-col h-full">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`p-2 rounded-xl flex items-center justify-center ${res.type === 'VIDEO' ? 'bg-rose-50 text-rose-500' : 'bg-blue-50 text-blue-500'}`}>
+                              {res.type === 'VIDEO' ? <Video className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+                            </div>
+                            <div className="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                              {res.batchName}
+                            </div>
+                          </div>
+                        </div>
+                        {res.subjectName && (
+                          <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50/50 px-2 py-1 rounded-md text-right max-w-[50%] truncate">
+                            {res.subjectName}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Content */}
+                      <h3 className="font-bold text-slate-800 text-sm mb-1.5 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+                        {res.title}
+                      </h3>
+                      
+                      <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-grow leading-relaxed">
+                        {res.description}
+                      </p>
+                      
+                      {/* Footer */}
+                      <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
+                        <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1.5">
+                          <Calendar className="w-3 h-3" />
+                          {formatDate(res.date)}
+                        </span>
+                        <a 
+                          href={res.url || res.fileUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className={`text-[11px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+                            res.type === 'VIDEO' 
+                              ? 'text-rose-600 bg-rose-50 hover:bg-rose-100' 
+                              : 'text-blue-600 bg-blue-50 hover:bg-blue-100'
+                          }`}
+                        >
+                          {res.type === 'VIDEO' ? 'Watch' : 'Open'}
+                          <ArrowRight className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
