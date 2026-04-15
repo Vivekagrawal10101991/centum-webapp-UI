@@ -25,7 +25,7 @@ import SharedBatchDetails from '../Tabs/BatchDetails';
 import LibraryContentManagement from '../Tabs/LibraryContentManagement';
 import BroadcastMessage from '../Tabs/BroadcastMessage'; 
 import NotificationHistory from '../Tabs/NotificationHistory'; 
-import Employees from '../Tabs/Employees'; // <--- NEW IMPORT ADDED HERE
+import Employees from '../Tabs/Employees';
 
 // Admin Components
 import { AdminDashboard, UsersPage } from '../dashboard/admin';
@@ -48,6 +48,7 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 // Operations Components
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 import BatchDetails from '../dashboard/operations/pages/BatchDetails';
+import ScheduleManagement from '../dashboard/operations/pages/ScheduleManagement'; // <--- NEW IMPORT ADDED HERE
 
 // Admission Manager Components (Lazy Loaded to prevent chunking conflicts)
 const AdmissionManagerDashboard = React.lazy(() => import('../dashboard/admission-manager/pages/AdmissionManagerDashboard'));
@@ -594,18 +595,14 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* <--- FIX APPLIED HERE: Replaced the placeholder with ScheduleManagement ---> */}
       <Route
         path="/dashboard/operations/schedule"
         element={
           <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
             <DashboardLayout>
-              <div className="w-full h-full min-h-[60vh] flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 animate-in fade-in zoom-in duration-300">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
-                  <Inbox className="w-10 h-10 text-slate-300" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">No Schedules</h2>
-                <p className="text-slate-500 text-center max-w-md">There are no active schedules to display.</p>
-              </div>
+              <ScheduleManagement />
             </DashboardLayout>
           </ProtectedRoute>
         }
@@ -672,19 +669,16 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* === UPDATED HR EMPLOYEES ROUTE === */}
       <Route
         path="/dashboard/hr/employees"
         element={
           <ProtectedRoute allowedRoles={[ROLES.HR]}>
             <DashboardLayout>
-              <Employees /> {/* <--- UPDATED: NOW RENDERS THE NEW EMPLOYEES COMPONENT */}
+              <Employees /> 
             </DashboardLayout>
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/dashboard/hr/attendance"
         element={
