@@ -5,7 +5,10 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/common/ProtectedRoute';
 import { ROLES } from '../../utils/roles';
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
-import BatchManagement from '../Tabs/BatchManagement'; // <-- IMPORTED HERE
+import BatchManagement from '../Tabs/BatchManagement';
+
+// 1. IMPORT THE NEW TABBED PAGE HERE
+import ScheduleManagement from '../dashboard/operations/pages/ScheduleManagement';
 
 /**
  * Reusable Empty State Component
@@ -36,7 +39,6 @@ export const operationRoutes = (
       }
     />
     
-    {/* <-- NEW ROUTE ADDED HERE --> */}
     <Route
       path="/dashboard/operations/batches"
       element={
@@ -63,16 +65,13 @@ export const operationRoutes = (
       }
     />
 
+    {/* 2. THIS IS THE FIX. IT NOW LOADS THE TABS INSTEAD OF THE "NO SCHEDULES" TEXT. */}
     <Route
       path="/dashboard/operations/schedule"
       element={
         <ProtectedRoute allowedRoles={[ROLES.OPERATIONS_MANAGER]}>
           <DashboardLayout>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Schedule Management</h1>
-              <p className="text-gray-600 mb-6">Manage master timetables and events.</p>
-              <EmptyState title="No Schedules" description="There are no active schedules to display." />
-            </div>
+            <ScheduleManagement />
           </DashboardLayout>
         </ProtectedRoute>
       }
