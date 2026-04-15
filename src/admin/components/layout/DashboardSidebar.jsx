@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, BookOpen, Settings, FileText, BarChart, Megaphone, Star,
   GraduationCap, Award, Video, MessageCircle, ClipboardList, Calendar,
-  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers, Image as ImageIcon, Send
+  TrendingUp, UserCog, Clock, Building2, Briefcase, Activity, CheckCircle, Layers, Image as ImageIcon, Send,
+  ChevronDown, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../../utils/roles';
@@ -14,6 +15,7 @@ const DashboardSidebar = () => {
   const location = useLocation();
   const { user } = useAuth();
   const [badgeCounts, setBadgeCounts] = useState({});
+  const [openMenus, setOpenMenus] = useState({});
 
   const fetchNotifications = async () => {
     try {
@@ -42,42 +44,20 @@ const DashboardSidebar = () => {
       { name: 'Social Proof', path: '/dashboard/super-admin/social-proof', icon: Star },
       { name: 'Media Center', path: '/dashboard/super-admin/media-center', icon: Video },
       { name: 'Library Content', path: '/dashboard/super-admin/library-content', icon: FileText }, 
-      { 
-        name: 'Leads & Enquiries', 
-        path: '/dashboard/super-admin/leads-enquiries', 
-        icon: MessageCircle,
-        badgeKey: 'leads' 
-      },
-      { 
-        name: 'Leave Approvals', 
-        path: '/dashboard/super-admin/leave-approvals', 
-        icon: CheckCircle,
-        badgeKey: 'leaves' 
-      },
+      { name: 'Leads & Enquiries', path: '/dashboard/super-admin/leads-enquiries', icon: MessageCircle, badgeKey: 'leads' },
+      { name: 'Leave Approvals', path: '/dashboard/super-admin/leave-approvals', icon: CheckCircle, badgeKey: 'leaves' },
       { name: 'Internal Broadcast', path: '/dashboard/super-admin/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/super-admin/settings', icon: Settings },
     ],
-
     [ROLES.ADMIN]: [
       { name: 'Overview', path: '/dashboard/admin', icon: BarChart },
       { name: 'Users', path: '/dashboard/admin/users', icon: Users },
       { name: 'Courses', path: '/dashboard/admin/courses', icon: BookOpen },
-      { 
-        name: 'Leads & Enquiries', 
-        path: '/dashboard/admin/leads', 
-        icon: MessageCircle,
-        badgeKey: 'leads'
-      },
-      { 
-        name: 'Leave Directory', 
-        path: '/dashboard/admin/leave-approvals', 
-        icon: CheckCircle,
-        badgeKey: 'leaves'
-      }, 
+      { name: 'Leads & Enquiries', path: '/dashboard/admin/leads', icon: MessageCircle, badgeKey: 'leads' },
+      { name: 'Leave Directory', path: '/dashboard/admin/leave-approvals', icon: CheckCircle, badgeKey: 'leaves' }, 
       { name: 'Internal Broadcast', path: '/dashboard/admin/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/admin/settings', icon: Settings },
     ],
-
     [ROLES.TECHNICAL_HEAD]: [
       { name: 'Overview', path: '/dashboard/technical', icon: BarChart },
       { name: 'Course Management', path: '/dashboard/technical/course-management', icon: BookOpen },
@@ -87,14 +67,12 @@ const DashboardSidebar = () => {
       { name: 'Social Proof', path: '/dashboard/technical/social-proof', icon: Star },
       { name: 'Settings', path: '/dashboard/technical/settings', icon: Settings },
     ],
-
     [ROLES.FACULTY]: [ 
       { name: 'Overview', path: '/dashboard/faculty', icon: BarChart },
       { name: 'My Courses', path: '/dashboard/faculty/courses', icon: BookOpen },
       { name: 'Students', path: '/dashboard/faculty/students', icon: Users },
       { name: 'Settings', path: '/dashboard/faculty/settings', icon: Settings },
     ],
-
     [ROLES.STUDENT]: [
       { name: 'Overview', path: '/dashboard/student', icon: BarChart },
       { name: 'My Courses', path: '/dashboard/student/courses', icon: BookOpen },
@@ -103,86 +81,53 @@ const DashboardSidebar = () => {
       { name: 'Schedule', path: '/dashboard/student/schedule', icon: Calendar },
       { name: 'Settings', path: '/dashboard/student/settings', icon: Settings },
     ],
-
     [ROLES.PARENT]: [
       { name: 'Overview', path: '/dashboard/parent', icon: BarChart },
       { name: 'Child Progress', path: '/dashboard/parent/progress', icon: TrendingUp },
       { name: 'Settings', path: '/dashboard/parent/settings', icon: Settings },
     ],
-
     [ROLES.HR]: [
       { name: 'Overview', path: '/dashboard/hr', icon: BarChart },
       { name: 'User Management', path: '/dashboard/hr/user-management', icon: Users },
-      { 
-        name: 'Leads & Enquiries', 
-        path: '/dashboard/hr/leads', 
-        icon: MessageCircle,
-        badgeKey: 'leads'
-      },
+      { name: 'Leads & Enquiries', path: '/dashboard/hr/leads', icon: MessageCircle, badgeKey: 'leads' },
       { name: 'Employees', path: '/dashboard/hr/employees', icon: Users },
       { name: 'Attendance', path: '/dashboard/hr/attendance', icon: Clock },
       { name: 'Leaves', path: '/dashboard/hr/leaves', icon: Calendar },
-      { 
-        name: 'Leave Directory', 
-        path: '/dashboard/hr/leave-approvals', 
-        icon: CheckCircle,
-        badgeKey: 'leaves'
-      }, 
+      { name: 'Leave Directory', path: '/dashboard/hr/leave-approvals', icon: CheckCircle, badgeKey: 'leaves' }, 
       { name: 'Recruitment', path: '/dashboard/hr/recruitment', icon: Briefcase },
       { name: 'Internal Broadcast', path: '/dashboard/hr/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/hr/settings', icon: Settings },
     ],
-
     [ROLES.OPERATIONS_MANAGER]: [
       { name: 'Overview', path: '/dashboard/operations', icon: BarChart },
       { name: 'Batch Management', path: '/dashboard/operations/batches', icon: Layers },
-      { 
-        name: 'Leads & Enquiries', 
-        path: '/dashboard/operations/leads', 
-        icon: MessageCircle,
-        badgeKey: 'leads'
-      },
+      { name: 'Leads & Enquiries', path: '/dashboard/operations/leads', icon: MessageCircle, badgeKey: 'leads' },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
-      { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
-      { 
-        name: 'Leave Directory', 
-        path: '/dashboard/operations/leave-approvals', 
-        icon: CheckCircle,
-        badgeKey: 'leaves'
-      }, 
+      { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar }, // <-- Restored to single link
+      { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle, badgeKey: 'leaves' }, 
       { name: 'Internal Broadcast', path: '/dashboard/operations/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings },
     ],
-
     [ROLES.ADMISSION_MANAGER]: [
       { name: 'Overview', path: '/dashboard/admission-manager', icon: BarChart },
-      { 
-        name: 'Leads & Enquiries', 
-        path: '/dashboard/admission-manager/leads', 
-        icon: MessageCircle,
-        badgeKey: 'leads'
-      },
+      { name: 'Leads & Enquiries', path: '/dashboard/admission-manager/leads', icon: MessageCircle, badgeKey: 'leads' },
       { name: 'Student Management', path: '/dashboard/admission-manager/student-management', icon: Users },
       { name: 'Settings', path: '/dashboard/admission-manager/settings', icon: Settings },
     ],
-
     [ROLES.GRAPHIC_DESIGNER]: [
       { name: 'Overview', path: '/dashboard/graphic-designer', icon: BarChart },
       { name: 'Promotions & Banners', path: '/dashboard/graphic-designer/promotions-banners', icon: ImageIcon },
       { name: 'Media Center', path: '/dashboard/graphic-designer/media-center', icon: Video },
       { name: 'Settings', path: '/dashboard/graphic-designer/settings', icon: Settings },
     ],
-
     [ROLES.ZONAL_HEAD]: [
       { name: 'Overview', path: '/dashboard/zonal-head', icon: BarChart },
       { name: 'Settings', path: '/dashboard/zonal-head/settings', icon: Settings },
     ],
-
     [ROLES.DTP]: [
       { name: 'Overview', path: '/dashboard/dtp', icon: BarChart },
       { name: 'Settings', path: '/dashboard/dtp/settings', icon: Settings },
     ],
-
     [ROLES.COORDINATOR]: [
       { name: 'Overview', path: '/dashboard/coordinator', icon: BarChart },
       { name: 'Settings', path: '/dashboard/coordinator/settings', icon: Settings }, 
@@ -190,31 +135,43 @@ const DashboardSidebar = () => {
   };
 
   const allItems = navigationItems[user?.role] || [];
-  const items = filterNavigationByPermissions(allItems, user);
+  const items = Array.isArray(allItems) ? filterNavigationByPermissions(allItems, user) || [] : [];
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const initialOpen = { ...openMenus };
+    let changed = false;
+    
+    items.forEach(item => {
+      if (item.subItems && Array.isArray(item.subItems)) {
+        if (item.subItems.some(sub => currentPath.startsWith(sub.path))) {
+          if (!initialOpen[item.name]) {
+             initialOpen[item.name] = true;
+             changed = true;
+          }
+        }
+      }
+    });
+    if (changed) setOpenMenus(initialOpen);
+  }, [location.pathname, user, items]);
+
+  const toggleSubmenu = (name) => {
+    setOpenMenus(prev => ({ ...prev, [name]: !prev[name] }));
+  };
 
   const isActive = (path) => {
+    if (!path) return false;
     if (location.pathname === path) return true;
     
     const basePaths = [
-      '/dashboard/super-admin/dashboard',
-      '/dashboard/admin',
-      '/dashboard/technical',
-      '/dashboard/faculty',
-      '/dashboard/student',
-      '/dashboard/parent',
-      '/dashboard/hr',
-      '/dashboard/operations',
-      '/dashboard/admission-manager',
-      '/dashboard/graphic-designer',
-      '/dashboard/zonal-head',
-      '/dashboard/dtp',        
+      '/dashboard/super-admin/dashboard', '/dashboard/admin', '/dashboard/technical',
+      '/dashboard/faculty', '/dashboard/student', '/dashboard/parent',
+      '/dashboard/hr', '/dashboard/operations', '/dashboard/admission-manager',
+      '/dashboard/graphic-designer', '/dashboard/zonal-head', '/dashboard/dtp',        
       '/dashboard/coordinator' 
     ];
 
-    if (basePaths.includes(path)) {
-      return false; 
-    }
-
+    if (basePaths.includes(path)) return false; 
     return location.pathname.startsWith(path + '/');
   };
 
@@ -236,14 +193,70 @@ const DashboardSidebar = () => {
       <div className="flex-1 overflow-y-auto px-4 custom-scrollbar">
         <nav className="space-y-1.5 mt-4">
           {items.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
+            if (!item) return null;
+            const Icon = item.icon || FileText;
+            const hasSubItems = !!item.subItems && item.subItems.length > 0;
+            const active = hasSubItems 
+                ? item.subItems.some(sub => isActive(sub.path))
+                : isActive(item.path);
             const count = item.badgeKey ? badgeCounts[item.badgeKey] : null;
+
+            if (hasSubItems) {
+               return (
+                 <div key={item.name} className="flex flex-col">
+                    <button
+                      onClick={() => toggleSubmenu(item.name)}
+                      className={`
+                        group flex w-full items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 relative
+                        ${active && !openMenus[item.name]
+                          ? 'text-white bg-blue-600/20 shadow-inner translate-x-1' 
+                          : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                        }
+                      `}
+                    >
+                      <div className="flex items-center gap-3.5 relative z-10">
+                        <Icon 
+                          strokeWidth={active ? 2.5 : 2}
+                          className={`w-[18px] h-[18px] transition-colors duration-300 ${active ? 'text-white' : 'text-slate-500 group-hover:text-white'}`} 
+                        />
+                        <span className={`text-[14px] tracking-tight ${active ? 'font-bold text-white' : 'font-medium'}`}>
+                          {item.name}
+                        </span>
+                      </div>
+                      {openMenus[item.name] ? <ChevronDown className="w-4 h-4 text-slate-500 transition-transform" /> : <ChevronRight className="w-4 h-4 text-slate-500 transition-transform" />}
+                    </button>
+
+                    <div className={`overflow-hidden transition-all duration-300 ${openMenus[item.name] ? 'max-h-64 opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+                      <div className="flex flex-col space-y-1 px-3">
+                         {item.subItems.map((sub) => {
+                            const subActive = isActive(sub.path);
+                            return (
+                               <Link
+                                 key={sub.path}
+                                 to={sub.path}
+                                 className={`
+                                   pl-9 pr-4 py-2.5 rounded-xl text-[13px] transition-all duration-300 flex items-center
+                                   ${subActive 
+                                     ? 'bg-blue-600 text-white font-semibold shadow-lg shadow-blue-900/40 translate-x-1' 
+                                     : 'text-slate-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
+                                   }
+                                 `}
+                               >
+                                 <span className="truncate">{sub.name}</span>
+                                 {subActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>}
+                               </Link>
+                            )
+                         })}
+                      </div>
+                    </div>
+                 </div>
+               );
+            }
 
             return (
               <Link
-                key={item.path}
-                to={item.path}
+                key={item.path || item.name}
+                to={item.path || '#'}
                 className={`
                   group flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 relative
                   ${active 
@@ -263,15 +276,12 @@ const DashboardSidebar = () => {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  {/* Notification Badge */}
                   {!active && count > 0 && (
                     <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white shadow-lg animate-pulse">
                       {count > 99 ? '99+' : count}
                     </span>
                   )}
-                  {active && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
-                  )}
+                  {active && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>}
                 </div>
               </Link>
             );
