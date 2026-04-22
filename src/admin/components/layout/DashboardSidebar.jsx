@@ -69,6 +69,7 @@ const DashboardSidebar = () => {
     ],
     [ROLES.FACULTY]: [ 
       { name: 'Overview', path: '/dashboard/faculty', icon: BarChart },
+      { name: 'My Schedule', path: '/dashboard/faculty/schedule', icon: Calendar },
       { name: 'My Courses', path: '/dashboard/faculty/courses', icon: BookOpen },
       { name: 'Students', path: '/dashboard/faculty/students', icon: Users },
       { name: 'Settings', path: '/dashboard/faculty/settings', icon: Settings },
@@ -103,7 +104,7 @@ const DashboardSidebar = () => {
       { name: 'Batch Management', path: '/dashboard/operations/batches', icon: Layers },
       { name: 'Leads & Enquiries', path: '/dashboard/operations/leads', icon: MessageCircle, badgeKey: 'leads' },
       { name: 'Logistics', path: '/dashboard/operations/logistics', icon: Building2 },
-      { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar }, // <-- Restored to single link
+      { name: 'Schedule', path: '/dashboard/operations/schedule', icon: Calendar },
       { name: 'Leave Directory', path: '/dashboard/operations/leave-approvals', icon: CheckCircle, badgeKey: 'leaves' }, 
       { name: 'Internal Broadcast', path: '/dashboard/operations/broadcast', icon: Send },
       { name: 'Settings', path: '/dashboard/operations/settings', icon: Settings },
