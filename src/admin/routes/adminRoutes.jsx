@@ -35,6 +35,7 @@ import { TechnicalDashboard } from '../dashboard/technical';
 
 // Faculty Components
 import { TeacherDashboard as FacultyDashboard } from '../dashboard/teacher';
+import FacultySchedule from '../dashboard/teacher/pages/FacultySchedule'; // <--- NEW IMPORT ADDED HERE
 
 // Student Components
 import { StudentDashboard } from '../dashboard/student';
@@ -48,7 +49,7 @@ import HRDashboard from '../dashboard/hr/pages/HRDashboard';
 // Operations Components
 import OperationsDashboard from '../dashboard/operations/pages/OperationsDashboard';
 import BatchDetails from '../dashboard/operations/pages/BatchDetails';
-import ScheduleManagement from '../dashboard/operations/pages/ScheduleManagement'; // <--- NEW IMPORT ADDED HERE
+import ScheduleManagement from '../dashboard/operations/pages/ScheduleManagement';
 
 // Admission Manager Components (Lazy Loaded to prevent chunking conflicts)
 const AdmissionManagerDashboard = React.lazy(() => import('../dashboard/admission-manager/pages/AdmissionManagerDashboard'));
@@ -595,8 +596,6 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
-      {/* <--- FIX APPLIED HERE: Replaced the placeholder with ScheduleManagement ---> */}
       <Route
         path="/dashboard/operations/schedule"
         element={
@@ -761,6 +760,19 @@ export const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* <--- NEW SCHEDULE ROUTE ADDED HERE ---> */}
+      <Route
+        path="/dashboard/faculty/schedule"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.FACULTY]}>
+            <DashboardLayout>
+              <FacultySchedule />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/dashboard/faculty/notifications"
         element={
