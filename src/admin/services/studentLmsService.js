@@ -1,4 +1,3 @@
-// src/admin/services/studentLmsService.js
 import api from '../../services/api';
 
 export const studentLmsService = {
@@ -12,7 +11,6 @@ export const studentLmsService = {
     }
   },
 
-  // NEW: Fetch personal batch resources
   getMyResources: async () => {
     try {
       const response = await api.get('/api/student/lms/my-resources');
@@ -53,13 +51,23 @@ export const studentLmsService = {
     }
   },
 
-  // Fetch batches the logged-in student is enrolled in
   getMyBatches: async () => {
     try {
       const response = await api.get('/api/student/lms/my-batches');
       return response.data;
     } catch (error) {
       console.error('Error fetching my batches:', error);
+      throw error;
+    }
+  },
+
+  // NEW: Fetch global live schedules mapped to the student's batches
+  getMySchedules: async () => {
+    try {
+      const response = await api.get('/api/student/lms/my-schedules');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching my schedules:', error);
       throw error;
     }
   }
