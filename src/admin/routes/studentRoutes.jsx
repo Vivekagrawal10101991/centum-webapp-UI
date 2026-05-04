@@ -21,6 +21,16 @@ export const studentRoutes = (
       }
     />
     <Route
+      path="/dashboard/student/batches"
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+          <DashboardLayout>
+            <StudentDashboard section="batches" />
+          </DashboardLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path="/dashboard/student/courses"
       element={
         <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
