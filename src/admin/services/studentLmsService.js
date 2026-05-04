@@ -51,5 +51,16 @@ export const studentLmsService = {
       console.error('Error submitting assignment:', error);
       throw error;
     }
+  },
+
+  // Fetch batches the logged-in student is enrolled in
+  getMyBatches: async () => {
+    try {
+      const response = await api.get('/api/student/lms/my-batches');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching my batches:', error);
+      throw error;
+    }
   }
 };
