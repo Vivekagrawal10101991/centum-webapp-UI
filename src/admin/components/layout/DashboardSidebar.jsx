@@ -76,6 +76,7 @@ const DashboardSidebar = () => {
     ],
     [ROLES.STUDENT]: [
       { name: 'Overview', path: '/dashboard/student', icon: BarChart },
+      { name: 'My Batches', path: '/dashboard/student/batches', icon: Layers },
       { name: 'My Courses', path: '/dashboard/student/courses', icon: BookOpen },
       { name: 'Assignments', path: '/dashboard/student/assignments', icon: ClipboardList },
       { name: 'Grades', path: '/dashboard/student/grades', icon: GraduationCap },

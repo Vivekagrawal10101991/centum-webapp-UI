@@ -836,6 +836,16 @@ export const AdminRoutes = () => {
         }
       />
       <Route
+        path="/dashboard/student/batches"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <DashboardLayout>
+              <StudentDashboard section="batches" />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/dashboard/student/grades"
         element={<Navigate to="/dashboard/student" replace />}
       />
