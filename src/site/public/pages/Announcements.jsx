@@ -37,7 +37,7 @@ const Announcements = () => {
         const data = await cmsService.getAnnouncements();
         const activeData = (Array.isArray(data) ? data : [])
           .filter(item => item.active)
-          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         
         setAnnouncements(activeData);
       } catch (error) {
@@ -191,7 +191,7 @@ const Announcements = () => {
                       
                       {/* Left: Date & Badge */}
                       <div className="flex flex-row md:flex-col items-center md:items-start gap-4 flex-shrink-0">
-                        <DateBox dateStr={item.startDate} theme={getCategoryTheme(item.type)} />
+                        <DateBox dateStr={item.createdAt} theme={getCategoryTheme(item.type)} />
                         <span className="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wider rounded-lg border border-red-100">
                           {item.type}
                         </span>
@@ -254,7 +254,7 @@ const Announcements = () => {
                           <div className="flex flex-col md:flex-row gap-5 items-start">
                             
                             {/* Date Box */}
-                            <DateBox dateStr={item.startDate} theme={theme} />
+                            <DateBox dateStr={item.createdAt} theme={theme} />
 
                             <div className="flex-grow">
                               <div className="flex items-center gap-3 mb-2">
@@ -264,7 +264,7 @@ const Announcements = () => {
                                 <span className="text-secondary-300 text-xs">•</span>
                                 <span className="text-xs text-secondary-400 font-medium flex items-center">
                                   <Clock className="w-3 h-3 mr-1" />
-                                  {item.startDate ? new Date(item.startDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'All Day'}
+                                  {item.createdAt ? new Date(item.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'All Day'}
                                 </span>
                               </div>
                               

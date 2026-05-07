@@ -48,15 +48,10 @@ const AchieversGrid = () => {
 
   const duplicatedStudents = students.length > 0 ? [...students, ...students, ...students] : [];
 
-  const stats = [
-    { value: "95%", label: "Success Rate", textColor: "text-purple-700", borderColor: "border-purple-200", hoverBorder: "group-hover:border-purple-500", bgColor: "bg-purple-50/50" },
-    { value: "50+", label: "Top 100 Ranks", textColor: "text-blue-700", borderColor: "border-blue-200", hoverBorder: "group-hover:border-blue-500", bgColor: "bg-blue-50/50" },
-    { value: "1000+", label: "IIT Selections", textColor: "text-amber-600", borderColor: "border-amber-200", hoverBorder: "group-hover:border-amber-500", bgColor: "bg-amber-50/50" },
-    { value: "500+", label: "Medical Seats", textColor: "text-emerald-700", borderColor: "border-emerald-200", hoverBorder: "group-hover:border-emerald-500", bgColor: "bg-emerald-50/50" }
-  ];
+
 
   return (
-    <section className="py-24 bg-white overflow-hidden font-sans">
+    <section className="pt-24 pb-8 bg-white overflow-hidden font-sans">
       <div className="max-w-7xl mx-auto px-6 mb-16 text-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -77,7 +72,7 @@ const AchieversGrid = () => {
         </p>
       </div>
 
-      <div className="relative w-full overflow-hidden mb-24 min-h-[480px] flex items-center justify-center">
+      <div className="relative w-full overflow-hidden min-h-[480px] flex items-center justify-center">
         {/* FADE GRADIENTS: Width reduced to w-8/md:w-16 */}
         <div className="absolute top-0 bottom-0 left-0 w-8 md:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
         <div className="absolute top-0 bottom-0 right-0 w-8 md:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
@@ -104,21 +99,7 @@ const AchieversGrid = () => {
         )}
       </div>
 
-      {/* STATS ROW */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, idx) => (
-            <div key={idx} className={`relative rounded-2xl p-6 md:py-8 text-center shadow-sm hover:shadow-md transition-all duration-300 border-2 ${stat.borderColor} ${stat.hoverBorder} ${stat.bgColor} group cursor-default`}>
-              <h3 className={`text-3xl md:text-4xl font-extrabold mb-2 tracking-tight ${stat.textColor} group-hover:scale-105 transition-transform duration-300`}>
-                {stat.value}
-              </h3>
-              <p className="text-xs md:text-sm font-bold text-slate-600 uppercase tracking-widest group-hover:text-slate-900 transition-colors duration-300">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+
     </section>
   );
 };
