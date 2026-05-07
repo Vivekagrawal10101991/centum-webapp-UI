@@ -60,13 +60,6 @@ const About = () => {
     return () => window.removeEventListener('resize', calc);
   }, []);
 
-  // Impact Statistics Data with Custom Gradients
-  const impactStats = [
-    { icon: Award, value: "1000+", label: "JEE Adv Selections", gradient: "from-[#F59E0B] to-[#D97706]" },
-    { icon: ShieldCheck, value: "5000+", label: "JEE Main Qualified", gradient: "from-[#1C64F2] to-[#1E40AF]" },
-    { icon: Target, value: "500+", label: "NEET Selections", gradient: "from-[#00A67E] to-[#047857]" },
-    { icon: Clock, value: "10 Years", label: "Of Excellence", gradient: "from-[#7E3AF2] to-[#6D28D9]" }
-  ];
 
   return (
     <div className="min-h-screen bg-white font-sans overflow-hidden">
@@ -215,56 +208,6 @@ const About = () => {
               );
             })}
           </motion.div>
-        </div>
-      </section>
-
-      {/* 6. IMPACT STATISTICS */}
-      <section className="py-16 bg-white border-t border-slate-100 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {impactStats.map((stat, idx) => (
-              <motion.div 
-                key={idx} 
-                className="relative group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                {/* Solid Theme Gradient Cards */}
-                <div 
-                  className={`text-center rounded-2xl p-5 shadow-lg transition-all duration-500 flex flex-col items-center justify-center border border-transparent hover:shadow-xl bg-gradient-to-br ${stat.gradient}`}
-                >
-                  <motion.div
-                    className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-3 bg-white/20 shadow-inner"
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 + 0.2 }}
-                  >
-                    <stat.icon className="h-5 w-5 text-white" />
-                  </motion.div>
-
-                  <motion.h3 
-                    className="text-2xl lg:text-3xl font-black text-white mb-1 tracking-tight"
-                    initial={{ scale: 0.9 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: idx * 0.1 + 0.3 }}
-                  >
-                    {stat.value}
-                  </motion.h3>
-
-                  <p className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest opacity-90">
-                    {stat.label}
-                  </p>
-
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl group-hover:bg-white/20 transition-all duration-500"></div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
