@@ -85,7 +85,7 @@ export const CourseOfferings = () => {
   const highlights = [
     { icon: Award, title: "Expert Faculty", desc: "IIT & AIIMS alumni with proven track record", color: "text-purple-600", bg: "bg-purple-100" },
     { icon: Users, title: "Small Batches", desc: "Personalized attention with 25-35 students", color: "text-blue-600", bg: "bg-blue-100" },
-    { icon: Target, title: "Result-Oriented", desc: "95% success rate with 500+ IIT selections", color: "text-emerald-600", bg: "bg-emerald-100" },
+    { icon: Target, title: "Result-Oriented", desc: "Turning Potential into Proven Results", color: "text-emerald-600", bg: "bg-emerald-100" },
     { icon: Clock, title: "Flexible Timings", desc: "School-integrated and full-time programs", color: "text-amber-600", bg: "bg-amber-100" }
   ];
 

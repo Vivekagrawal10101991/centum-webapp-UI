@@ -8,7 +8,7 @@ const StatsSection = ({ showHeading = true }) => {
   const stats = [
     {
       label: "Students Cracked JEE Advanced",
-      value: "1000+",
+      value: "500+",
       description: "Top performers securing seats in premier IITs across India.",
       icon: Award,
       color: "#4F46E5", // Indigo

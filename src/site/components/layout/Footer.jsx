@@ -6,7 +6,7 @@ import logo from "../../../assets/logo.png";
 const Footer = () => {
   // Social media links configuration
   const socialLinks = [
-    { Icon: Linkedin, href: "https://www.linkedin.com/company/centum-academy/" },
+    { Icon: Linkedin, href: "https://www.linkedin.com/company/103762559/admin/dashboard/" },
     { Icon: Facebook, href: "https://www.facebook.com/centumacademy" },
     { Icon: Instagram, href: "https://www.instagram.com/centumacademy/" },
     { Icon: Youtube, href: "https://www.youtube.com/@centumacademy" },
