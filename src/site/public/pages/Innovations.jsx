@@ -19,8 +19,7 @@ import Button from '../../../components/common/Button';
 
 // Asset Imports
 import mindgaugeImg from '../../../assets/AI Innovation/Mindguage.png';
-import classBuzzImg from '../../../assets/AI Innovation/class buzz.png';
-import learnWithDashImg from '../../../assets/AI Innovation/learn with dash.png';
+import classGaugeImg from '../../../assets/AI Innovation/ClassGauge.png';
 import centumAiQuImg from '../../../assets/AI Innovation/Centum AiQu.png';
 
 const Innovations = () => {
@@ -29,7 +28,7 @@ const Innovations = () => {
     {
       title: "ClassGauge",
       description: "ClassGauge makes classrooms more attentive and measurable by conducting short quizzes right after teaching. Students stay engaged, teachers get instant feedback, and parents get visibility into topic-wise learning trends beyond exam marks.",
-      image: classBuzzImg,
+      image: classGaugeImg,
       features: [
         { icon: PlayCircle, label: "Live Quizzes" },
         { icon: MessageSquare, label: "Instant Feedback" },
@@ -53,19 +52,6 @@ const Innovations = () => {
       reverse: true
     },
     {
-      title: "Learn with Dash",
-      description: "Learn with Dash is a personalised learning companion that helps students revise anytime, practice effectively, learn from mistakes, and improve continuously through dashboards, mind maps, assessments, and recorded learning support.",
-      image: learnWithDashImg,
-      features: [
-        { icon: Zap, label: "Personalized" },
-        { icon: LayoutDashboard, label: "Mind Maps" },
-        { icon: Target, label: "Practice Tests" }
-      ],
-      linkText: "Explore Learn with Dash",
-      linkTo: "/ai-innovation/learn-with-dash",
-      reverse: false
-    },
-    {
       title: "Centum AiQu",
       description: "Centum AiQu is a 100% Al-powered learning and quiz application designed to make studying interactive, competitive, and rewarding. It transforms learning into a game-like experience while providing personalized recommendations and instant performance tracking.",
       image: centumAiQuImg,
@@ -76,7 +62,7 @@ const Innovations = () => {
       ],
       linkText: "Download App",
       linkTo: "/ai-innovation/centum-aiqu",
-      reverse: true
+      reverse: false
     }
   ];
 

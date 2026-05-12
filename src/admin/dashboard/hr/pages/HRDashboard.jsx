@@ -9,6 +9,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Card, Button, Modal, Input, Select, Textarea } from '../../../../components/common';
 import { hrService } from '../../../services/hrService';
+import superAdminService from '../../../services/superAdminService';
 import api from '../../../../services/api';
 import LeaveApplicationWidget from '../../../components/common/LeaveApplicationWidget';
 
@@ -94,11 +95,82 @@ const HRDashboard = () => {
 // 1. OVERVIEW TAB
 // ==========================================
 const OverviewTab = ({ changeTab }) => {
+  const [overviewData, setOverviewData] = useState({
+    totalEmployees: 0,
+    presentToday: 0,
+    openPositions: 0,
+    leaveRequests: 0,
+    loading: true
+  });
+
+  useEffect(() => {
+    const fetchOverviewData = async () => {
+      try {
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        // Fetch all necessary data points concurrently for performance
+        const [usersRes, attendanceRes, jobsRes, leavesRes] = await Promise.allSettled([
+          superAdminService.getAllUsers(),
+          api.get(`/api/attendance/all?date=${todayStr}`),
+          hrService.getAllJobs(),
+          hrService.getAllLeaves()
+        ]);
+
+        let totalEmployees = 0;
+        let presentToday = 0;
+        let openPositions = 0;
+        let leaveRequests = 0;
+
+        // Process Users (Total Staff excluding Students and Parents)
+        if (usersRes.status === 'fulfilled') {
+          const data = usersRes.value; 
+          if (Array.isArray(data)) {
+            totalEmployees = data.filter(u => u.role !== 'STUDENT' && u.role !== 'PARENT').length;
+          } else if (data?.data && Array.isArray(data.data)) {
+            totalEmployees = data.data.filter(u => u.role !== 'STUDENT' && u.role !== 'PARENT').length;
+          }
+        }
+
+        // Process Attendance (Present Today)
+        if (attendanceRes.status === 'fulfilled') {
+          const data = attendanceRes.value.data?.data || attendanceRes.value.data || [];
+          presentToday = data.length;
+        }
+
+        // Process Jobs (Active Open Positions)
+        if (jobsRes.status === 'fulfilled') {
+          const data = jobsRes.value.data?.data || jobsRes.value.data || [];
+          openPositions = data.filter(job => job.open === true).length;
+        }
+
+        // Process Leaves (Pending Requests awaiting action)
+        if (leavesRes.status === 'fulfilled') {
+          const data = leavesRes.value.data?.data || leavesRes.value.data || [];
+          leaveRequests = data.filter(leave => leave.status === 'PENDING').length;
+        }
+
+        setOverviewData({
+          totalEmployees,
+          presentToday,
+          openPositions,
+          leaveRequests,
+          loading: false
+        });
+
+      } catch (error) {
+        console.error("Error fetching overview data:", error);
+        setOverviewData(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchOverviewData();
+  }, []);
+
   const stats = [
-    { title: 'Total Employees', value: '142', change: '+5 this month', icon: Users, color: 'blue' },
-    { title: 'Present Today', value: '135', change: '95% attendance', icon: UserCheck, color: 'green' },
-    { title: 'Open Positions', value: '8', change: 'Active hiring', icon: Building2, color: 'purple' },
-    { title: 'Leave Requests', value: '12', change: 'Company wide', icon: Calendar, color: 'orange' },
+    { title: 'Total Employees', value: overviewData.loading ? '...' : overviewData.totalEmployees, change: 'Active staff members', icon: Users, color: 'blue' },
+    { title: 'Present Today', value: overviewData.loading ? '...' : overviewData.presentToday, change: 'Logged in today', icon: UserCheck, color: 'green' },
+    { title: 'Open Positions', value: overviewData.loading ? '...' : overviewData.openPositions, change: 'Active hiring', icon: Building2, color: 'purple' },
+    { title: 'Pending Leaves', value: overviewData.loading ? '...' : overviewData.leaveRequests, change: 'Awaiting approval', icon: Calendar, color: 'orange' },
   ];
 
   return (
@@ -544,7 +616,6 @@ const RecruitmentTab = () => {
     }
   };
 
-  // ✅ NEW: Delete Job Handler with Confirmation
   const handleDeleteJob = async (id) => {
     if (!window.confirm("Are you sure you want to delete this job posting? All associated applications will also be permanently deleted. This action cannot be undone.")) {
       return;

@@ -145,8 +145,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">Visit Us</h3>
-                  <p className="text-slate-600 font-medium mt-1">HSR Layout, Bengaluru</p>
-                  <p className="text-sm text-slate-400 mt-1">Karnataka, India</p>
+                  <p className="text-slate-600 font-medium mt-1">HSR Layout & Whitefield</p>
+                  <p className="text-sm text-slate-400 mt-1">Bengaluru, Karnataka</p>
                 </div>
               </div>
 
@@ -307,19 +307,42 @@ const Contact = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-slate-900">Find Us on Map</h2>
-            <p className="text-slate-500 mt-2">Located in the heart of HSR Layout, Bengaluru</p>
+            <p className="text-slate-500 mt-2">Visit our centers in Bengaluru</p>
           </div>
-          <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[500px]">
-            <iframe 
-              src="https://maps.google.com/maps?q=Centum+Academy,+HSR+Layout,+Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen={true} 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Centum Academy Location"
-            ></iframe>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* HSR Layout Map */}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-xl font-bold text-slate-800 text-center">HSR Layout Center</h3>
+              <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[400px]">
+                <iframe 
+                  src="https://maps.google.com/maps?q=Centum+Academy,+HSR+Layout,+Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={true} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Centum Academy HSR Layout Location"
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Whitefield Map */}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-xl font-bold text-slate-800 text-center">Whitefield Center</h3>
+              <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[400px]">
+                <iframe 
+                  src="https://maps.google.com/maps?q=7,+ITPL+Main+Rd,+Junction,+near+Hope+farm,+Prasanth+Layout,+Prasanth+Extension,+Bengaluru,+Karnataka+560066&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={true} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Centum Academy Whitefield Location"
+                ></iframe>
+              </div>
+            </div>
           </div>
         </div>
       </section>
