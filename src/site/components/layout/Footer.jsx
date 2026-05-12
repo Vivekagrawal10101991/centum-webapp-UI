@@ -107,6 +107,13 @@ const Footer = () => {
                   <p className="text-white leading-relaxed">HSR Layout, Bengaluru,<br/>Karnataka</p>
                 </div>
               </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 text-indigo-400 mt-1" />
+                <div>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase">Location</p>
+                  <p className="text-white leading-relaxed">7, ITPL Main Rd, Junction, near Hope farm,<br/>Prasanth Layout, Prasanth Extension,<br/>Bengaluru, Karnataka 560066</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

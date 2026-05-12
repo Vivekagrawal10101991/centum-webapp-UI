@@ -4,9 +4,29 @@ import { Card } from '../../components/common';
 import toast from 'react-hot-toast';
 import { leadsService } from '../services/leadsService';
 
+// The exhaustive list of statuses from your requirements
+const STATUS_OPTIONS = [
+  "PENDING", // Default/New state from backend
+  "Converted",
+  "Future lead",
+  "Need more counselling/ Neutral",
+  "Not interested/ Lost",
+  "Others/ Not Relevant",
+  "Unresponsive/RNR",
+  "Willing to visit the school",
+  "Wrong Number",
+  "Visited",
+  "Residential School",
+  "Call Back",
+  "Disconnected the call",
+  "Appointment Booked",
+  "School Denied/ Diverted"
+];
+
 const LeadsEnquiries = () => {
   const [activeTab, setActiveTab] = useState('admission');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -78,7 +98,7 @@ const LeadsEnquiries = () => {
     }
   };
 
-  // Filter based on active tab and search term
+  // Filter based on active tab, search term, and status filter
   const filteredEnquiries = enquiries.filter(item => {
     // 1. Tab Filtering
     let tabMatch = true;
@@ -100,17 +120,51 @@ const LeadsEnquiries = () => {
       item.email?.toLowerCase().includes(searchLower) ||
       item.phoneNumber?.includes(searchTerm);
 
-    return tabMatch && searchMatch;
+    // 3. Status Filtering
+    const currentStatus = item.status || 'PENDING';
+    const statusMatch = statusFilter === 'ALL' || currentStatus === statusFilter;
+
+    return tabMatch && searchMatch && statusMatch;
   });
 
+  // Professional Color Coding for each specific status
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'new': 
-      case 'pending': return 'bg-blue-100 text-blue-800';
-      case 'contacted': return 'bg-yellow-100 text-yellow-800';
-      case 'enrolled': return 'bg-green-100 text-green-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-blue-50 text-blue-600';
+    const normalizedStatus = status?.toLowerCase() || '';
+    
+    switch (normalizedStatus) {
+      case 'pending':
+      case 'new':
+        return 'bg-blue-100 text-blue-800';
+      case 'converted': 
+        return 'bg-green-100 text-green-800';
+      case 'future lead': 
+        return 'bg-teal-100 text-teal-800';
+      case 'need more counselling/ neutral': 
+        return 'bg-yellow-100 text-yellow-800';
+      case 'not interested/ lost': 
+        return 'bg-red-100 text-red-800';
+      case 'others/ not relevant': 
+        return 'bg-gray-200 text-gray-800';
+      case 'unresponsive/rnr': 
+        return 'bg-orange-100 text-orange-800';
+      case 'willing to visit the school': 
+        return 'bg-indigo-100 text-indigo-800';
+      case 'wrong number': 
+        return 'bg-rose-100 text-rose-800';
+      case 'visited': 
+        return 'bg-emerald-100 text-emerald-800';
+      case 'residential school': 
+        return 'bg-purple-100 text-purple-800';
+      case 'call back': 
+        return 'bg-sky-100 text-sky-800';
+      case 'disconnected the call': 
+        return 'bg-amber-100 text-amber-800';
+      case 'appointment booked': 
+        return 'bg-lime-100 text-lime-800';
+      case 'school denied/ diverted': 
+        return 'bg-red-50 text-red-600';
+      default: 
+        return 'bg-slate-100 text-slate-600';
     }
   };
 
@@ -187,12 +241,17 @@ const LeadsEnquiries = () => {
             />
           </div>
           <div className="flex gap-3 w-full md:w-auto">
-            <select className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-              <option value="">All Status</option>
-              <option value="PENDING">Pending</option>
-              <option value="New">New</option>
-              <option value="Contacted">Contacted</option>
-              <option value="Enrolled">Enrolled</option>
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-600 min-w-[200px]"
+            >
+              <option value="ALL">All Statuses</option>
+              {STATUS_OPTIONS.map((statusOption) => (
+                <option key={`filter-${statusOption}`} value={statusOption}>
+                  {statusOption === "PENDING" ? "Pending (New)" : statusOption}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -275,13 +334,14 @@ const LeadsEnquiries = () => {
                       <select
                         value={enquiry.status || 'PENDING'}
                         onChange={(e) => handleStatusUpdate(enquiry.id, e.target.value)}
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none ${getStatusColor(enquiry.status)}`}
+                        className={`text-xs font-semibold px-2.5 py-1.5 rounded-md border border-gray-200 cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none max-w-[180px] truncate ${getStatusColor(enquiry.status)}`}
+                        title={enquiry.status || 'PENDING'}
                       >
-                        {/* Included PENDING since the Spring Boot backend defaults to it */}
-                        <option value="PENDING">Pending (New)</option>
-                        <option value="Contacted">Contacted</option>
-                        <option value="Enrolled">Enrolled</option>
-                        <option value="Closed">Closed</option>
+                        {STATUS_OPTIONS.map((statusOption) => (
+                          <option key={`row-${enquiry.id}-${statusOption}`} value={statusOption}>
+                            {statusOption === "PENDING" ? "Pending (New)" : statusOption}
+                          </option>
+                        ))}
                       </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
