@@ -106,7 +106,7 @@ export const cmsService = {
     return response.data;
   },
 
-  // --- Testimonials Endpoints (UPDATED & CONNECTED) ---
+  // --- Testimonials Endpoints ---
   getTestimonials: async () => {
     const response = await api.get('/api/tech/social/testimonials');
     return response.data;
@@ -166,6 +166,37 @@ export const cmsService = {
 
   deleteLibraryContent: async (id) => {
     const response = await api.delete(`/api/tech/library/${id}`);
+    return response.data;
+  },
+
+  // --- Master Data Endpoints (Programs & Categories) ---
+  getLibraryPrograms: async () => {
+    const response = await api.get('/api/tech/library/programs');
+    return response.data;
+  },
+
+  addLibraryProgram: async (name) => {
+    const response = await api.post('/api/tech/library/programs', { name });
+    return response.data;
+  },
+
+  deleteLibraryProgram: async (id) => {
+    const response = await api.delete(`/api/tech/library/programs/${id}`);
+    return response.data;
+  },
+
+  getLibraryCategories: async () => {
+    const response = await api.get('/api/tech/library/categories');
+    return response.data;
+  },
+
+  addLibraryCategory: async (name) => {
+    const response = await api.post('/api/tech/library/categories', { name });
+    return response.data;
+  },
+
+  deleteLibraryCategory: async (id) => {
+    const response = await api.delete(`/api/tech/library/categories/${id}`);
     return response.data;
   }
 };
