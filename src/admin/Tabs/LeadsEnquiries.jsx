@@ -103,14 +103,21 @@ const LeadsEnquiries = () => {
     // 1. Tab Filtering
     let tabMatch = true;
     const interest = item.courseInterest || '';
+    const message = item.message || '';
     
-    if (activeTab === 'brochure') {
-      tabMatch = interest === 'Brochure Download';
+    const isLibraryDownload = message.includes('Library Download Request');
+    const isBrochureDownload = interest === 'Brochure Download';
+    const isContactForm = interest.toLowerCase().includes('contact') || interest.toLowerCase() === 'general inquiry';
+
+    if (activeTab === 'library') {
+      tabMatch = isLibraryDownload;
+    } else if (activeTab === 'brochure') {
+      tabMatch = isBrochureDownload && !isLibraryDownload;
     } else if (activeTab === 'contact') {
-      tabMatch = interest.toLowerCase().includes('contact') || interest.toLowerCase() === 'general inquiry';
+      tabMatch = isContactForm && !isLibraryDownload;
     } else {
-      // Admission tab: Exclude Brochure and Contact forms
-      tabMatch = interest !== 'Brochure Download' && !interest.toLowerCase().includes('contact') && interest.toLowerCase() !== 'general inquiry';
+      // Admission tab: Exclude Library, Brochure, and Contact forms
+      tabMatch = !isLibraryDownload && !isBrochureDownload && !isContactForm;
     }
 
     // 2. Search Filtering
@@ -174,7 +181,7 @@ const LeadsEnquiries = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Leads & Enquiries</h1>
-          <p className="text-gray-500">Manage contact requests, admissions, and brochure downloads</p>
+          <p className="text-gray-500">Manage contact requests, admissions, and material downloads</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -223,6 +230,16 @@ const LeadsEnquiries = () => {
             }`}
           >
             Brochure Downloads
+          </button>
+          <button
+            onClick={() => setActiveTab('library')}
+            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'library'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Study Material Downloads
           </button>
         </nav>
       </div>
@@ -293,7 +310,12 @@ const LeadsEnquiries = () => {
               ) : filteredEnquiries.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                    No records found for {activeTab === 'brochure' ? 'Brochure Downloads' : activeTab === 'contact' ? 'Contact Submissions' : 'Admission Enquiries'}.
+                    No records found for {
+                      activeTab === 'library' ? 'Study Material Downloads' :
+                      activeTab === 'brochure' ? 'Brochure Downloads' : 
+                      activeTab === 'contact' ? 'Contact Submissions' : 
+                      'Admission Enquiries'
+                    }.
                   </td>
                 </tr>
               ) : (

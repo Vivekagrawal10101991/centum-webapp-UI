@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import usePageTitle from '../hooks/usePageTitle';
-import { Search, FileText, Download, Calendar } from 'lucide-react';
+import { Search, FileText, Download, Calendar, X, Loader2 } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
+import { enquiryService } from '../../services/enquiryService';
 
 const Library = () => {
   usePageTitle('Digital Library & Free Study Resources | Centum Academy');
@@ -17,10 +18,20 @@ const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedYear, setSelectedYear] = useState('All');
 
+  // --- Lead Capture State ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [leadForm, setLeadForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    location: ''
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all data in parallel for better performance
         const [materialsData, programsData, categoriesData] = await Promise.all([
           cmsService.getLibraryContents(),
           cmsService.getLibraryPrograms(),
@@ -39,10 +50,8 @@ const Library = () => {
     fetchData();
   }, []);
 
-  // Compute options for dropdowns based on Master Data
   const programs = ['All', ...masterPrograms.map(p => p.name)];
   const categories = ['All', ...masterCategories.map(c => c.name)];
-  // Academic years remain dynamically derived from the available documents
   const academicYears = ['All', ...new Set(materials.map(m => m.academicYear).filter(Boolean))];
 
   const filteredMaterials = materials.filter((material) => {
@@ -64,6 +73,54 @@ const Library = () => {
     }
   };
 
+  // --- Download & Lead Logic ---
+  const handleDownloadClick = (material) => {
+    // Check if the user has already unlocked downloads in this browser
+    const isUnlocked = localStorage.getItem('centum_library_unlocked');
+    
+    if (isUnlocked === 'true') {
+      // Direct download if already verified
+      window.open(material.fileUrl, '_blank');
+    } else {
+      // Open modal if not verified
+      setSelectedDoc(material);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setLeadForm({ ...leadForm, [e.target.name]: e.target.value });
+  };
+
+  const handleLeadSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Submit data to your backend
+      await enquiryService.submitEnquiry({
+        name: leadForm.name,
+        email: leadForm.email,
+        phone: leadForm.phone,
+        city: leadForm.location, // Mapped to city, adjust if your backend expects 'location'
+        message: `Library Download Request: ${selectedDoc?.name} (${selectedDoc?.program})`
+      });
+
+      // Save success token in local storage so they don't have to fill it out again
+      localStorage.setItem('centum_library_unlocked', 'true');
+      
+      // Close modal and trigger the download
+      setIsModalOpen(false);
+      window.open(selectedDoc.fileUrl, '_blank');
+      
+    } catch (error) {
+      console.error("Failed to submit lead data", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
       {/* Hero Section */}
@@ -75,7 +132,6 @@ const Library = () => {
               Access comprehensive study materials, previous year papers, sample papers, and expert notes.
             </p>
             
-            {/* Search Bar */}
             <div className="relative max-w-2xl mx-auto">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400" />
               <input
@@ -180,15 +236,14 @@ const Library = () => {
                   </div>
                 </div>
 
-                <a 
-                  href={material.fileUrl} 
-                  target="_blank" 
-                  rel="noreferrer"
+                {/* Changed from <a> tag to <button> to trigger lead form check */}
+                <button 
+                  onClick={() => handleDownloadClick(material)}
                   className="w-full flex items-center justify-center gap-2 bg-[#7E3AF2] hover:bg-[#6C2BD9] text-white py-2.5 px-4 rounded-xl font-bold transition-all shadow-md hover:shadow-lg"
                 >
                   <Download className="h-4 w-4" />
                   Download Material
-                </a>
+                </button>
               </div>
             ))}
           </div>
@@ -209,6 +264,68 @@ const Library = () => {
           </div>
         )}
       </div>
+
+      {/* Lead Capture Form Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all">
+            <button 
+              onClick={() => setIsModalOpen(false)} 
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full p-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="p-6 sm:p-8">
+              <div className="w-12 h-12 bg-purple-100 text-[#7E3AF2] rounded-xl flex items-center justify-center mb-5">
+                <Download className="w-6 h-6" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Unlock Study Material</h3>
+              <p className="text-slate-600 mb-6 text-sm">
+                Enter your details below to download <span className="font-semibold text-slate-800">"{selectedDoc?.name}"</span>. 
+                You will only need to do this once.
+              </p>
+
+              <form onSubmit={handleLeadSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                  <input required type="text" name="name" value={leadForm.name} onChange={handleInputChange} className="w-full border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#7E3AF2] text-sm" placeholder="e.g. Rahul Sharma" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                  <input required type="email" name="email" value={leadForm.email} onChange={handleInputChange} className="w-full border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#7E3AF2] text-sm" placeholder="e.g. rahul@example.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input required type="tel" name="phone" value={leadForm.phone} onChange={handleInputChange} className="w-full border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#7E3AF2] text-sm" placeholder="e.g. 9876543210" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Location / City</label>
+                  <input required type="text" name="location" value={leadForm.location} onChange={handleInputChange} className="w-full border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#7E3AF2] text-sm" placeholder="e.g. Bangalore" />
+                </div>
+
+                <div className="pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting} 
+                    className="w-full bg-[#7E3AF2] hover:bg-[#6C2BD9] text-white py-3 px-4 rounded-xl font-bold transition-all disabled:opacity-70 flex justify-center items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <><Loader2 className="w-5 h-5 animate-spin" /> Unlocking...</>
+                    ) : (
+                      'Download Now'
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-center text-slate-500 mt-4">
+                  By downloading, you agree to receive academic updates from Centum Academy.
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
