@@ -105,7 +105,7 @@ const LibraryContentManagement = () => {
   // --- Delete Confirmation State ---
   const [deleteConfirm, setDeleteConfirm] = useState({
     isOpen: false,
-    type: '', // 'program', 'category', or 'content'
+    type: '', 
     id: null,
     itemName: ''
   });
@@ -149,11 +149,10 @@ const LibraryContentManagement = () => {
     }
   };
 
-  // --- Dynamic List Handlers ---
   const handleAddProgram = async (name) => {
     try {
       await cmsService.addLibraryProgram(name);
-      fetchMasterData(); // Refresh list
+      fetchMasterData();
     } catch(err) { console.error("Failed to add program", err); }
   };
 
@@ -164,7 +163,7 @@ const LibraryContentManagement = () => {
   const handleAddCategory = async (name) => {
     try {
       await cmsService.addLibraryCategory(name);
-      fetchMasterData(); // Refresh list
+      fetchMasterData(); 
     } catch(err) { console.error("Failed to add category", err); }
   };
 
@@ -180,6 +179,17 @@ const LibraryContentManagement = () => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // --- NEW: Frontend File Size Validation ---
+    const MAX_FILE_SIZE_MB = 50; // Set to match your backend limits
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      const actualSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      alert(`File is too large! You are trying to upload a ${actualSizeMB} MB file.\n\nThe maximum allowed size is ${MAX_FILE_SIZE_MB} MB.`);
+      e.target.value = ''; // Reset the input field
+      return;
+    }
+
     setUploading(true);
     try {
       const result = await storageService.uploadFile(file);
@@ -187,7 +197,7 @@ const LibraryContentManagement = () => {
       alert('File uploaded successfully!');
     } catch (error) {
       console.error("File upload failed", error);
-      alert('File upload failed.');
+      alert('File upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -230,7 +240,6 @@ const LibraryContentManagement = () => {
     setDeleteConfirm({ isOpen: true, type: 'content', id, itemName: name });
   };
 
-  // --- Centralized Delete Execution ---
   const executeDelete = async () => {
     const { type, id } = deleteConfirm;
     try {
