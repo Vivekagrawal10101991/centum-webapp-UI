@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import usePageTitle from '../hooks/usePageTitle';
-import { Search, FileText, BookOpen, Download, Calendar } from 'lucide-react';
+import { Search, FileText, Download, Calendar } from 'lucide-react';
 import { cmsService } from '../../services/cmsService';
 
 const Library = () => {
   usePageTitle('Digital Library & Free Study Resources | Centum Academy');
+  
   const [materials, setMaterials] = useState([]);
+  const [masterPrograms, setMasterPrograms] = useState([]);
+  const [masterCategories, setMasterCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -15,23 +18,32 @@ const Library = () => {
   const [selectedYear, setSelectedYear] = useState('All');
 
   useEffect(() => {
-    const fetchMaterials = async () => {
+    const fetchData = async () => {
       try {
-        const data = await cmsService.getLibraryContents();
-        setMaterials(data);
+        // Fetch all data in parallel for better performance
+        const [materialsData, programsData, categoriesData] = await Promise.all([
+          cmsService.getLibraryContents(),
+          cmsService.getLibraryPrograms(),
+          cmsService.getLibraryCategories()
+        ]);
+        
+        setMaterials(materialsData || []);
+        setMasterPrograms(programsData || []);
+        setMasterCategories(categoriesData || []);
       } catch (error) {
         console.error("Failed to load library data");
       } finally {
         setLoading(false);
       }
     };
-    fetchMaterials();
+    fetchData();
   }, []);
 
-  // Compute distinct options for dropdowns based on real data
-  const programs = ['All', ...new Set(materials.map(m => m.program))];
-  const categories = ['All', ...new Set(materials.map(m => m.category))];
-  const academicYears = ['All', ...new Set(materials.map(m => m.academicYear))];
+  // Compute options for dropdowns based on Master Data
+  const programs = ['All', ...masterPrograms.map(p => p.name)];
+  const categories = ['All', ...masterCategories.map(c => c.name)];
+  // Academic years remain dynamically derived from the available documents
+  const academicYears = ['All', ...new Set(materials.map(m => m.academicYear).filter(Boolean))];
 
   const filteredMaterials = materials.filter((material) => {
     const matchesProgram = selectedProgram === 'All' || material.program === selectedProgram;
@@ -44,11 +56,11 @@ const Library = () => {
 
   const getThumbnailByProgram = (program) => {
     switch(program?.toUpperCase()) {
-      case 'JEE': return '📚';
+      case 'JEE': return '🎓';
       case 'NEET': return '🧬';
-      case 'FOUNDATION': return '🔢';
+      case 'FOUNDATION': return '🏗️';
       case 'OLYMPIAD': return '🏆';
-      default: return '📝';
+      default: return '📚';
     }
   };
 
@@ -185,7 +197,7 @@ const Library = () => {
         {/* Empty State */}
         {!loading && filteredMaterials.length === 0 && (
           <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-6xl mb-4">📂</div>
             <h3 className="text-2xl font-bold text-slate-900 mb-2">No materials found</h3>
             <p className="text-slate-600 mb-6">Try adjusting your search or filters</p>
             <button 

@@ -118,13 +118,34 @@ export const cmsService = {
     }
   },
 
-  // --- Library Content (NEW) ---
+  // --- Library Content ---
   getLibraryContents: async () => {
     try {
       const response = await api.get('/api/tech/library/all');
       return response.data;
     } catch (error) {
       console.error("Error fetching library contents:", error);
+      return [];
+    }
+  },
+
+  // --- Master Data Endpoints (NEW) ---
+  getLibraryPrograms: async () => {
+    try {
+      const response = await api.get('/api/tech/library/programs');
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching library programs:", error);
+      return [];
+    }
+  },
+
+  getLibraryCategories: async () => {
+    try {
+      const response = await api.get('/api/tech/library/categories');
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching library categories:", error);
       return [];
     }
   }
