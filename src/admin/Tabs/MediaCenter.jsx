@@ -683,29 +683,29 @@ export default function MediaCenter() {
             </div>
           )}
 
-          {/* Videos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Videos List (Row Layout) */}
+          <div className="flex flex-col gap-4">
             {videos.length === 0 && !loading && (
-               <div className="col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+               <div className="col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                  <Video className="w-12 h-12 mx-auto mb-3 opacity-20"/>
-                 <p>No videos found. Add your first YouTube video!</p>
+                 <p className="font-medium text-slate-600">No videos found. Add your first YouTube video!</p>
                </div>
             )}
 
             {videos.map((video) => {
               const videoId = getYoutubeId(video.videoUrl);
               return (
-                <div key={video.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
-                  <div className="relative h-48 bg-gray-100">
+                <div key={video.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col md:flex-row items-center p-4 gap-6">
+                  <div className="relative w-full md:w-56 aspect-video bg-slate-100 rounded-xl overflow-hidden flex-shrink-0 shadow-inner">
                     {videoId ? (
                        <img
                         src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
                         alt={video.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                        />
                     ) : (
                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                         <Video className="w-10 h-10" />
+                         <Video className="w-10 h-10 opacity-20" />
                        </div>
                     )}
                     <a 
@@ -718,42 +718,49 @@ export default function MediaCenter() {
                        <ExternalLink className="w-4 h-4" />
                     </a>
                     {video.visibility === 'PRIVATE' && (
-                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-gray-800 text-white text-xs rounded">Private</span>
+                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-gray-800/90 text-white text-[10px] font-bold rounded-md backdrop-blur-sm">Private</span>
                     )}
                   </div>
 
-                  <div className="p-4">
-                    <h4 className="font-semibold text-gray-800 mb-2 line-clamp-1" title={video.title}>{video.title}</h4>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2 h-10">{video.description}</p>
-                    
-                    <div className="flex gap-2 border-t pt-3">
-                      {hasPermission(PERMISSIONS.EDIT_VIDEO) && (
-                        <button
-                          onClick={() => {
-                            setEditingVideo(video);
-                            setVideoForm({
-                              title: video.title,
-                              description: video.description,
-                              videoUrl: video.videoUrl,
-                              visibility: video.visibility || 'PUBLIC'
-                            });
-                            setShowVideoForm(true);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="flex-1 p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1.5 font-medium text-xs"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" /> Edit
-                        </button>
-                      )}
-                      {hasPermission(PERMISSIONS.DELETE_VIDEO) && (
-                        <button
-                          onClick={() => openDeleteModal(video.id, 'video')}
-                          className="flex-1 p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5 font-medium text-xs"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
-                      )}
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${video.visibility === 'PRIVATE' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
+                        {video.visibility || 'PUBLIC'}
+                      </span>
                     </div>
+                    <h4 className="font-black text-slate-800 mb-1 truncate text-lg" title={video.title}>{video.title}</h4>
+                    <p className="text-sm text-slate-500 line-clamp-2 max-w-2xl">{video.description || 'No description provided.'}</p>
+                  </div>
+                  
+                  <div className="flex gap-2 w-full md:w-auto border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6">
+                    {hasPermission(PERMISSIONS.EDIT_VIDEO) && (
+                      <button
+                        onClick={() => {
+                          setEditingVideo(video);
+                          setVideoForm({
+                            title: video.title,
+                            description: video.description,
+                            videoUrl: video.videoUrl,
+                            visibility: video.visibility || 'PUBLIC'
+                          });
+                          setShowVideoForm(true);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="flex-1 md:w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                        title="Edit Video"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    {hasPermission(PERMISSIONS.DELETE_VIDEO) && (
+                      <button
+                        onClick={() => openDeleteModal(video.id, 'video')}
+                        className="flex-1 md:w-10 h-10 flex items-center justify-center bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                        title="Delete Video"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );

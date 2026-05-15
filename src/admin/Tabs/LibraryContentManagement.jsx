@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, FileText, Edit2, Trash2, AlertTriangle, Search, ChevronLeft, ChevronRight } from 'lucide-react'; 
+import { Plus, FileText, Edit2, Trash2, AlertTriangle, Search, ChevronLeft, ChevronRight, X } from 'lucide-react'; 
 import { cmsService } from '../services/cmsService';
 import { storageService } from '../services/storageService';
 
@@ -102,6 +102,11 @@ const LibraryContentManagement = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // Advanced Filters State
+  const [filterProgram, setFilterProgram] = useState('All');
+  const [filterCategory, setFilterCategory] = useState('All');
+  const [filterYear, setFilterYear] = useState('All');
+
   // Search and Pagination State
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -129,10 +134,10 @@ const LibraryContentManagement = () => {
     fetchMasterData();
   }, []);
 
-  // Reset pagination when search changes
+  // Reset pagination when search or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, filterProgram, filterCategory, filterYear]);
 
   const fetchContents = async () => {
     try {
@@ -150,21 +155,33 @@ const LibraryContentManagement = () => {
 
   const fetchMasterData = async () => {
     try {
-      const progs = await cmsService.getLibraryPrograms();
-      const cats = await cmsService.getLibraryCategories();
-      setPrograms(progs);
-      setCategories(cats);
+      const [progs, cats] = await Promise.all([
+        cmsService.getLibraryPrograms(),
+        cmsService.getLibraryCategories()
+      ]);
+      setPrograms(progs || []);
+      setCategories(cats || []);
     } catch (error) {
       console.error("Failed to fetch master data", error);
     }
   };
 
+  // Extract unique academic years for filtering
+  const academicYears = ['All', ...new Set(contents.map(item => item.academicYear).filter(Boolean))].sort((a, b) => b - a);
+
   // Compute filtered and paginated contents
-  const filteredContents = contents.filter(item => 
-    item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.program?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredContents = contents.filter(item => {
+    const matchesSearch = !searchQuery || 
+      item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.program?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesProgram = filterProgram === 'All' || item.program === filterProgram;
+    const matchesCategory = filterCategory === 'All' || item.category === filterCategory;
+    const matchesYear = filterYear === 'All' || item.academicYear === filterYear;
+
+    return matchesSearch && matchesProgram && matchesCategory && matchesYear;
+  });
 
   const totalPages = Math.ceil(filteredContents.length / ITEMS_PER_PAGE);
   const paginatedContents = filteredContents.slice(
@@ -314,20 +331,66 @@ const LibraryContentManagement = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-        {/* Toolbar */}
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input 
-              type="text"
-              placeholder="Search by name, program, or category..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
-            />
-          </div>
-          <div className="text-sm font-semibold text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
-            Total: {filteredContents.length}
+        {/* Toolbar & Filters */}
+        <div className="p-5 border-b border-slate-100 bg-slate-50/30 space-y-4">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="relative w-full max-w-md group">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+              <input 
+                type="text"
+                placeholder="Search by name, program, or category..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-xl outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all text-sm font-medium bg-white"
+              />
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+              {/* Program Filter */}
+              <select 
+                value={filterProgram}
+                onChange={(e) => setFilterProgram(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 cursor-pointer shadow-sm min-w-[140px]"
+              >
+                <option value="All">All Programs</option>
+                {programs.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+              </select>
+
+              {/* Category Filter */}
+              <select 
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 cursor-pointer shadow-sm min-w-[140px]"
+              >
+                <option value="All">All Categories</option>
+                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+              </select>
+
+              {/* Year Filter */}
+              <select 
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 cursor-pointer shadow-sm min-w-[120px]"
+              >
+                <option value="All">All Years</option>
+                {academicYears.filter(y => y !== 'All').map(year => <option key={year} value={year}>{year}</option>)}
+              </select>
+
+              {/* Clear Filters Button */}
+              {(filterProgram !== 'All' || filterCategory !== 'All' || filterYear !== 'All' || searchQuery !== '') && (
+                <button 
+                  onClick={() => { setFilterProgram('All'); setFilterCategory('All'); setFilterYear('All'); setSearchQuery(''); }}
+                  className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors border border-transparent hover:border-red-100 shadow-sm bg-white"
+                  title="Clear All Filters"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+
+              <div className="text-sm font-bold text-slate-500 bg-slate-100/80 px-4 py-2.5 rounded-xl border border-slate-200 shadow-inner ml-auto lg:ml-0">
+                Found: <span className="text-blue-600">{filteredContents.length}</span>
+              </div>
+            </div>
           </div>
         </div>
 
