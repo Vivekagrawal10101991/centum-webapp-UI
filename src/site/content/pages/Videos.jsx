@@ -24,52 +24,80 @@ const getYoutubeId = (url) => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
-// --- Custom Video Card Component ---
+// --- Custom Video Row Component ---
 const VideoCard = ({ video, index, onPlay }) => {
   const theme = PASTEL_COLORS[index % PASTEL_COLORS.length];
   const videoId = getYoutubeId(video.videoUrl);
 
   return (
     <motion.div
-      whileHover={{ y: -8, scale: 1.02 }}
-      className={`relative rounded-2xl overflow-hidden ${theme.bg} shadow-sm hover:shadow-lg border border-white/60 flex flex-col h-full transition-all duration-300 group cursor-pointer`}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.05 }}
+      className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between group relative overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(30,58,138,0.08)] hover:border-blue-300 cursor-pointer"
       onClick={() => onPlay(videoId)}
     >
-      {/* Thumbnail Container */}
-      <div className="p-2 pb-0">
-        <div className="relative aspect-video rounded-xl overflow-hidden shadow-inner bg-black/10">
+      {/* Premium Side Accent */}
+      <div className="absolute left-0 top-0 w-1.5 h-full bg-gradient-to-b from-blue-500 to-indigo-600 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500"></div>
+
+      <div className="flex flex-1 items-center gap-6 w-full mb-5 sm:mb-0">
+        {/* Thumbnail Container - Large & Row Styled */}
+        <div className="relative w-full sm:w-64 aspect-video rounded-xl overflow-hidden shadow-md bg-slate-100 flex-shrink-0 group-hover:shadow-xl transition-all duration-500">
           {videoId ? (
-             <img
-               src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-               alt={video.title}
-               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-             />
+            <img
+              src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+              alt={video.title}
+              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+            />
           ) : (
-             <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <VideoIcon className="w-10 h-10 opacity-20" />
-             </div>
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              <VideoIcon className="w-12 h-12 opacity-20" />
+            </div>
           )}
           
-          {/* Custom Play Button Overlay */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-            <div className={`w-12 h-12 ${theme.bg} rounded-full flex items-center justify-center shadow-lg backdrop-blur-md bg-opacity-90 group-hover:scale-110 transition-transform duration-300`}>
-              <Play className={`w-5 h-5 ${theme.text} fill-current ml-1`} />
+          {/* Glassmorphism Play Overlay */}
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+            <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-2xl transform scale-90 group-hover:scale-110 transition-transform duration-500">
+              <Play className="w-6 h-6 text-white fill-current ml-1 drop-shadow-lg" />
             </div>
           </div>
+          
+          {/* Duration/Status Badge (Placeholder/Style) */}
+          <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold rounded-md border border-white/10">
+            {video.visibility === 'PRIVATE' ? 'PRIVATE' : 'HD VIDEO'}
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="flex flex-col flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+             <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${theme.bg} ${theme.text} border border-white/50 shadow-sm`}>
+               Video Tutorial
+             </span>
+             <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">
+               Centum Academy
+             </span>
+          </div>
+          
+          <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-1">
+            {video.title}
+          </h3>
+          
+          <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 max-w-2xl">
+            {video.description || "Unlock key insights and expert strategies in this comprehensive session curated by Centum Academy faculty."}
+          </p>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
-        <div className={`inline-flex self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${theme.accent} ${theme.text} bg-opacity-60`}>
-          Video
-        </div>
-        <h3 className="text-lg font-bold text-gray-800 mb-2 leading-tight line-clamp-2">
-          {video.title}
-        </h3>
-        <p className="text-gray-600 text-xs leading-relaxed line-clamp-3">
-          {video.description}
-        </p>
+      {/* Action Section */}
+      <div className="w-full sm:w-auto flex-shrink-0 sm:pl-6 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0">
+        <button 
+          className="w-full sm:w-auto flex items-center justify-center gap-3 bg-slate-900 hover:bg-blue-600 text-white py-3 px-8 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-slate-900/10 hover:shadow-blue-600/30 hover:-translate-y-0.5 active:scale-95"
+        >
+          <Play className="h-4 w-4 fill-current" />
+          Play Now
+        </button>
       </div>
     </motion.div>
   );
@@ -115,39 +143,61 @@ const Videos = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* 1. HERO HEADER */}
-      <div className="relative bg-gradient-to-br from-blue-50 via-white to-blue-100 py-16 overflow-hidden border-b border-blue-100">
+    <div className="bg-white min-h-screen font-sans">
+      {/* 1. PREMIUM HERO HEADER */}
+      <div className="relative bg-[#0f172a] text-white py-24 overflow-hidden border-b border-slate-800">
+        {/* Abstract Background Shapes */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20"></div>
+        </div>
+
         <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="inline-block px-3 py-1 mb-3 text-[10px] font-bold text-blue-700 bg-white/80 rounded-full uppercase tracking-widest shadow-sm border border-blue-100">
-            Media Center
-          </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
-            Explore Our Video Library
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light">
-            Curated educational content, expert sessions, and concept explainers to boost your preparation.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block px-4 py-1.5 mb-6 text-[11px] font-black text-blue-400 bg-blue-400/10 rounded-full uppercase tracking-[0.2em] shadow-inner border border-blue-400/20">
+              Centum Media Center
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+              Master Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Concepts</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+              Curated educational content, expert sessions, and high-quality concept explainers to give your preparation the Centum edge.
+            </p>
+          </motion.div>
           
-          {/* Search Bar */}
-          <div className="max-w-md mx-auto mt-8 relative">
+          {/* Search Bar - Refined */}
+          <div className="max-w-xl mx-auto mt-12 relative group">
             <input
               type="text"
-              placeholder="Search videos..."
+              placeholder="Search concepts, topics or videos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 shadow-2xl focus:bg-white/10 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 text-base font-medium"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 w-6 h-6 transition-colors" />
           </div>
         </div>
       </div>
 
-      {/* 2. VIDEO GRID SECTION */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+      {/* 2. VIDEO LIST SECTION (ROW STRIPS) */}
+      <section className="py-20 bg-slate-50/50">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex justify-between items-center mb-10">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <Play className="w-6 h-6 text-blue-600 fill-current" />
+              {searchTerm ? `Search Results for "${searchTerm}"` : 'Latest Uploads'}
+            </h2>
+            <div className="hidden sm:block text-sm font-bold text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+              {filteredVideos.length} {filteredVideos.length === 1 ? 'Video' : 'Videos'} Available
+            </div>
+          </div>
+
           {filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex flex-col gap-6">
               {filteredVideos.map((video, index) => (
                 <VideoCard 
                   key={video.id} 
@@ -158,9 +208,16 @@ const Videos = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 text-gray-500">
-              <VideoIcon className="w-16 h-16 mx-auto mb-4 text-gray-200" />
-              <p>No videos found matching your search.</p>
+            <div className="text-center py-32 bg-white rounded-3xl border border-dashed border-slate-300 shadow-inner">
+              <VideoIcon className="w-20 h-20 mx-auto mb-6 text-slate-200" />
+              <h3 className="text-xl font-bold text-slate-800 mb-2">No videos found</h3>
+              <p className="text-slate-500">We couldn't find any videos matching your search criteria.</p>
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="mt-6 text-blue-600 font-bold hover:underline"
+              >
+                Clear all filters
+              </button>
             </div>
           )}
         </div>
